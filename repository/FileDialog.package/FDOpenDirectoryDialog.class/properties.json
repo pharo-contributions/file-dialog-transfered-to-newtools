@@ -1,0 +1,14 @@
+{
+	"category" : "FileDialog",
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "",
+	"instvars" : [
+		 ],
+	"name" : "FDOpenDirectoryDialog",
+	"pools" : [
+		 ],
+	"super" : "FDFileDialog",
+	"type" : "normal" }

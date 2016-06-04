@@ -1,0 +1,27 @@
+{
+	"category" : "FileDialog",
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		"CustomBookmarks" ],
+	"commentStamp" : "PeterUhnak 6/4/2016 17:30",
+	"instvars" : [
+		"bookmarksList",
+		"pathLabel",
+		"createFolderButton",
+		"nameText",
+		"extensionDropList",
+		"filesList",
+		"currentDirectory",
+		"nameLabel",
+		"cancelButton",
+		"filteredExtensions",
+		"confirmButton",
+		"onConfirmBlock",
+		"customBookmarks",
+		"showHiddenFiles" ],
+	"name" : "FDFileDialog",
+	"pools" : [
+		 ],
+	"super" : "ComposableModel",
+	"type" : "normal" }
