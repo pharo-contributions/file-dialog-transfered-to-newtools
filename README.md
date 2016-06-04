@@ -17,6 +17,7 @@ Metacello new
 	baseline: 'FileDialog';
 	repository: 'github://peteruhnak/file-dialog/repository';
 	load.
+```
 
 ## Classes
 
@@ -26,6 +27,7 @@ Metacello new
 
 ## Example
 
+```st
 FDSaveFileDialog new
 	whenSelected: [ :file | file inspect ];
 	filteredExtensions: {
@@ -35,6 +37,7 @@ FDSaveFileDialog new
 	defaultFolder: FileLocator imageDirectory asFileReference;
 	defaultName: 'hello.png';
 	open
+```
 
 
 ![](figures/file-dialog-1.png)
