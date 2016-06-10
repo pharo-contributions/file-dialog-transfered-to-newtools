@@ -9,6 +9,7 @@ A simple replacement for Pharo's native file/folder selection dialog.
 * toggle hidden files (right-click on file listing)
 * preset file name
 * filtering files by extension and toggling between filters
+* synchronous and asynchronous mode
 
 ## Installation
 
@@ -27,6 +28,8 @@ Metacello new
 
 ## Example
 
+asynchronous — execute behavior from a block
+
 ```st
 FDSaveFileDialog new
 	whenSelected: [ :file | file inspect ];
@@ -38,6 +41,15 @@ FDSaveFileDialog new
 	defaultName: 'hello.png';
 	open
 ```
+
+synchronous — return the value
+
+```st
+file := FDSaveFileDialog new
+	...
+	openModal
+```
+
 
 
 ![](figures/file-dialog-1.png)
