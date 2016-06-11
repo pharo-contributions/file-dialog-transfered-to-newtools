@@ -1,3 +1,3 @@
-actions
+accessing
 selectedEntry
 	^ filesList selectedItem

@@ -1,0 +1,3 @@
+accessing
+defaultFolder
+	^ FileLocator imageDirectory asFileReference

@@ -1,0 +1,14 @@
+{
+	"category" : "FileDialog",
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "",
+	"instvars" : [
+		 ],
+	"name" : "FDMorphicUIManager",
+	"pools" : [
+		 ],
+	"super" : "MorphicUIManager",
+	"type" : "normal" }

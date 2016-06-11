@@ -1,4 +1,4 @@
 public
 filteredExtensions: anArray
-	filteredExtensions := anArray.
-	extensionDropList items: filteredExtensions
+	self deprecated: 'Use extensionFilters: instead'.
+	self extensionFilters: anArray

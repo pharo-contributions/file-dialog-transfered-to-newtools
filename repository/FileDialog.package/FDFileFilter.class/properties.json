@@ -1,0 +1,14 @@
+{
+	"category" : "FileDialog",
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "",
+	"instvars" : [
+		 ],
+	"name" : "FDFileFilter",
+	"pools" : [
+		 ],
+	"super" : "Object",
+	"type" : "normal" }

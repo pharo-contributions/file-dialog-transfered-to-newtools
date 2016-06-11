@@ -1,3 +1,5 @@
 public
 defaultFolder: aPath
-	self openFolder: aPath asFileReference
+	aPath
+		ifNil: [ self openFolder: self defaultFolder ]
+		ifNotNil: [ self openFolder: aPath asFileReference ]

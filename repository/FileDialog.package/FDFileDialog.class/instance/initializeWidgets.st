@@ -10,10 +10,10 @@ initializeWidgets
 	(confirmButton := self newButton)
 		label: 'Confirm';
 		disable.
-	extensionDropList := self newDropList.
+	filtersDropList := self newDropList.
 	self title: self initialTitle.
 	self focusOrder
 		add: nameText;
-		add: extensionDropList;
+		add: filtersDropList;
 		add: cancelButton;
 		add: confirmButton

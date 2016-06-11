@@ -1,9 +1,10 @@
 example
 exampleModal
 	"return the selected value"
+
 	(FDSaveFileDialog new
-		filteredExtensions:
-			{'All images' -> #(jpg png gif svg).
+		fileFilters:
+			{'STON files' -> #('*.ston').
 			'All files' -> #()};
 		defaultFolder: FileLocator imageDirectory asFileReference;
 		defaultName: 'hello.png';

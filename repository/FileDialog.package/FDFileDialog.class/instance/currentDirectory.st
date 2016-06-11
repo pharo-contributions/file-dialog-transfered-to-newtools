@@ -1,4 +1,3 @@
 accessing
 currentDirectory
-	^ currentDirectory
-		ifNil: [ currentDirectory := FileLocator imageDirectory asFileReference ]
+	^ currentDirectory ifNil: [ currentDirectory := self defaultFolder ]

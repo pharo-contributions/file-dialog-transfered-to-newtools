@@ -1,10 +1,10 @@
 accessing
 filesFilteringBlock
 	^ [ :entries | 
-	(showHiddenFiles
-		ifTrue: [ entries ]
-		ifFalse: [ entries reject: [ :each | (each basename beginsWith: '.') and: [ (each basename = '..') not ] ] ])
-		select: [ :each | 
-			each isFile & self filteredExtensions isNotEmpty
-				ifTrue: [ self filteredExtensions includes: each extension asLowercase ]
-				ifFalse: [ true ] ] ]
+	| e |
+	e := entries.
+	showHiddenFiles
+		ifFalse: [ e := filter noHiddenFiles: entries ].
+	filtersDropList selectedItem value
+		ifNotEmpty: [ :patterns | e := filter files: e matching: patterns ].
+	e ]
