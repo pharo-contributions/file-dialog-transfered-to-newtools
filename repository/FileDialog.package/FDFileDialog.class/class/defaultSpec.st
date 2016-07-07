@@ -4,7 +4,9 @@ defaultSpec
 		newRow: [ :r | 
 			r
 				newColumn: [ :c | c add: #bookmarksList ] width: 150;
-				newColumn: [ :c | c add: #filesList ] ];
+				newColumn: [ :c | 
+					c add: #currentFolderLabel height: self toolbarHeight.
+					c add: #filesList ] ];
 		newRow: [ :r | 
 			r
 				add: #nameLabel width: 50;

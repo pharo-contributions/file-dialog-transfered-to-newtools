@@ -1,6 +1,6 @@
 example
 example
-	^ FDSaveFileDialog new
+	^ FDOpenFileDialog new
 		whenSelected: [ :file | file inspect ];
 		extensionFilters:
 			{'All images' -> #(jpg png gif svg).

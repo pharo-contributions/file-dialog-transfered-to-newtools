@@ -1,11 +1,7 @@
 example
 exampleModal
-	"return the selected value"
+	"modal returns the selected value"
 
-	(FDSaveFileDialog new
-		fileFilters:
-			{'STON files' -> #('*.ston').
-			'All files' -> #()};
+	(FDOpenDirectoryDialog new
 		defaultFolder: FileLocator imageDirectory asFileReference;
-		defaultName: 'hello.png';
 		openModal) inspect
