@@ -26,7 +26,7 @@ Metacello new
 
 ### Replacing native dialogs
 
-If you feel brave, you can replace the native dialogs everywhere in the system be running
+If you feel brave, you can replace the native dialogs everywhere in the system by running
 
 ```st
 FDMorphicUIManager new beDefault
