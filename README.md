@@ -78,14 +78,13 @@ fileFilters: { 'STON files (*.ston, *.json)' -> #('*.ston' '*.json') }
 asynchronous — execute behavior on selection from a block
 
 ```st
-FDSaveFileDialog new
+FDOpenFileDialog new
 	whenSelected: [ :file | file inspect ];
-	filteredExtensions: {
+	extensionFilters: {
 		'All images' -> #(jpg png gif svg).
 		'All files' -> #()
 	};
 	defaultFolder: FileLocator imageDirectory asFileReference;
-	defaultName: 'hello.png';
 	open
 ```
 
