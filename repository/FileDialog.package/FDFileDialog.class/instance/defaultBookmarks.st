@@ -12,9 +12,19 @@ defaultBookmarks
 	FileLocator temp asFileReference
 		->
 			{'tmp'.
-			self icons open}.
-	FileLocator root asFileReference
-		->
-			{'file system'.
-			self icons smallWindow}} asOrderedDictionary.
+			self icons open}} asOrderedDictionary.
+	OSPlatform current isWindows
+		ifFalse: [ preset
+				at: FileLocator root asFileReference
+				put:
+					{'file system'.
+					self icons smallWindow} ].
+	OSPlatform current isWindows
+		ifTrue: [ FileLocator root asFileReference children
+				do: [ :each | 
+					preset
+						at: each
+						put:
+							{each basename.
+							self icons smallWindow} ] ].
 	^ preset
