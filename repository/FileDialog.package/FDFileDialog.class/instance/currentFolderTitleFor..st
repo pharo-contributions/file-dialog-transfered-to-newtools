@@ -6,5 +6,5 @@ currentFolderTitleFor: aString
 	optimal := (LabelMorph contents: aString) optimalExtent x.
 	max := e x - leftBarWidth.
 	optimal < max
-		ifTrue: [ ^ aString , self separator ].
-	^ '... ' , (aString last: (aString size * (max / optimal)) rounded) , self separator
+		ifTrue: [ ^ aString , self delimiter ].
+	^ '... ' , (aString last: (aString size * (max / optimal)) rounded) , self delimiter
