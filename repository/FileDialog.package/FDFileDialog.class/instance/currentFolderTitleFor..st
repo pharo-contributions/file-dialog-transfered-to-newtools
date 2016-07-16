@@ -7,4 +7,4 @@ currentFolderTitleFor: aString
 	max := e x - leftBarWidth.
 	optimal < max
 		ifTrue: [ ^ aString ].
-	^ '... ' , (aString last: (aString size * (max / optimal)) rounded)
+	^ '... ' , (aString last: (aString size * (max / optimal)) rounded) , '/'
