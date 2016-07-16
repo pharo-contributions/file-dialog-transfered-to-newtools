@@ -15,8 +15,6 @@ defaultSpec
 			height: self toolbarHeight;
 		newRow: [ :r | 
 			r newColumn: [ :c |  ].
-			r
-				add: #cancelButton width: 60;
-				add: #confirmButton width: 60 ]
+			self dialogButtonsLayout: r ]
 			height: self toolbarHeight;
 		yourself
