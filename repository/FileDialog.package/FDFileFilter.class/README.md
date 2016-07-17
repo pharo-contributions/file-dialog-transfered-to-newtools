@@ -1,0 +1,1 @@
+I help the file dialog with some file filtering (e.g. selecting only files matching an extension, etc.)
