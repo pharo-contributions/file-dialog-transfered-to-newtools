@@ -19,5 +19,6 @@ initializeFilesList
 	filesList
 		menu: [ :aMenu :shifterd | 
 			aMenu
+				add: 'Create directory' target: self selector: #createDirectory;
 				add: 'Toggle hidden files' target: self selector: #toggleHiddenFiles;
 				yourself ]
