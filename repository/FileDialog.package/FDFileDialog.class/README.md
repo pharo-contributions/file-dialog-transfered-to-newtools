@@ -1,4 +1,6 @@
-Parent class for various UI dialogs.
+I am an abstract base class for different styles of opening/saving.
+
+Don't use me directly -- instead use one of my children.
 
 ## Examples
 
