@@ -1,4 +1,4 @@
 bookmarks
 removeBookmark: aFolder
-	self customBookmarks removeKey: aFolder.
-	bookmarksList items: self bookmarks keys
+	self class removeBookmark: aFolder.
+	self refreshBookmarks

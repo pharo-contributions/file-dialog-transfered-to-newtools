@@ -1,3 +1,3 @@
 bookmarks
 customBookmarks
-	^ CustomBookmarks ifNil: [ CustomBookmarks := OrderedDictionary new ]
+	^ self class customBookmarks
