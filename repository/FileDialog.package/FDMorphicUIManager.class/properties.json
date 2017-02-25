@@ -1,11 +1,14 @@
 {
-	"commentStamp" : "PeterUhnak 7/17/2016 16:30",
-	"super" : "MorphicUIManager",
 	"category" : "FileDialog",
-	"classinstvars" : [ ],
-	"pools" : [ ],
-	"classvars" : [ ],
-	"instvars" : [ ],
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "PeterUhnak 7/17/2016 16:30",
+	"instvars" : [
+		 ],
 	"name" : "FDMorphicUIManager",
-	"type" : "normal"
-}
+	"pools" : [
+		 ],
+	"super" : "MorphicUIManager",
+	"type" : "normal" }

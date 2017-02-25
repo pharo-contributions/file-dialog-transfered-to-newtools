@@ -1,11 +1,14 @@
 {
-	"commentStamp" : "PeterUhnak 7/17/2016 16:31",
-	"super" : "FDFileDialog",
 	"category" : "FileDialog",
-	"classinstvars" : [ ],
-	"pools" : [ ],
-	"classvars" : [ ],
-	"instvars" : [ ],
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "PeterUhnak 7/17/2016 16:31",
+	"instvars" : [
+		 ],
 	"name" : "FDOpenFileDialog",
-	"type" : "normal"
-}
+	"pools" : [
+		 ],
+	"super" : "FDFileDialog",
+	"type" : "normal" }
