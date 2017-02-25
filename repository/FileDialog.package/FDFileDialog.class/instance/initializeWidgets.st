@@ -3,7 +3,7 @@ initializeWidgets
 	bookmarksList := self instantiate: IconListModel.
 	(currentFolderLabel := self newLabel)
 		color: Smalltalk ui theme textColor.
-	filesList := self instantiate: FastTableModel.
+	filesList := self instantiate: IconListModel.
 	createFolderButton := self newButton.
 	(nameLabel := self newLabel) label: 'Name:'.
 	(nameText := self newTextInput) autoAccept: true.

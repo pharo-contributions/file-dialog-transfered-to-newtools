@@ -1,14 +1,11 @@
 {
-	"category" : "FileDialog",
-	"classinstvars" : [
-		 ],
-	"classvars" : [
-		 ],
 	"commentStamp" : "PeterUhnak 7/17/2016 16:30",
-	"instvars" : [
-		 ],
-	"name" : "FDFileFilter",
-	"pools" : [
-		 ],
 	"super" : "Object",
-	"type" : "normal" }
+	"category" : "FileDialog",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [ ],
+	"name" : "FDFileFilter",
+	"type" : "normal"
+}

@@ -1,14 +1,11 @@
 {
-	"category" : "FileDialog",
-	"classinstvars" : [
-		 ],
-	"classvars" : [
-		 ],
 	"commentStamp" : "PeterUhnak 7/17/2016 16:31",
-	"instvars" : [
-		 ],
-	"name" : "FDSaveFileDialog",
-	"pools" : [
-		 ],
 	"super" : "FDFileDialog",
-	"type" : "normal" }
+	"category" : "FileDialog",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [ ],
+	"name" : "FDSaveFileDialog",
+	"type" : "normal"
+}
