@@ -1,3 +1,3 @@
 filtering - convenience
 filterAllImages
-	^ {'All images' -> #(jpg png gif svg)}
+	^ {'All Images' -> #(jpg png gif svg)}

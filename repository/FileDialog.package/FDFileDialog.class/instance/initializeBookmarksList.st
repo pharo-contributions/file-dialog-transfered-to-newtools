@@ -1,22 +1,22 @@
 initialization
 initializeBookmarksList
-	| places initialItems |
-	places := self defaultBookmarks keys.
-	initialItems := self bookmarks keys.
-	bookmarksList items: initialItems.
+	| nonRemovableBookmarks |
+	nonRemovableBookmarks := self defaultBookmarks.
+	bookmarksList items: self bookmarks.
 	bookmarksList autoDeselect: false.
-	bookmarksList displayBlock: [ :folder | (self bookmarks at: folder) first ].
-	bookmarksList icons: [ :folder | (self bookmarks at: folder) second ].
-	bookmarksList setSelectedIndex: (initialItems indexOf: self currentDirectory).
-	bookmarksList whenSelectedItemChanged: [ :folder | folder ifNotNil: [ self openFolder: folder ] ].
+	bookmarksList displayBlock: #name.
+	bookmarksList icons: #icon.
+	self selectBookmarkFor: self currentDirectory.
+	bookmarksList
+		whenSelectedItemChanged: [ :bookmark | bookmark ifNotNil: [ self openFolder: bookmark location ] ].
 	bookmarksList
 		menu: [ :aMenu :shifterd | 
 			bookmarksList selectedItem
-				ifNotNil: [ :folder | 
-					(places includes: folder)
+				ifNotNil: [ :bookmark | 
+					(nonRemovableBookmarks includes: bookmark)
 						ifFalse: [ aMenu
 								add: 'Remove bookmark'
 								target: self
 								selector: #removeBookmark:
-								argument: folder ].
+								argument: bookmark ].
 					aMenu ] ]

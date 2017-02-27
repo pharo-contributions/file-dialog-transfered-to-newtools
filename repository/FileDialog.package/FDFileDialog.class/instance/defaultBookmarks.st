@@ -1,30 +1,12 @@
 bookmarks
 defaultBookmarks
-	| preset |
-	preset := {FileLocator imageDirectory asFileReference
-		->
-			{'image directory'.
-			self icons komitterNewSlice}.
-	FileLocator home asFileReference
-		->
-			{'home'.
-			self icons home}.
-	FileLocator temp asFileReference
-		->
-			{'tmp'.
-			self icons open}} asOrderedDictionary.
+	| presets |
+	presets := OrderedCollection new.
+	presets add: FDBookmark image.
+	presets add: FDBookmark home.
+	OSPlatform current isUnix
+		ifTrue: [ presets add: FDBookmark root.
+			presets add: FDBookmark tmp ].
 	OSPlatform current isWindows
-		ifFalse: [ preset
-				at: FileLocator root asFileReference
-				put:
-					{'file system'.
-					self icons smallWindow} ].
-	OSPlatform current isWindows
-		ifTrue: [ FileLocator root asFileReference children
-				do: [ :each | 
-					preset
-						at: each
-						put:
-							{each basename.
-							self icons smallWindow} ] ].
-	^ preset
+		ifTrue: [ presets addAll: FDBookmark windowsDrives ].
+	^ presets

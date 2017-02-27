@@ -1,3 +1,3 @@
 adding
 removeBookmark: aFolder
-	self customBookmarks removeKey: aFolder
+	self customBookmarks removeAllSuchThat: [ :each | each location = aFolder ]

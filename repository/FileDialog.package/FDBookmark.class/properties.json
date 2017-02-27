@@ -1,0 +1,16 @@
+{
+	"category" : "FileDialog",
+	"classinstvars" : [
+		 ],
+	"classvars" : [
+		 ],
+	"commentStamp" : "PeterUhnak 2/27/2017 11:21",
+	"instvars" : [
+		"location",
+		"name",
+		"icon" ],
+	"name" : "FDBookmark",
+	"pools" : [
+		 ],
+	"super" : "Object",
+	"type" : "normal" }

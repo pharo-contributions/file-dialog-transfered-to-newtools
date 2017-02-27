@@ -1,3 +1,4 @@
 adding
 addBookmark: aFolder
-	self customBookmarks at: aFolder put: (Array with: aFolder basename with: Smalltalk ui icons open)
+	self customBookmarks
+		add: (FDBookmark name: aFolder basename location: aFolder icon: Smalltalk ui icons open)

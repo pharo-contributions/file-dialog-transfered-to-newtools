@@ -1,3 +1,3 @@
 bookmarks
 refreshBookmarks
-	bookmarksList items: self bookmarks keys
+	bookmarksList items: self bookmarks

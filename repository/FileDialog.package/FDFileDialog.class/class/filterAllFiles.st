@@ -1,3 +1,3 @@
 filtering - convenience
 filterAllFiles
-	^ {'All files' -> #()}
+	^ {'All Files' -> #()}

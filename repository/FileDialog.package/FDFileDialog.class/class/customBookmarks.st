@@ -1,3 +1,5 @@
 adding
 customBookmarks
-	^ CustomBookmarks ifNil: [ CustomBookmarks := OrderedDictionary new ]
+	CustomBookmarks isDictionary
+		ifTrue: [ CustomBookmarks := self convertBookmarks: CustomBookmarks ].
+	^ CustomBookmarks ifNil: [ CustomBookmarks := OrderedCollection new ]

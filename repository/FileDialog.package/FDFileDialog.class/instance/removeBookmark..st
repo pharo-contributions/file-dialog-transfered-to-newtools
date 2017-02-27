@@ -1,4 +1,4 @@
 bookmarks
-removeBookmark: aFolder
-	self class removeBookmark: aFolder.
+removeBookmark: aBookmark
+	self class removeBookmark: aBookmark location.
 	self refreshBookmarks
