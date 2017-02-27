@@ -1,0 +1,15 @@
+SmalltalkCISpec {
+	#loading : [
+		SCIMetacelloLoadSpec {
+			#baseline : 'FileDialog',
+			#directory : 'repository',
+			#platforms : [ #pharo ]
+		}
+	],
+	#testing : {
+		#packages : [ 'FileDialog' ],
+		#coverage : {
+			#packages : [ 'FileDialog' ]
+		}
+	}
+}
