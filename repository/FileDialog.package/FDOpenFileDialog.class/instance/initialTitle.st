@@ -1,3 +1,3 @@
 api
 initialTitle
-	^ 'Select file'
+	^ 'Select File To Open'

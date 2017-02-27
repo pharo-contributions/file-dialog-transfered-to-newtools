@@ -6,9 +6,10 @@
 		 ],
 	"commentStamp" : "",
 	"instvars" : [
-		 ],
-	"name" : "FDOpenFileDialogTest",
+		"dialog",
+		"window" ],
+	"name" : "FDFileDialogTest",
 	"pools" : [
 		 ],
-	"super" : "FDFileDialogTest",
+	"super" : "FDTest",
 	"type" : "normal" }

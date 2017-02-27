@@ -1,4 +1,4 @@
 tests
 testOpen
 	"will it even open?"
-	window := opener open.
+	window := dialog open.

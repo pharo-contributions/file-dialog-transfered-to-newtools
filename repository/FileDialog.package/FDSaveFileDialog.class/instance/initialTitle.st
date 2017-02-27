@@ -1,3 +1,3 @@
 api
 initialTitle
-	^ 'Select file'
+	^ 'Save As'

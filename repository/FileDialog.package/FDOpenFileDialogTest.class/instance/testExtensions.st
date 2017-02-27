@@ -1,4 +1,4 @@
 tests
 testExtensions
-	opener extensionFilters: {'Ext files' -> #(ext)}.
-	self assert: opener fileFilters equals: {'Ext files (*.ext)' -> #('*.ext')}
+	dialog extensionFilters: {'Ext files' -> #(ext)}.
+	self assert: dialog fileFilters equals: {'Ext files (*.ext)' -> #('*.ext')}

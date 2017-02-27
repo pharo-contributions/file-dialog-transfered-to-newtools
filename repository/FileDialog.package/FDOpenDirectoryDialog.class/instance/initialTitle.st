@@ -1,3 +1,3 @@
 api
 initialTitle
-	^ 'Select directory'
+	^ 'Select Directory To Open'
