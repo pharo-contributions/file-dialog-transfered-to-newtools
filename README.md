@@ -1,5 +1,5 @@
 # File Dialog
-[![Build Status](https://travis-ci.org/peteruhnak/file-dialog.svg?branch=master)](https://travis-ci.org/peteruhnak/file-dialog)
+[![Build Status](https://travis-ci.org/peteruhnak/file-dialog.svg?branch=master)](https://travis-ci.org/peteruhnak/file-dialog) [![Coverage Status](https://coveralls.io/repos/github/peteruhnak/file-dialog/badge.svg)](https://coveralls.io/github/peteruhnak/file-dialog)
 
 A simple replacement for Pharo's native file/folder selection dialog.
 
