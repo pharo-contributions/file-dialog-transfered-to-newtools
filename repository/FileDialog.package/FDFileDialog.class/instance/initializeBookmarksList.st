@@ -4,8 +4,8 @@ initializeBookmarksList
 	nonRemovableBookmarks := self defaultBookmarks.
 	bookmarksList items: self bookmarks.
 	bookmarksList autoDeselect: false.
-	bookmarksList displayBlock: #name.
-	bookmarksList icons: #icon.
+	bookmarksList displayBlock: [ :each | each name ].
+	bookmarksList icons: [ :each | each icon ].
 	self selectBookmarkFor: self currentDirectory.
 	bookmarksList
 		whenSelectedItemChanged: [ :bookmark | bookmark ifNotNil: [ self openFolder: bookmark location ] ].
