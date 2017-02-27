@@ -1,4 +1,5 @@
 # File Dialog
+[![Build Status](https://travis-ci.org/peteruhnak/file-dialog.svg?branch=master)](https://travis-ci.org/peteruhnak/file-dialog)
 
 A simple replacement for Pharo's native file/folder selection dialog.
 
