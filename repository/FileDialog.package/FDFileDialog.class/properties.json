@@ -1,10 +1,12 @@
 {
-	"category" : "FileDialog",
-	"classinstvars" : [
-		 ],
-	"classvars" : [
-		"CustomBookmarks" ],
 	"commentStamp" : "PeterUhnak 7/29/2016 17:05",
+	"super" : "ComposableModel",
+	"category" : "FileDialog",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [
+		"CustomBookmarks"
+	],
 	"instvars" : [
 		"bookmarksList",
 		"createFolderButton",
@@ -19,9 +21,8 @@
 		"filter",
 		"filtersDropList",
 		"fileFilters",
-		"currentFolderLabel" ],
+		"currentFolderLabel"
+	],
 	"name" : "FDFileDialog",
-	"pools" : [
-		 ],
-	"super" : "ComposableModel",
-	"type" : "normal" }
+	"type" : "normal"
+}

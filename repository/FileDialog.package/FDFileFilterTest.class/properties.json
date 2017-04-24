@@ -1,14 +1,11 @@
 {
-	"category" : "FileDialog-Tests",
-	"classinstvars" : [
-		 ],
-	"classvars" : [
-		 ],
 	"commentStamp" : "",
-	"instvars" : [
-		 ],
-	"name" : "FDFileFilterTest",
-	"pools" : [
-		 ],
 	"super" : "FDTest",
-	"type" : "normal" }
+	"category" : "FileDialog-Tests",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [ ],
+	"name" : "FDFileFilterTest",
+	"type" : "normal"
+}
