@@ -1,0 +1,11 @@
+{
+	"commentStamp" : "",
+	"super" : "FDFileDialogTest",
+	"category" : "FileDialog-Tests",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [ ],
+	"name" : "FDOpenFileDialogTest",
+	"type" : "normal"
+}

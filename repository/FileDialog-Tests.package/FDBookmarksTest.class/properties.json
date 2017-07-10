@@ -1,0 +1,13 @@
+{
+	"commentStamp" : "",
+	"super" : "FDTest",
+	"category" : "FileDialog-Tests",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [
+		"existingBookmarks"
+	],
+	"name" : "FDBookmarksTest",
+	"type" : "normal"
+}
