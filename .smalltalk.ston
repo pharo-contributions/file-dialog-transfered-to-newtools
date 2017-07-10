@@ -7,9 +7,9 @@ SmalltalkCISpec {
 		}
 	],
 	#testing : {
-		#packages : [ 'FileDialog' ],
+		#packages : [ 'FileDialog', 'FileDialog-Tests' ],
 		#coverage : {
-			#packages : [ 'FileDialog' ]
+			#packages : [ 'FileDialog', 'FileDialog-Tests' ]
 		}
 	}
 }
