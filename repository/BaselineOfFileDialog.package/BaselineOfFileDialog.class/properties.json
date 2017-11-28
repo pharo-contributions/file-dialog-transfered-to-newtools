@@ -1,14 +1,11 @@
 {
-	"category" : "BaselineOfFileDialog",
-	"classinstvars" : [
-		 ],
-	"classvars" : [
-		 ],
 	"commentStamp" : "PeterUhnak 6/4/2016 17:30",
-	"instvars" : [
-		 ],
-	"name" : "BaselineOfFileDialog",
-	"pools" : [
-		 ],
 	"super" : "BaselineOf",
-	"type" : "normal" }
+	"category" : "BaselineOfFileDialog",
+	"classinstvars" : [ ],
+	"pools" : [ ],
+	"classvars" : [ ],
+	"instvars" : [ ],
+	"name" : "BaselineOfFileDialog",
+	"type" : "normal"
+}
