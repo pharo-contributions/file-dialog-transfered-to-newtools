@@ -73,6 +73,9 @@ extensionFilters: { 'STON files' -> #(ston json) }
 fileFilters: { 'STON files (*.ston, *.json)' -> #('*.ston' '*.json') }
 ```
 
+## Custom Icons
+
+
 
 ## Example
 
