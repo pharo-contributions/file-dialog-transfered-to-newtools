@@ -1,11 +1,11 @@
 accessing
 iconFor: anEntry
-	| icons |
+	| icons ext |
 	icons := self icons.
 	anEntry isDirectory
-		ifTrue: [ ^ icons open ].
-	(#(st txt) includes: anEntry extension)
-		ifTrue: [ ^ icons smallLeftFlush ].
-	(#(png jpg gif svg) includes: anEntry extension)
-		ifTrue: [ ^ icons komitter ].
-	^ icons page
+		ifTrue: [ ^ #open asIcon ].
+	ext := anEntry extension.
+	^ self class allIcons asDictionary
+		at: ext
+		ifPresent: [ :icon | icon ]
+		ifAbsent: [ #page asIcon ]
