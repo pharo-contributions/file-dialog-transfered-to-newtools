@@ -1,6 +1,6 @@
 actions
 openFolder: aFolder
-	currentDirectory := aFolder pathString asFileReference.
+	currentDirectory := self canonicalize: aFolder.
 	currentFolderLabel
 		label: (self currentFolderTitleFor: currentDirectory pathString);
 		help: currentDirectory pathString , self delimiter.
