@@ -3,7 +3,7 @@ iconFor: anEntry
 	| icons ext |
 	icons := self icons.
 	anEntry isDirectory
-		ifTrue: [ ^ #open asIcon ].
+		ifTrue: [ ^ self iconNamed: #open ].
 	ext := anEntry extension.
 	^ self class allIcons asDictionary
 		at: ext

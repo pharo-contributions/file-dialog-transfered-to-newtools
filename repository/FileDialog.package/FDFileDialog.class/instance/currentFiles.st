@@ -1,5 +1,5 @@
 accessing
 currentFiles
-	^ (self currentDirectory isRoot
+	^ ((self isRootDirectory: currentDirectory)
 		ifTrue: [ {} ]
 		ifFalse: [ {self currentDirectory / '..'} ]) , self currentDirectory children
