@@ -4,7 +4,7 @@ Class {
 	#category : 'FileDialog-Tests'
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #tests }
 FDConvertBookmarksTest >> testConvertBookmarks [
 	| dict result |
 	dict := OrderedDictionary
