@@ -1,3 +1,0 @@
-actions
-selectedEntry
-	^ self currentDirectory

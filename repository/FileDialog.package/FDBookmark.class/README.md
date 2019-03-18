@@ -1,1 +1,0 @@
-I represent a bookmark having location, icon, and a name.

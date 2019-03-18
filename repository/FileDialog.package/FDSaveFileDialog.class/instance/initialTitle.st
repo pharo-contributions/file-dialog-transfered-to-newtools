@@ -1,3 +1,0 @@
-api
-initialTitle
-	^ 'Save As'

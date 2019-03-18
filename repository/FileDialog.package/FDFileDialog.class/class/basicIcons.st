@@ -1,4 +1,0 @@
-icons
-basicIcons
-"	<icons>
-	^ {#zip -> ''}"

@@ -1,1 +1,0 @@
-My responsibility is to provide dialog for selecting Files.
