@@ -13,7 +13,7 @@ https://github.com/peteruhnak/file-dialog
 "
 Class {
 	#name : #FDFileDialog,
-	#superclass : #ComposableModel,
+	#superclass : #ComposablePresenter,
 	#instVars : [
 		'bookmarksList',
 		'createFolderButton',
@@ -33,7 +33,7 @@ Class {
 	#classVars : [
 		'CustomBookmarks'
 	],
-	#category : 'FileDialog'
+	#category : #FileDialog
 }
 
 { #category : #adding }
@@ -47,7 +47,8 @@ FDFileDialog class >> addBookmark: aFolder [
 FDFileDialog class >> allIcons [
 	<script: 'self allIcons inspect'>
 	^ (Pragma allNamed: 'icons' in: FDFileDialog class)
-		flatCollect: [ :pragma | pragma methodClass theNonMetaClass perform: pragma methodSelector ]
+		flatCollect:
+			[ :pragma | pragma methodClass instanceSide perform: pragma methodSelector ]
 ]
 
 { #category : #icons }
@@ -153,10 +154,12 @@ FDFileDialog class >> forImages [
 { #category : #icons }
 FDFileDialog class >> imageIcons [
 	<icons>
-	^ {#png -> #komitter asIcon.
-	#jpg -> #komitter asIcon.
-	#gif -> #komitter asIcon.
-	#svg -> #komitter asIcon}
+	^ {(#png -> (self iconNamed: #komitter)).
+	(#jpg -> (self iconNamed: #komitter)).
+	(#gif ->
+		(self iconNamed: #komitter)).
+	(#svg ->
+		(self iconNamed: #komitter))}
 ]
 
 { #category : #adding }
@@ -167,8 +170,9 @@ FDFileDialog class >> removeBookmark: aFolder [
 { #category : #icons }
 FDFileDialog class >> textIcons [
 	<icons>
-	^ {#st -> #smallLeftFlush asIcon.
-	#txt -> #smallLeftFlush asIcon}
+	^ {(#st -> (self iconNamed: #smallLeftFlush)).
+	(#txt ->
+		(self iconNamed: #smallLeftFlush))}
 ]
 
 { #category : #bookmarks }
@@ -376,7 +380,7 @@ FDFileDialog >> iconFor: anEntry [
 	^ self class allIcons asDictionary
 		at: ext
 		ifPresent: [ :icon | icon ]
-		ifAbsent: [ #page asIcon ]
+		ifAbsent: [ self iconNamed: #page ]
 ]
 
 { #category : #accessing }
