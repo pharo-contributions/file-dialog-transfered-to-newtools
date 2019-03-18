@@ -40,7 +40,7 @@ Class {
 FDFileDialog class >> addBookmark: aFolder [
 	self customBookmarks detect: [ :each | each location = aFolder ] ifFound: [ ^ self ].
 	self customBookmarks
-		add: (FDBookmark name: aFolder basename location: aFolder icon: Smalltalk ui icons open)
+		add: (FDBookmark name: aFolder basename location: aFolder icon: (self iconNamed: #open))
 ]
 
 { #category : #icons }
@@ -103,13 +103,13 @@ FDFileDialog class >> defaultSpec [
 
 { #category : #specs }
 FDFileDialog class >> dialogButtonsLayout: aRow [
-	OSPlatform current isWindows
-		ifTrue: [ ^ aRow
-				add: #confirmButton width: 60;
-				add: #cancelButton width: 60 ]
-		ifFalse: [ ^ aRow
-				add: #cancelButton width: 60;
-				add: #confirmButton width: 60 ]
+	^ OSPlatform current isWindows
+		ifTrue: [ aRow
+						add: #confirmButton width: 60;
+						add: #cancelButton width: 60 ]
+		ifFalse: [ aRow
+						add: #cancelButton width: 60;
+						add: #confirmButton width: 60 ]
 ]
 
 { #category : #example }
@@ -155,11 +155,9 @@ FDFileDialog class >> forImages [
 FDFileDialog class >> imageIcons [
 	<icons>
 	^ {(#png -> (self iconNamed: #komitter)).
-	(#jpg -> (self iconNamed: #komitter)).
-	(#gif ->
-		(self iconNamed: #komitter)).
-	(#svg ->
-		(self iconNamed: #komitter))}
+		(#jpg -> (self iconNamed: #komitter)).
+		(#gif -> (self iconNamed: #komitter)).
+		(#svg -> (self iconNamed: #komitter))}
 ]
 
 { #category : #adding }
@@ -171,8 +169,7 @@ FDFileDialog class >> removeBookmark: aFolder [
 FDFileDialog class >> textIcons [
 	<icons>
 	^ {(#st -> (self iconNamed: #smallLeftFlush)).
-	(#txt ->
-		(self iconNamed: #smallLeftFlush))}
+		(#txt -> (self iconNamed: #smallLeftFlush))}
 ]
 
 { #category : #bookmarks }
