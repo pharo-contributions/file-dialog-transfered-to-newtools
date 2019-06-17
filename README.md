@@ -5,11 +5,14 @@ A simple replacement for Pharo's native file/folder selection dialog.
 
 ## migration RoadMap to Spec 2  
 - [ ] 1st step 
-	- [ ] migrate all instance variable
+	- [ ] fix all warning 
 - [ ] 2nd step 
+	- [ ] manage shortcuts 
+	- [ ] use Strastegie pattern for filtering 
 	- [ ] migrate contextMenu to commander 2
 - [ ] 3rd step 
-	- [ ] add feature 
+	- [ ] add previewSystem ( when select an png it show the picture ) 
+	
 
 
 ![](figures/file-dialog-3.png)
