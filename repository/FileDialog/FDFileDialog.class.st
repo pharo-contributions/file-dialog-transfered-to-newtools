@@ -81,24 +81,27 @@ FDFileDialog class >> customBookmarks: aCollection [
 
 { #category : #specs }
 FDFileDialog class >> defaultSpec [
-	^ SpecColumnLayout composed
-		newRow: [ :r | 
-			r
-				newColumn: [ :c | c add: #bookmarksList ] width: 150;
-				newColumn: [ :c | 
-					c add: #currentFolderLabel height: self toolbarHeight.
-					c add: #filesList ] ];
-		newRow: [ :r | 
-			r
-				add: #nameLabel width: 50;
+	^ SpecBoxLayout newVertical
+		add:
+			(SpecBoxLayout newHorizontal
+				add: #bookmarksList
+					withConstraints: [ :contraint | contraint width: 150 ];
+				add:
+					(SpecBoxLayout newVertical
+						add: #currentFolderLabel
+							withConstraints: [ :contraint | contraint height: self toolbarHeight ];
+						add: #filesList;
+						yourself);
+				yourself);
+		add:
+			(SpecBoxLayout newHorizontal 
+				add: #nameLabel
+					withConstraints: [ :contraint | contraint width: 50 ];
 				add: #nameText;
-				add: #filtersDropList width: 200 ]
-			height: self toolbarHeight;
-		newRow: [ :r | 
-			r newColumn: [ :c |  ].
-			self dialogButtonsLayout: r ]
-			height: self toolbarHeight;
-		yourself
+				add: #filtersDropList
+					withConstraints: [ :contraint | contraint width: 200 ];
+				yourself)withConstraints: [ :contraint | contraint height: self toolbarHeight]
+			yourself
 ]
 
 { #category : #specs }

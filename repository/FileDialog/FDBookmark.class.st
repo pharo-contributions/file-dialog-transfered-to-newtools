@@ -9,7 +9,7 @@ Class {
 		'name',
 		'icon'
 	],
-	#category : 'FileDialog'
+	#category : #FileDialog
 }
 
 { #category : #'default bookmarks' }

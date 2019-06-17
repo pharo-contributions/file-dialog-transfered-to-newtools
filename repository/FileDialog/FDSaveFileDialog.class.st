@@ -4,7 +4,7 @@ My responsibility is to provide dialog for SAVING files.
 Class {
 	#name : #FDSaveFileDialog,
 	#superclass : #FDFileDialog,
-	#category : 'FileDialog'
+	#category : #FileDialog
 }
 
 { #category : #api }
