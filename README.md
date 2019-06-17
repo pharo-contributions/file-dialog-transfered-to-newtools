@@ -3,6 +3,15 @@
 
 A simple replacement for Pharo's native file/folder selection dialog.
 
+## migration RoadMap to Spec 2  
+- [ ] 1st step 
+	- [ ] migrate all instance variable
+- [ ] 2nd step 
+	- [ ] migrate contextMenu to commander 2
+- [ ] 3rd step 
+	- [ ] add feature 
+
+
 ![](figures/file-dialog-3.png)
 
 ## Features
