@@ -25,7 +25,7 @@ FDSaveFileDialog >> initializePresenter [
 { #category : #initialization }
 FDSaveFileDialog >> initializeWidgets [
 	super initializeWidgets.
-	confirmButton label: 'Save'
+	"confirmButton label: 'Save'"
 ]
 
 { #category : #accessing }

@@ -25,16 +25,6 @@ FDOpenDirectoryDialog class >> defaultSpec [
 		yourself
 ]
 
-{ #category : #accessing }
-FDOpenDirectoryDialog >> filesFilteringBlock [
-	^ [ :entries | 
-	| e |
-	e := filter directoriesOnly: entries.
-	showHiddenFiles
-		ifFalse: [ e := filter noHiddenFiles: e ].
-	e ]
-]
-
 { #category : #api }
 FDOpenDirectoryDialog >> initialTitle [
 	^ 'Select Directory To Open'
@@ -44,9 +34,9 @@ FDOpenDirectoryDialog >> initialTitle [
 FDOpenDirectoryDialog >> initializeWidgets [
 	super initializeWidgets.
 	nameText disable.
-	confirmButton
+	"confirmButton
 		label: 'Open';
-		enable
+		enable"
 ]
 
 { #category : #actions }
@@ -59,4 +49,15 @@ FDOpenDirectoryDialog >> nameChanged [
 { #category : #actions }
 FDOpenDirectoryDialog >> selectedEntry [
 	^ self currentDirectory
+]
+
+{ #category : #accessing }
+FDOpenDirectoryDialog >> setupFilesFilter [
+	filesList
+		itemFilterBlock: [ :entries | 
+			| e |
+			e := filter directoriesOnly: entries.
+			showHiddenFiles
+				ifFalse: [ e := filter noHiddenFiles: e ].
+			e ]
 ]

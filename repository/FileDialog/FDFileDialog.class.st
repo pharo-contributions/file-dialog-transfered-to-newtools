@@ -21,14 +21,13 @@ Class {
 		'filesList',
 		'currentDirectory',
 		'nameLabel',
-		'cancelButton',
-		'confirmButton',
 		'onConfirmBlock',
 		'showHiddenFiles',
 		'filter',
 		'filtersDropList',
 		'fileFilters',
-		'currentFolderLabel'
+		'currentFolderLabel',
+		'filesListContent'
 	],
 	#classVars : [
 		'CustomBookmarks'
@@ -124,7 +123,7 @@ FDFileDialog class >> example [
 			'All Files' -> #()};
 		defaultFolder: FileLocator imageDirectory asFileReference;
 		defaultName: 'hello.png';
-		open
+		openDialogWithSpec
 ]
 
 { #category : #example }
@@ -191,9 +190,12 @@ FDFileDialog >> bookmarksList [
 	^ bookmarksList
 ]
 
-{ #category : #'accessing - spec fields' }
-FDFileDialog >> cancelButton [
-	^ cancelButton
+{ #category : #'initialize-actions' }
+FDFileDialog >> bookmarksListAction [
+	bookmarksList
+		whenSelectionChangedDo: [ :selection | 
+			selection selectedItem
+				ifNotNil: [ self openFolder: selection selectedItem location ] ]
 ]
 
 { #category : #utility }
@@ -205,15 +207,12 @@ FDFileDialog >> canonicalize: aFileReference [
 
 { #category : #actions }
 FDFileDialog >> confirm [
+	nameText text isNotEmpty
+		ifFalse: [ ^ self inform: 'you have to select a file' ].
 	self selectedEntry
 		ifNotNil: [ :entry | 
 			onConfirmBlock value: entry.
 			self delete ]
-]
-
-{ #category : #'accessing - spec fields' }
-FDFileDialog >> confirmButton [
-	^ confirmButton
 ]
 
 { #category : #actions }
@@ -252,9 +251,16 @@ FDFileDialog >> currentDirectory [
 
 { #category : #accessing }
 FDFileDialog >> currentFiles [
-	^ ((self isRootDirectory: currentDirectory)
+	^ (((self isRootDirectory: currentDirectory)
 		ifTrue: [ {} ]
-		ifFalse: [ {self currentDirectory / '..'} ]) , self currentDirectory children
+		ifFalse: [ {(self currentDirectory / '..')} ])
+		, self currentDirectory children) asOrderedCollection
+		sort: [ :a :b | 
+			(a isDirectory & b isDirectory not
+				or: [ a isDirectory & b isDirectory
+						& (a basename asLowercase < b basename asLowercase) ])
+				or: [ a isFile & b isFile
+						& (a basename asLowercase < b basename asLowercase) ] ]
 ]
 
 { #category : #'accessing - spec fields' }
@@ -342,21 +348,21 @@ FDFileDialog >> fileFilters: anArray [
 	filtersDropList items: fileFilters
 ]
 
-{ #category : #accessing }
-FDFileDialog >> filesFilteringBlock [
-	^ [ :entries | 
-	| e |
-	e := entries.
-	showHiddenFiles
-		ifFalse: [ e := filter noHiddenFiles: entries ].
-	filtersDropList selectedItem value
-		ifNotEmpty: [ :patterns | e := filter files: e matching: patterns ].
-	e ]
-]
-
 { #category : #'accessing - spec fields' }
 FDFileDialog >> filesList [
 	^ filesList
+]
+
+{ #category : #'initialize-actions' }
+FDFileDialog >> filesListAction [
+	filesList
+		whenSelectionChangedDo: [ :selection | 
+			[ :entry | 
+			entry
+				ifNotNil: [ entry isDirectory
+						ifTrue: [ self openFolder: entry ]
+						ifFalse: [ self selectFile: entry ] ] ]
+				cull: selection selectedItem ]
 ]
 
 { #category : #public }
@@ -407,17 +413,14 @@ FDFileDialog >> initialize [
 	self defaultFolder: self defaultFolder
 ]
 
-{ #category : #initialization }
+{ #category : #'initialize-widgets' }
 FDFileDialog >> initializeBookmarksList [
 	| nonRemovableBookmarks |
 	nonRemovableBookmarks := self defaultBookmarks.
 	bookmarksList items: self bookmarks.
-	bookmarksList autoDeselect: false.
 	bookmarksList displayBlock: [ :each | each name ].
 	bookmarksList icons: [ :each | each icon ].
 	self selectBookmarkFor: self currentDirectory.
-	bookmarksList
-		whenSelectedItemChanged: [ :bookmark | bookmark ifNotNil: [ self openFolder: bookmark location ] ].
 	bookmarksList
 		menu: [ :aMenu :shifterd | 
 			bookmarksList selectedItem
@@ -432,6 +435,15 @@ FDFileDialog >> initializeBookmarksList [
 ]
 
 { #category : #initialization }
+FDFileDialog >> initializeDialogWindow: aDialogWindowPresenter [
+	super initializeDialogWindow: aDialogWindowPresenter.
+	aDialogWindowPresenter title: self initialTitle.
+	aDialogWindowPresenter
+		okAction: [ self confirm ];
+		cancelAction: [ self delete ]
+]
+
+{ #category : #'initialize-widgets' }
 FDFileDialog >> initializeDragAndDrop [
 	filesList dragEnabled: true.
 	bookmarksList
@@ -441,85 +453,64 @@ FDFileDialog >> initializeDragAndDrop [
 				and: [ item source = filesList
 						and: [ item passenger first originalObject isDirectory
 								and: [ (item passenger first originalObject basename = '..') not ] ] ] ];
-		acceptDropBlock: [ :transfer :event :source :receiver | self addBookmark: transfer passenger first originalObject ]
+		acceptDropBlock:
+				[ :transfer :event :source :receiver | self addBookmark: transfer passenger first originalObject ]
 ]
 
-{ #category : #initialization }
+{ #category : #'initialize-widgets' }
 FDFileDialog >> initializeFilesList [
 	filesList
 		items: self currentFiles;
-		autoDeselect: true;
 		displayBlock: [ :entry | entry basename ];
-		icons: [ :entry | self iconFor: entry ];
-		filteringBlock: self filesFilteringBlock;
-		sortingBlock: [ :a :b | 
-			(a isDirectory & b isDirectory not
-				or: [ a isDirectory & b isDirectory & (a basename asLowercase < b basename asLowercase) ])
-				or: [ a isFile & b isFile & (a basename asLowercase < b basename asLowercase) ] ].
-	filesList
-		whenSelectedItemChanged: [ :entry | 
-			entry
-				ifNotNil: [ entry isDirectory
-						ifTrue: [ self openFolder: entry ]
-						ifFalse: [ self selectFile: entry ] ] ].
+		icons: [ :entry | self iconFor: entry ].
+	filesListContent := filesList items.
+	self setupFilesFilter.
 	filesList
 		menu: [ :aMenu :shifterd | 
 			aMenu
 				add: 'Create directory' target: self selector: #createDirectory;
-				add: 'Toggle hidden files' target: self selector: #toggleHiddenFiles;
+				add: 'Toggle hidden files'
+					target: self
+					selector: #toggleHiddenFiles;
 				yourself ]
 ]
 
-{ #category : #initialization }
+{ #category : #'initialize-widgets' }
 FDFileDialog >> initializeFiltersDropList [
 	filtersDropList
 		items: self fileFilters;
 		displayBlock: [ :item | item key ];
-		whenSelectedItemChanged: [ :item | filesList refreshListItems ];
-		setSelectedIndex: 1
+		selectedIndex: 1
 ]
 
 { #category : #initialization }
 FDFileDialog >> initializePresenter [
-	self initializeBookmarksList.
-	self initializeFilesList.
-	self initializeFiltersDropList.
+	self bookmarksListAction.
+	self filesListAction.
+	"filtersDropList whenSelectedItemChanged: [ :item | filesList refreshListItems ]"
 	self initializeDragAndDrop.
-	cancelButton action: [ self delete ].
-	confirmButton action: [ self confirm ].
-	nameText whenTextChanged: [ self nameChanged ]
 ]
 
 { #category : #initialization }
 FDFileDialog >> initializeWidgets [
-	bookmarksList := self instantiate: IconListModel.
-	(currentFolderLabel := self newLabel)
-		color: Smalltalk ui theme textColor.
-	filesList := self instantiate: IconListModel.
+	bookmarksList := self newList.
+	currentFolderLabel := self newLabel.
+	filesList := self newList.
 	createFolderButton := self newButton.
 	(nameLabel := self newLabel) label: 'Name:'.
 	(nameText := self newTextInput) autoAccept: true.
-	(cancelButton := self newButton) label: 'Cancel'.
-	(confirmButton := self newButton)
-		label: 'Confirm';
-		disable.
 	filtersDropList := self newDropList.
-	self title: self initialTitle.
+	self initializeBookmarksList.
+	self initializeFilesList.
+	self initializeFiltersDropList.
 	self focusOrder
 		add: nameText;
-		add: filtersDropList;
-		add: cancelButton;
-		add: confirmButton
+		add: filtersDropList
 ]
 
 { #category : #accessing }
 FDFileDialog >> isRootDirectory: aDirectory [
 	^ aDirectory isRoot or: [ OSPlatform current isWindows and: [ aDirectory parent isRoot ] ]
-]
-
-{ #category : #actions }
-FDFileDialog >> nameChanged [
-	confirmButton enabled: nameText text isNotEmpty
 ]
 
 { #category : #'accessing - spec fields' }
@@ -544,7 +535,8 @@ FDFileDialog >> openFolder: aFolder [
 		label: (self currentFolderTitleFor: currentDirectory pathString);
 		help: currentDirectory pathString , self delimiter.
 	filesList items: self currentFiles.
-	filesList resetSelection.
+	filesListContent := filesList items.
+	filesList unselectAll.
 	self selectBookmarkFor: currentDirectory
 ]
 
@@ -570,21 +562,36 @@ FDFileDialog >> removeBookmark: aBookmark [
 { #category : #utility }
 FDFileDialog >> selectBookmarkFor: aDirectory [
 	"bookmarksList' ListModel uses identity based comparison, so I need to select index instead"
-	
+
 	"is there withIndexDetect: ?"
-	bookmarksList setSelectedIndex: ((self bookmarks collect: #location) indexOf: aDirectory)
+
+	bookmarksList
+		selectIndex: ((self bookmarks collect: #location) indexOf: aDirectory)
 ]
 
 { #category : #actions }
 FDFileDialog >> selectFile: aFile [
-	filesList selectedItem = aFile
-		ifFalse: [ filesList setSelectedIndex: (filesList listItems indexOf: aFile) ].
+	filesList selection selectedItem = aFile
+		ifFalse: [ filesList selectIndex: (filesList model items indexOf: aFile) ].
 	nameText text: aFile basename
 ]
 
 { #category : #accessing }
 FDFileDialog >> selectedEntry [
 	^ self subclassResponsibility
+]
+
+{ #category : #accessing }
+FDFileDialog >> setupFilesFilter [
+	filesList
+		itemFilterBlock: [ :entries | 
+			| e |
+			e := entries.
+			showHiddenFiles
+				ifFalse: [ e := filter noHiddenFiles: entries ].
+			filtersDropList selectedItem value
+				ifNotEmpty: [ :patterns | e := filter files: e matching: patterns ].
+			e ]
 ]
 
 { #category : #actions }
