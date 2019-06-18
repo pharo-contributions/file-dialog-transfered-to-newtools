@@ -48,14 +48,3 @@ FDOpenDirectoryDialog >> nameChanged [
 FDOpenDirectoryDialog >> selectedEntry [
 	^ self currentDirectory
 ]
-
-{ #category : #accessing }
-FDOpenDirectoryDialog >> setupFilesFilter [
-	filesList
-		itemFilterBlock: [ :entries | 
-			| e |
-			e := filter directoriesOnly: entries.
-			showHiddenFiles
-				ifFalse: [ e := filter noHiddenFiles: e ].
-			e ]
-]
