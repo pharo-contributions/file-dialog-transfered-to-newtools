@@ -5,45 +5,35 @@ Class {
 }
 
 { #category : #tests }
-FDFileFilterTest >> testFilterExtensions [
+FDFileFilterTest >> testDefaultFilterShouldReturnEveryTimeTrue [
+	| beforeFilter |
+	beforeFilter := root children.
+	FDDefaultFilter new filter: root.
 	self
-		assert: ((filter files: root children withExtensions: #(aaa)) collect: #basename) asSet
-		equals:
-			(Set
-				with: 'dir'
-				with: 'dir.ext'
-				with: '.hidden-dir'
-				with: 'sth.aaa')
+		assert:
+			(root children
+				select: [ :fileReference | FDDefaultFilter new filter: fileReference ])
+		equals: beforeFilter
 ]
 
 { #category : #tests }
-FDFileFilterTest >> testFilterMatching [
+FDFileFilterTest >> testJPGFilterShouldFilterOnlyJPGFile [
+	| filterBis |
+	filterBis := FDDotJPGFilter new.
 	self
-		assert: ((filter files: root children matching: #('*th.e*' '*dd*')) collect: #basename) asSet
-		equals:
-			(Set
-				with: 'dir'
-				with: 'dir.ext'
-				with: '.hidden-dir'
-				with: '.hidden'
-				with: 'sth.ext')
+		assert:
+			((root children
+				select: [ :fileReference | filterBis filter: fileReference ])
+				allSatisfy: [ :item | (item basename endsWith: '.jpg') or: [ item isDirectory ] ])
 ]
 
 { #category : #tests }
-FDFileFilterTest >> testFoldersOnly [
+FDFileFilterTest >> testPNGFilterShouldFilterOnlyPNGFile [
+	| filterBis |
+	filterBis := FDDotPNGFilter new.
 	self
-		assert: ((filter directoriesOnly: root children) collect: #basename) asSet
-		equals: (Set with: 'dir' with: 'dir.ext' with: '.hidden-dir')
-]
-
-{ #category : #tests }
-FDFileFilterTest >> testHiddenFiles [
-	self
-		assert: ((filter noHiddenFiles: root children) collect: #basename) asSet
-		equals:
-			(Set
-				with: 'dir'
-				with: 'dir.ext'
-				with: 'sth.ext'
-				with: 'sth.aaa')
+		assert:
+			((root children
+				select: [ :fileReference | filterBis filter: fileReference ])
+				allSatisfy: [ :item | (item basename endsWith: '.png' )or:[ item isDirectory]  ])
 ]
