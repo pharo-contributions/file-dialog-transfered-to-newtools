@@ -4,7 +4,7 @@ My responsibility is to provide dialog for SAVING files.
 Class {
 	#name : #FDSaveFileDialog,
 	#superclass : #FDFileDialog,
-	#category : 'FileDialog'
+	#category : #FileDialog
 }
 
 { #category : #api }
@@ -25,7 +25,7 @@ FDSaveFileDialog >> initializePresenter [
 { #category : #initialization }
 FDSaveFileDialog >> initializeWidgets [
 	super initializeWidgets.
-	confirmButton label: 'Save'
+	"confirmButton label: 'Save'"
 ]
 
 { #category : #accessing }

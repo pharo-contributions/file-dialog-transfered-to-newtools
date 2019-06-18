@@ -4,7 +4,7 @@ I help the file dialog with some file filtering (e.g. selecting only files match
 Class {
 	#name : #FDFileFilter,
 	#superclass : #Object,
-	#category : 'FileDialog'
+	#category : #FileDialog
 }
 
 { #category : #filters }
