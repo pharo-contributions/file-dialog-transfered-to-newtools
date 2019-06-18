@@ -5,7 +5,7 @@ Class {
 		'filter',
 		'root'
 	],
-	#category : 'FileDialog-Tests'
+	#category : #'FileDialog-Tests'
 }
 
 { #category : #'instance creation' }

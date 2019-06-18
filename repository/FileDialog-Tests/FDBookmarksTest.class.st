@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'existingBookmarks'
 	],
-	#category : 'FileDialog-Tests'
+	#category : #'FileDialog-Tests'
 }
 
 { #category : #tests }

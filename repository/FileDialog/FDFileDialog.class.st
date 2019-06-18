@@ -27,10 +27,14 @@ Class {
 		'filtersDropList',
 		'fileFilters',
 		'currentFolderLabel',
-		'filesListContent'
+		'filesListContent',
+		'noRemovableBookmarks'
 	],
 	#classVars : [
 		'CustomBookmarks'
+	],
+	#classInstVars : [
+		'customShortcut'
 	],
 	#category : #FileDialog
 }
@@ -54,6 +58,20 @@ FDFileDialog class >> allIcons [
 FDFileDialog class >> basicIcons [
 "	<icons>
 	^ {#zip -> ''}"
+]
+
+{ #category : #commander2 }
+FDFileDialog class >> buildCommandsGroupWith: presenter forRoot: rootCommandGroup [
+	rootCommandGroup
+		register:
+			((CmCommandGroup named: 'interact with file') asSpecGroup
+				register: (FDCreatDirectoryCommand forSpec context: presenter);
+				register: (FDToggleHiddenFilesCommand forSpec context: presenter);
+				yourself);
+		register:
+			((CmCommandGroup named: 'bookmark menu') asSpecGroup
+				register: (FDRemoveBookMarkCommand forSpec context: presenter);
+				yourself)
 ]
 
 { #category : #adding }
@@ -162,6 +180,15 @@ FDFileDialog class >> imageIcons [
 		(#svg -> (self iconNamed: #komitter))}
 ]
 
+{ #category : #'instance creation' }
+FDFileDialog class >> open [
+	^ self openDialogWithSpec
+]
+
+{ #category : #'instance creation' }
+FDFileDialog class >> openOn: aCollectionOfFDBookMark [
+]
+
 { #category : #adding }
 FDFileDialog class >> removeBookmark: aFolder [
 	self customBookmarks removeAllSuchThat: [ :each | each location = aFolder ]
@@ -182,7 +209,7 @@ FDFileDialog >> addBookmark: aFolder [
 
 { #category : #bookmarks }
 FDFileDialog >> bookmarks [
-	^ self defaultBookmarks , self customBookmarks
+	^ noRemovableBookmarks , self customBookmarks
 ]
 
 { #category : #'accessing - spec fields' }
@@ -415,23 +442,13 @@ FDFileDialog >> initialize [
 
 { #category : #'initialize-widgets' }
 FDFileDialog >> initializeBookmarksList [
-	| nonRemovableBookmarks |
-	nonRemovableBookmarks := self defaultBookmarks.
+	noRemovableBookmarks  := self defaultBookmarks.
 	bookmarksList items: self bookmarks.
 	bookmarksList displayBlock: [ :each | each name ].
 	bookmarksList icons: [ :each | each icon ].
 	self selectBookmarkFor: self currentDirectory.
 	bookmarksList
-		menu: [ :aMenu :shifterd | 
-			bookmarksList selectedItem
-				ifNotNil: [ :bookmark | 
-					(nonRemovableBookmarks includes: bookmark)
-						ifFalse: [ aMenu
-								add: 'Remove bookmark'
-								target: self
-								selector: #removeBookmark:
-								argument: bookmark ].
-					aMenu ] ]
+		contextMenu: [ (self rootCommandsGroup / 'bookmark menu') beRoot asMenuPresenter ]
 ]
 
 { #category : #initialization }
@@ -466,13 +483,8 @@ FDFileDialog >> initializeFilesList [
 	filesListContent := filesList items.
 	self setupFilesFilter.
 	filesList
-		menu: [ :aMenu :shifterd | 
-			aMenu
-				add: 'Create directory' target: self selector: #createDirectory;
-				add: 'Toggle hidden files'
-					target: self
-					selector: #toggleHiddenFiles;
-				yourself ]
+		contextMenu: [ (self rootCommandsGroup / 'interact with file') beRoot
+				asMenuPresenter ]
 ]
 
 { #category : #'initialize-widgets' }
@@ -523,9 +535,14 @@ FDFileDialog >> nameText [
 	^ nameText
 ]
 
+{ #category : #accessing }
+FDFileDialog >> noRemovableBookmarks [
+	^ noRemovableBookmarks
+]
+
 { #category : #'instance creation' }
 FDFileDialog >> open [
-	^ self openWithSpec
+	^ self openDialogWithSpec
 ]
 
 { #category : #actions }
@@ -574,6 +591,11 @@ FDFileDialog >> selectFile: aFile [
 	filesList selection selectedItem = aFile
 		ifFalse: [ filesList selectIndex: (filesList model items indexOf: aFile) ].
 	nameText text: aFile basename
+]
+
+{ #category : #accessing }
+FDFileDialog >> selectedBookMark [
+	^ bookmarksList selection selectedItem
 ]
 
 { #category : #accessing }

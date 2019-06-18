@@ -1,7 +1,7 @@
 Class {
 	#name : #FDOpenFileDialogTest,
 	#superclass : #FDFileDialogTest,
-	#category : 'FileDialog-Tests'
+	#category : #'FileDialog-Tests'
 }
 
 { #category : #accessing }

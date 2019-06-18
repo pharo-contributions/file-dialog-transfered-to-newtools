@@ -1,7 +1,7 @@
 Class {
 	#name : #FDOpenDirectoryDialogTest,
 	#superclass : #FDFileDialogTest,
-	#category : 'FileDialog-Tests'
+	#category : #'FileDialog-Tests'
 }
 
 { #category : #accessing }
@@ -24,8 +24,8 @@ FDOpenDirectoryDialogTest >> testSelectDirectory [
 	self assert: dialog currentDirectory equals: root.
 	dialog selectFile: root / 'dir'.
 	self assert: dialog selectedEntry equals: root / 'dir'.
-	dialog confirm.
-	self assert: selectedDirectory equals: root / 'dir'
+	window triggerOkAction.
+	self assert: selectedDirectory equals: root / 'dir' 
 ]
 
 { #category : #tests }

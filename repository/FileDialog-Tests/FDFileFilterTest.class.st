@@ -1,7 +1,7 @@
 Class {
 	#name : #FDFileFilterTest,
 	#superclass : #FDTest,
-	#category : 'FileDialog-Tests'
+	#category : #'FileDialog-Tests'
 }
 
 { #category : #tests }

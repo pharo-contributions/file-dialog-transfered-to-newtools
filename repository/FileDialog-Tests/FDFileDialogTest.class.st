@@ -5,7 +5,7 @@ Class {
 		'dialog',
 		'window'
 	],
-	#category : 'FileDialog-Tests'
+	#category : #'FileDialog-Tests'
 }
 
 { #category : #testing }

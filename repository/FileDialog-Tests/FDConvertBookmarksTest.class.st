@@ -1,7 +1,7 @@
 Class {
 	#name : #FDConvertBookmarksTest,
 	#superclass : #FDTest,
-	#category : 'FileDialog-Tests'
+	#category : #'FileDialog-Tests'
 }
 
 { #category : #tests }
