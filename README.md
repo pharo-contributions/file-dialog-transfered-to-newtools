@@ -9,7 +9,7 @@ A simple replacement for Pharo's native file/folder selection dialog.
 	- [X] fix all warning 
 -[ ] 2nd step 
 	- [ ] manage shortcuts 
-	- [ ] use Strastegie pattern for filtering 
+	- [X] use Strastegie pattern for filtering 
 	- [X] migrate contextMenu to commander 2
 -[ ] 3rd step 
 	- [ ] add previewSystem ( when select an png it show the picture ) 
