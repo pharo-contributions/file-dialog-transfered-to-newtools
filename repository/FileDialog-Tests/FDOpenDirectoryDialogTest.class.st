@@ -19,13 +19,12 @@ FDOpenDirectoryDialogTest >> testDefaultDirectory [
 { #category : #tests }
 FDOpenDirectoryDialogTest >> testSelectDirectory [
 	| selectedDirectory |
-	1 halt.
 	dialog whenSelected: [ :dir | selectedDirectory := dir ].
 	window := dialog open.
 	self assert: dialog currentDirectory equals: root.
 	dialog selectFile: root / 'dir'.
 	self assert: dialog selectedEntry equals: root / 'dir'.
-	window okAction.
+	window triggerOkAction.
 	self assert: selectedDirectory equals: root / 'dir' 
 ]
 
