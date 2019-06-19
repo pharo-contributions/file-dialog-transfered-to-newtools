@@ -39,6 +39,121 @@ Class {
 	#category : #FileDialog
 }
 
+{ #category : #adding }
+FDFileDialogPresenter class >> addBookmark: aFolder [
+	self customBookmarks detect: [ :each | each location = aFolder ] ifFound: [ ^ self ].
+	self customBookmarks
+		add: (FDBookmark name: aFolder basename location: aFolder icon: (self iconNamed: #open))
+]
+
+{ #category : #icons }
+FDFileDialogPresenter class >> allIcons [
+	<script: 'self allIcons inspect'>
+	^ (Pragma allNamed: 'icons' in: FDFileDialogPresenter class)
+		flatCollect:
+			[ :pragma | pragma methodClass instanceSide perform: pragma methodSelector ]
+]
+
+{ #category : #commander2 }
+FDFileDialogPresenter class >> buildCommandsGroupWith: presenter forRoot: rootCommandGroup [
+	rootCommandGroup
+		register:
+			((CmCommandGroup named: 'interact with file') asSpecGroup
+				register: (FDCreatDirectoryCommand forSpec context: presenter);
+				register: (FDToggleHiddenFilesCommand forSpec context: presenter);
+				yourself);
+		register:
+			((CmCommandGroup named: 'bookmark menu') asSpecGroup
+				register: (FDRemoveBookMarkCommand forSpec context: presenter);
+				yourself)
+]
+
+{ #category : #adding }
+FDFileDialogPresenter class >> convertBookmarks: aDictionary [
+	"convert bookmarks from old OrderedDictionary of location->#(name icon) to FDBookmark instances"
+
+	^ aDictionary associations asOrderedCollection
+		collect: [ :pair | FDBookmark name: pair value first location: pair key icon: pair value second ]
+]
+
+{ #category : #adding }
+FDFileDialogPresenter class >> customBookmarks [
+	CustomBookmarks isDictionary
+		ifTrue: [ CustomBookmarks := self convertBookmarks: CustomBookmarks ].
+	^ CustomBookmarks ifNil: [ CustomBookmarks := OrderedCollection new ]
+]
+
+{ #category : #adding }
+FDFileDialogPresenter class >> customBookmarks: aCollection [
+	self assert: [ aCollection isKindOf: OrderedCollection ].
+	self assert: [ aCollection allSatisfy: [ :each | each isKindOf: FDBookmark ] ].
+	CustomBookmarks := aCollection
+]
+
+{ #category : #specs }
+FDFileDialogPresenter class >> defaultSpec [
+	^ SpecBoxLayout newVertical
+		add:
+			(SpecBoxLayout newHorizontal
+				add: #bookmarksList
+					withConstraints: [ :contraint | contraint width: 150 ];
+				add:
+					(SpecBoxLayout newVertical
+						add: #currentFolderLabel
+							withConstraints: [ :contraint | contraint height: self toolbarHeight ];
+						add: #filesList;
+						yourself);
+				yourself);
+		add:
+			(SpecBoxLayout newHorizontal 
+				add: #nameLabel
+					withConstraints: [ :contraint | contraint width: 50 ];
+				add: #nameText;
+				add: #filtersDropList
+					withConstraints: [ :contraint | contraint width: 200 ];
+				yourself)withConstraints: [ :contraint | contraint height: self toolbarHeight]
+			yourself
+]
+
+{ #category : #example }
+FDFileDialogPresenter class >> example [
+	^ FDOpenFileDialog new
+		whenSelected: [ :file | file inspect ];
+		defaultFolder: FileLocator imageDirectory asFileReference;
+		defaultName: 'hello.png';
+		openDialogWithSpec
+]
+
+{ #category : #example }
+FDFileDialogPresenter class >> exampleModal [
+	"modal returns the selected value"
+
+	(FDOpenDirectoryDialog new
+		defaultFolder: FileLocator imageDirectory asFileReference;
+		openModal) inspect
+]
+
+{ #category : #'instance creation' }
+FDFileDialogPresenter class >> open [
+	^ self openDialogWithSpec
+]
+
+{ #category : #'instance creation' }
+FDFileDialogPresenter class >> openOn: aCollectionOfFDBookMark [
+]
+
+{ #category : #adding }
+FDFileDialogPresenter class >> removeBookmark: aFolder [
+	self customBookmarks removeAllSuchThat: [ :each | each location = aFolder ]
+]
+
+{ #category : #icons }
+FDFileDialogPresenter class >> textIcons [
+	<icons>
+	^ {(#st -> (self iconNamed: #smallLeftFlush)).
+		(#txt -> (self iconNamed: #smallLeftFlush))}
+]
+
 { #category : #bookmarks }
 FDFileDialogPresenter >> addBookmark: aFolder [
 	self class addBookmark: aFolder.

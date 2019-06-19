@@ -3,7 +3,7 @@ My responsibility is to provide dialog for SAVING files.
 "
 Class {
 	#name : #FDSaveFileDialog,
-	#superclass : #FDFileDialog,
+	#superclass : #FDFileDialogPresenter,
 	#category : #FileDialog
 }
 

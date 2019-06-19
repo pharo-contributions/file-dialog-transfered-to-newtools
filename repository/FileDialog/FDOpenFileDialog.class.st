@@ -23,7 +23,7 @@ FDOpenFileDialog new
 "
 Class {
 	#name : #FDOpenFileDialog,
-	#superclass : #FDFileDialog,
+	#superclass : #FDFileDialogPresenter,
 	#category : #FileDialog
 }
 
