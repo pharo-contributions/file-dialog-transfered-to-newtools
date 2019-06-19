@@ -138,6 +138,10 @@ FDFileDialog class >> open [
 	^ self openDialogWithSpec
 ]
 
+{ #category : #'instance creation' }
+FDFileDialog class >> openOn: aCollectionOfFDBookMark [
+]
+
 { #category : #adding }
 FDFileDialog class >> removeBookmark: aFolder [
 	self customBookmarks removeAllSuchThat: [ :each | each location = aFolder ]

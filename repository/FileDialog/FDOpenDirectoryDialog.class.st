@@ -26,6 +26,12 @@ FDOpenDirectoryDialog class >> defaultSpec [
 		yourself
 ]
 
+{ #category : #examples }
+FDOpenDirectoryDialog class >> main [
+	<example>
+		^ self new openDialogWithSpec 
+]
+
 { #category : #api }
 FDOpenDirectoryDialog >> initialTitle [
 	^ 'Select Directory To Open'
