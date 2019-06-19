@@ -54,12 +54,6 @@ FDFileDialog class >> allIcons [
 			[ :pragma | pragma methodClass instanceSide perform: pragma methodSelector ]
 ]
 
-{ #category : #icons }
-FDFileDialog class >> basicIcons [
-"	<icons>
-	^ {#zip -> ''}"
-]
-
 { #category : #commander2 }
 FDFileDialog class >> buildCommandsGroupWith: presenter forRoot: rootCommandGroup [
 	rootCommandGroup
@@ -121,24 +115,10 @@ FDFileDialog class >> defaultSpec [
 			yourself
 ]
 
-{ #category : #specs }
-FDFileDialog class >> dialogButtonsLayout: aRow [
-	^ OSPlatform current isWindows
-		ifTrue: [ aRow
-						add: #confirmButton width: 60;
-						add: #cancelButton width: 60 ]
-		ifFalse: [ aRow
-						add: #cancelButton width: 60;
-						add: #confirmButton width: 60 ]
-]
-
 { #category : #example }
 FDFileDialog class >> example [
 	^ FDOpenFileDialog new
 		whenSelected: [ :file | file inspect ];
-		extensionFilters:
-			{'All Images' -> #(jpg png gif svg).
-			'All Files' -> #()};
 		defaultFolder: FileLocator imageDirectory asFileReference;
 		defaultName: 'hello.png';
 		openDialogWithSpec
@@ -151,33 +131,6 @@ FDFileDialog class >> exampleModal [
 	(FDOpenDirectoryDialog new
 		defaultFolder: FileLocator imageDirectory asFileReference;
 		openModal) inspect
-]
-
-{ #category : #'filtering - convenience' }
-FDFileDialog class >> filterAllFiles [
-	^ {'All Files' -> #()}
-]
-
-{ #category : #'filtering - convenience' }
-FDFileDialog class >> filterAllImages [
-	^ {'All Images' -> #(jpg png gif svg)}
-]
-
-{ #category : #example }
-FDFileDialog class >> forImages [
-	^ self new
-		extensionFilters:
-			{'All Images' -> #(jpg png gif svg).
-			'All Files' -> #()}
-]
-
-{ #category : #icons }
-FDFileDialog class >> imageIcons [
-	<icons>
-	^ {(#png -> (self iconNamed: #komitter)).
-		(#jpg -> (self iconNamed: #komitter)).
-		(#gif -> (self iconNamed: #komitter)).
-		(#svg -> (self iconNamed: #komitter))}
 ]
 
 { #category : #'instance creation' }
@@ -392,12 +345,6 @@ FDFileDialog >> filesListAction [
 				cull: selection selectedItem ]
 ]
 
-{ #category : #public }
-FDFileDialog >> filteredExtensions: anArray [
-	self deprecated: 'Use extensionFilters: instead'.
-	self extensionFilters: anArray
-]
-
 { #category : #'accessing - spec fields' }
 FDFileDialog >> filtersDropList [
 	^ filtersDropList
@@ -481,7 +428,6 @@ FDFileDialog >> initializeFilesList [
 		displayBlock: [ :entry | entry basename ];
 		icons: [ :entry | self iconFor: entry ].
 	filesListContent := filesList items.
-	self setupFilesFilter.
 	filesList
 		contextMenu: [ (self rootCommandsGroup / 'interact with file') beRoot
 				asMenuPresenter ]
@@ -490,8 +436,8 @@ FDFileDialog >> initializeFilesList [
 { #category : #'initialize-widgets' }
 FDFileDialog >> initializeFiltersDropList [
 	filtersDropList
-		items: self fileFilters;
-		displayBlock: [ :item | item key ];
+		items: FDAbstractFilter actions;
+		displayBlock: [ :item | item name ];
 		selectedIndex: 1
 ]
 
@@ -499,8 +445,11 @@ FDFileDialog >> initializeFiltersDropList [
 FDFileDialog >> initializePresenter [
 	self bookmarksListAction.
 	self filesListAction.
-	"filtersDropList whenSelectedItemChanged: [ :item | filesList refreshListItems ]"
-	self initializeDragAndDrop.
+	filtersDropList
+		transmitTo: filesList
+		transform:
+			[ :filterBis | filesListContent select: [ :item | filterBis filter: item ] ].
+	self initializeDragAndDrop
 ]
 
 { #category : #initialization }
@@ -542,7 +491,7 @@ FDFileDialog >> noRemovableBookmarks [
 
 { #category : #'instance creation' }
 FDFileDialog >> open [
-	^ self openWithSpec
+	^ self openDialogWithSpec
 ]
 
 { #category : #actions }
@@ -601,19 +550,6 @@ FDFileDialog >> selectedBookMark [
 { #category : #accessing }
 FDFileDialog >> selectedEntry [
 	^ self subclassResponsibility
-]
-
-{ #category : #accessing }
-FDFileDialog >> setupFilesFilter [
-	filesList
-		itemFilterBlock: [ :entries | 
-			| e |
-			e := entries.
-			showHiddenFiles
-				ifFalse: [ e := filter noHiddenFiles: entries ].
-			filtersDropList selectedItem value
-				ifNotEmpty: [ :patterns | e := filter files: e matching: patterns ].
-			e ]
 ]
 
 { #category : #actions }
