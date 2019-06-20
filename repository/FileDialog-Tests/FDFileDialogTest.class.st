@@ -89,3 +89,14 @@ FDFileDialogTest >> testWhenOpenADirectoryShouldDisplayHisChildrenFilterByCurren
 		selectIndex: ((dialog filesList items collect: #basename) indexOf: 'dir').
 	self fileListAllMustBeFilterByPNGFIlter
 ]
+
+{ #category : #'as yet unclassified' }
+FDFileDialogTest >> testWhenToggleShowHiddenFileShouldHiddenFileAppear [
+	self deny: dialog showHiddenFiles.
+	dialog toggleHiddenFiles.
+	self
+		assert: (dialog filesList items collect: #basename) asSet
+		equals:
+			{'dir'  . 'dir.ext' . '.hidden-dir' . '.hidden'.
+			'sth.ext' . 'sth.aaa' . 'banana.jpg' . 'patate.png' . '..'} asSet
+]

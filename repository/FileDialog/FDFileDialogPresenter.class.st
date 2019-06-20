@@ -231,6 +231,11 @@ FDFileDialogPresenter >> currentDirectory [
 ]
 
 { #category : #accessing }
+FDFileDialogPresenter >> currentDirectory: anObject [
+	currentDirectory := anObject
+]
+
+{ #category : #accessing }
 FDFileDialogPresenter >> currentFiles [
 	^ (((self isRootDirectory: currentDirectory)
 		ifTrue: [ {} ]
@@ -569,11 +574,15 @@ FDFileDialogPresenter >> selectedEntry [
 	^ self subclassResponsibility
 ]
 
+{ #category : #accessing }
+FDFileDialogPresenter >> showHiddenFiles [
+	^ showHiddenFiles
+]
+
 { #category : #'initialize-actions' }
 FDFileDialogPresenter >> toggleHiddenFiles [
 	showHiddenFiles := showHiddenFiles not.
-	self needRebuild: false.
-	self buildWithSpec
+	filesList items: (self filterACollection: self currentFiles) 
 ]
 
 { #category : #public }
