@@ -14,6 +14,7 @@ FDTest >> createRoot [
 		ensureCreateDirectory.
 	(root / 'dir') ensureCreateDirectory.
 	(root / 'dir' / 'klm.png') ensureCreateFile.
+	(root / 'dir' / 'klm.jpg') ensureCreateFile.
 	(root / 'dir.ext') ensureCreateDirectory.
 	(root / '.hidden-dir') ensureCreateDirectory.
 	(root / '.hidden') ensureCreateFile.

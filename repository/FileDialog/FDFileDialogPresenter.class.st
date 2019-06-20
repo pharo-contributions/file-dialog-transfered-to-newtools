@@ -28,7 +28,8 @@ Class {
 		'fileFilters',
 		'currentFolderLabel',
 		'filesListContent',
-		'noRemovableBookmarks'
+		'noRemovableBookmarks',
+		'hiddenFilter'
 	],
 	#classVars : [
 		'CustomBookmarks'
@@ -135,7 +136,7 @@ FDFileDialogPresenter class >> exampleModal [
 
 { #category : #'instance creation' }
 FDFileDialogPresenter class >> open [
-	^ self openDialogWithSpec
+	^ self new openDialogWithSpec
 ]
 
 { #category : #'instance creation' }
@@ -345,6 +346,20 @@ FDFileDialogPresenter >> filesListAction [
 				cull: selection selectedItem ]
 ]
 
+{ #category : #'initialize-actions' }
+FDFileDialogPresenter >> filterACollection: aCollectionOfFileReference [
+	| collection |
+	collection := aCollectionOfFileReference
+		select:
+			[ :fileReference | filtersDropList selectedItem filter: fileReference ].
+	showHiddenFiles
+		ifFalse: [ collection
+				removeAll:
+					(collection
+						select: [ :aFileReference | hiddenFilter filter: aFileReference ]) ].
+	^ collection
+]
+
 { #category : #'accessing - spec fields' }
 FDFileDialogPresenter >> filtersDropList [
 	^ filtersDropList
@@ -383,6 +398,7 @@ FDFileDialogPresenter >> initialize [
 	showHiddenFiles := false.
 	onConfirmBlock := [ :selection |  ].
 	super initialize.
+	hiddenFilter := FDHidenFileFilter new.
 	self defaultFolder: self defaultFolder
 ]
 
@@ -501,7 +517,7 @@ FDFileDialogPresenter >> openFolder: aFolder [
 	currentFolderLabel
 		label: (self currentFolderTitleFor: currentDirectory pathString);
 		help: currentDirectory pathString , self delimiter.
-	filesList items: self currentFiles.
+	filesList items: (self filterACollection: self currentFiles).
 	filesListContent := filesList items.
 	filesList unselectAll.
 	self selectBookmarkFor: currentDirectory
@@ -553,10 +569,11 @@ FDFileDialogPresenter >> selectedEntry [
 	^ self subclassResponsibility
 ]
 
-{ #category : #actions }
+{ #category : #'initialize-actions' }
 FDFileDialogPresenter >> toggleHiddenFiles [
 	showHiddenFiles := showHiddenFiles not.
-	filesList items: self currentFiles
+	self needRebuild: false.
+	self buildWithSpec
 ]
 
 { #category : #public }
