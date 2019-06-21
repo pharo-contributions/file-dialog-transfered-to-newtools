@@ -79,6 +79,24 @@ FDFileDialogTest >> testOpenFolder [
 ]
 
 { #category : #tests }
+FDFileDialogTest >> testWhenAddBookmarkShouldBeInCustomBookmarks [
+	| contextActionMenu |
+	contextActionMenu := FDAddBookMarkCommand new
+		context: dialog;
+		yourself.
+	dialog filesList
+		selectIndex: ((dialog filesList items collect: #basename) indexOf: 'dir').
+	contextActionMenu execute.
+	self
+		assert:
+			(((dialog bookmarksTreeTable roots
+				at:
+					((dialog bookmarksTreeTable roots collect: #name)
+						indexOf: 'customBookMark')) collection collect: #name)
+				includes: 'dir')
+]
+
+{ #category : #tests }
 FDFileDialogTest >> testWhenOpenADirectoryShouldDisplayHisChildrenFilterByCurrentFilter [
 	dialog filtersDropList
 		selectedIndex:
@@ -87,6 +105,7 @@ FDFileDialogTest >> testWhenOpenADirectoryShouldDisplayHisChildrenFilterByCurren
 	self fileListAllMustBeFilterByPNGFIlter.
 	dialog filesList
 		selectIndex: ((dialog filesList items collect: #basename) indexOf: 'dir').
+		dialog filesList clickOnSelectedItem.
 	self fileListAllMustBeFilterByPNGFIlter
 ]
 

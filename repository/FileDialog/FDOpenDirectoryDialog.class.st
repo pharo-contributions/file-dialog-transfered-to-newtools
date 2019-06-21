@@ -14,7 +14,7 @@ FDOpenDirectoryDialog class >> defaultSpec [
 	^ SpecBoxLayout newVertical
 		add:
 			(SpecBoxLayout newHorizontal
-				add: #bookmarksList
+				add: #bookmarksTreeTable
 					withConstraints: [ :contraint | contraint width: 150 ];
 				add:
 					(SpecBoxLayout newVertical
@@ -52,5 +52,9 @@ FDOpenDirectoryDialog >> nameChanged [
 
 { #category : #actions }
 FDOpenDirectoryDialog >> selectedEntry [
-	^ self currentDirectory
+	filesList selection selectedItem
+		ifNotNil: [ :fileReference | 
+			fileReference isDirectory
+				ifTrue: [ ^ fileReference ] ].
+	self inform: 'you must select a directory'
 ]

@@ -3,11 +3,9 @@ I represent a bookmark having location, icon, and a name.
 "
 Class {
 	#name : #FDBookmark,
-	#superclass : #Object,
+	#superclass : #FDAbstractBookMark,
 	#instVars : [
-		'location',
-		'name',
-		'icon'
+		'location'
 	],
 	#category : #FileDialog
 }
@@ -17,7 +15,7 @@ FDBookmark class >> home [
 	^ FDBookmark
 		name: 'home'
 		location: FileLocator home asFileReference
-		icon: Smalltalk ui icons home
+		icon: (self iconNamed: #home)
 ]
 
 { #category : #'default bookmarks' }
@@ -25,7 +23,7 @@ FDBookmark class >> image [
 	^ FDBookmark
 		name: 'image directory'
 		location: FileLocator imageDirectory asFileReference
-		icon: Smalltalk ui icons komitterNewSlice
+		icon: (self iconNamed: #komitterNewSlice)
 ]
 
 { #category : #'instance creation' }
@@ -42,7 +40,7 @@ FDBookmark class >> root [
 	^ FDBookmark
 		name: 'file system'
 		location: FileLocator root asFileReference
-		icon: Smalltalk ui icons smallWindow
+		icon: (self iconNamed: #smallWindow)
 ]
 
 { #category : #'default bookmarks' }
@@ -50,14 +48,17 @@ FDBookmark class >> tmp [
 	^ FDBookmark
 		name: 'tmp'
 		location: FileLocator temp asFileReference
-		icon: Smalltalk ui icons open
+		icon: (self iconNamed: #open)
 ]
 
 { #category : #'default bookmarks' }
 FDBookmark class >> windowsDrives [
 	^ FileLocator root asFileReference directories
-		collect:
-			[ :each | FDBookmark name: each basename location: each icon: Smalltalk ui icons smallWindow ]
+		collect: [ :each | 
+			FDBookmark
+				name: each basename
+				location: each
+				icon: (self iconNamed: #smallWindow) ]
 ]
 
 { #category : #comparing }
@@ -81,6 +82,11 @@ FDBookmark >> icon [
 { #category : #accessing }
 FDBookmark >> icon: anIcon [
 	icon := anIcon
+]
+
+{ #category : #testing }
+FDBookmark >> isComposite [
+	^ false
 ]
 
 { #category : #accessing }
