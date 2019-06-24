@@ -105,6 +105,11 @@ FDFileDialogPresenter class >> defaultDirectory [
 ]
 
 { #category : #defaultClassVariable }
+FDFileDialogPresenter class >> defaultFilterSet [
+	^ FDAbstractFilter actions
+]
+
+{ #category : #defaultClassVariable }
 FDFileDialogPresenter class >> defaultFixedBookmarks [
 	| presets |
 	presets := OrderedCollection new.
