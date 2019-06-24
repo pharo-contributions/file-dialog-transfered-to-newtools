@@ -16,3 +16,13 @@ FDAbstractCompositeFilter class >> actions [
 FDAbstractCompositeFilter class >> isAbstract [ 
 	^ self = FDAbstractCompositeFilter
 ]
+
+{ #category : #accessing }
+FDAbstractCompositeFilter >> collectionOfFDAbstractFilter [
+	^ collectionOfFDAbstractFilter
+]
+
+{ #category : #accessing }
+FDAbstractCompositeFilter >> collectionOfFDAbstractFilter: anObject [
+	collectionOfFDAbstractFilter := anObject
+]

@@ -18,46 +18,43 @@ FDFileFilterTest >> testDefaultFilterShouldReturnEveryTimeTrue [
 
 { #category : #tests }
 FDFileFilterTest >> testFilterExtensions [
+
 	self
-		assert: ((filter files: root children withExtensions: #(aaa)) collect: #basename) asSet
-		equals:
-			(Set
-				with: 'dir'
-				with: 'dir.ext'
-				with: '.hidden-dir'
-				with: 'sth.aaa')
+		assert:
+			(root children
+				select: [ :fileReference | FDDefaultFilter new filter: fileReference ])
+		equals: beforeFilter
 ]
 
 { #category : #tests }
-FDFileFilterTest >> testFilterMatching [
+FDFileFilterTest >> testHiddenFilter [
 	self
-		assert: ((filter files: root children matching: #('*th.e*' '*dd*')) collect: #basename) asSet
-		equals:
-			(Set
-				with: 'dir'
-				with: 'dir.ext'
-				with: '.hidden-dir'
-				with: '.hidden'
-				with: 'sth.ext')
+		assert:
+			((root children select: [ :item | FDHidenFileFilter new filter: item ])
+				collect: #basename) asSet
+		equals: {  '.hidden-dir' . '.hidden'} asSet 
 ]
 
 { #category : #tests }
-FDFileFilterTest >> testFoldersOnly [
+FDFileFilterTest >> testJPGFilterShouldFilterOnlyJPGFile [
+	| filterBis |
+	filterBis := FDDotJPGFilter new.
 	self
-		assert: ((filter directoriesOnly: root children) collect: #basename) asSet
-		equals: (Set with: 'dir' with: 'dir.ext' with: '.hidden-dir')
+		assert:
+			((root children
+				select: [ :fileReference | filterBis filter: fileReference ])
+				allSatisfy: [ :item | (item basename endsWith: '.jpg') or: [ item isDirectory ] ])
 ]
 
 { #category : #tests }
-FDFileFilterTest >> testHiddenFiles [
+FDFileFilterTest >> testPNGFilterShouldFilterOnlyPNGFile [
+	| filterBis |
+	filterBis := FDDotPNGFilter new.
 	self
-		assert: ((filter noHiddenFiles: root children) collect: #basename) asSet
-		equals:
-			(Set
-				with: 'dir'
-				with: 'dir.ext'
-				with: 'sth.ext'
-				with: 'sth.aaa')
+		assert:
+			((root children
+				select: [ :fileReference | filterBis filter: fileReference ])
+				allSatisfy: [ :item | (item basename endsWith: '.png' )or:[ item isDirectory]  ])
 ]
 
 { #category : #tests }

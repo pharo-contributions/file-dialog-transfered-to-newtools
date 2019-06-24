@@ -10,26 +10,16 @@ FDOpenDirectoryDialogTest >> dialogClass [
 ]
 
 { #category : #tests }
-FDOpenDirectoryDialogTest >> testDefaultDirectory [
-	self assert: dialog selectedEntry equals: root.
-	dialog defaultFolder: root / 'dir'.
-	self assert: dialog selectedEntry equals: root / 'dir'
-]
-
-{ #category : #tests }
 FDOpenDirectoryDialogTest >> testSelectDirectory [
 	| selectedDirectory |
 	dialog whenSelected: [ :dir | selectedDirectory := dir ].
 	window := dialog open.
 	self assert: dialog currentDirectory equals: root.
 	dialog selectFile: root / 'dir'.
-	self assert: dialog selectedEntry equals: root / 'dir'.
+	self
+		assert: dialog selectedEntry
+		equals: root / dialog filesList selection selectedItem basename.
 	window triggerOkAction.
-	self assert: selectedDirectory equals: root / 'dir' 
-]
+	self assert: selectedDirectory equals: root / 'dir'
 
-{ #category : #tests }
-FDOpenDirectoryDialogTest >> testSelectNonexistingDirectory [
-	dialog defaultFolder: root / 'idontexist'.
-	self assert: dialog selectedEntry equals: FileLocator imageDirectory asFileReference
 ]

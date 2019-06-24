@@ -18,6 +18,16 @@ FDFileDialogTest >> dialogClass [
 	^ self subclassResponsibility
 ]
 
+{ #category : #tests }
+FDFileDialogTest >> fileListAllMustBeFilterByPNGFIlter [
+	self
+		assert:
+			(dialog filesList items
+				allSatisfy: [ :fileReference | 
+					fileReference isDirectory
+						or: [ fileReference basename endsWith: '.png' ] ])
+]
+
 { #category : #running }
 FDFileDialogTest >> setUp [
 	super setUp.
@@ -35,6 +45,11 @@ FDFileDialogTest >> testCanonicalize [
 	| location |
 	location := FileLocator imageDirectory asFileReference.
 	self assert: (dialog canonicalize: location / '..') fullName equals: location parent fullName
+]
+
+{ #category : #tests }
+FDFileDialogTest >> testInitializeFilterDropListSelectedItemShouldBeDefaultFilter [
+	self assert: dialog filtersDropList selectedItem name equals: FDDefaultFilter new name
 ]
 
 { #category : #tests }
@@ -61,4 +76,46 @@ FDFileDialogTest >> testOpenFolder [
 	self assert: dialog currentDirectory equals: root.
 	dialog openFolder: root / 'dir'.
 	self assert: dialog currentDirectory equals: root / 'dir'
+]
+
+{ #category : #tests }
+FDFileDialogTest >> testWhenAddBookmarkShouldBeInCustomBookmarks [
+	| contextActionMenu |
+	contextActionMenu := FDAddBookMarkCommand new
+		context: dialog;
+		yourself.
+	dialog filesList
+		selectIndex: ((dialog filesList items collect: #basename) indexOf: 'dir').
+	contextActionMenu execute.
+	self
+		assert:
+			(((dialog bookmarksTreeTable roots
+				at:
+					((dialog bookmarksTreeTable roots collect: #name)
+						indexOf: 'customBookMark')) collection collect: #name)
+				includes: 'dir')
+]
+
+{ #category : #tests }
+FDFileDialogTest >> testWhenOpenADirectoryShouldDisplayHisChildrenFilterByCurrentFilter [
+	dialog filtersDropList
+		selectedIndex:
+			((dialog filtersDropList listItems collect: #name)
+				indexOf: FDDotPNGFilter new name).
+	self fileListAllMustBeFilterByPNGFIlter.
+	dialog filesList
+		selectIndex: ((dialog filesList items collect: #basename) indexOf: 'dir').
+		dialog filesList clickOnSelectedItem.
+	self fileListAllMustBeFilterByPNGFIlter
+]
+
+{ #category : #'as yet unclassified' }
+FDFileDialogTest >> testWhenToggleShowHiddenFileShouldHiddenFileAppear [
+	self deny: dialog showHiddenFiles.
+	dialog toggleHiddenFiles.
+	self
+		assert: (dialog filesList items collect: #basename) asSet
+		equals:
+			{'dir'  . 'dir.ext' . '.hidden-dir' . '.hidden'.
+			'sth.ext' . 'sth.aaa' . 'banana.jpg' . 'patate.png' . '..'} asSet
 ]

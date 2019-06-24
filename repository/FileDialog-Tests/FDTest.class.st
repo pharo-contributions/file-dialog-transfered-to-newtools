@@ -13,6 +13,8 @@ FDTest >> createRoot [
 	(root := (FileLocator imageDirectory / 'fd-test') asFileReference)
 		ensureCreateDirectory.
 	(root / 'dir') ensureCreateDirectory.
+	(root / 'dir' / 'klm.png') ensureCreateFile.
+	(root / 'dir' / 'klm.jpg') ensureCreateFile.
 	(root / 'dir.ext') ensureCreateDirectory.
 	(root / '.hidden-dir') ensureCreateDirectory.
 	(root / '.hidden') ensureCreateFile.
