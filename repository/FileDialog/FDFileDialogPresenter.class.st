@@ -179,16 +179,12 @@ FDFileDialogPresenter class >> open [
 ]
 
 { #category : #'instance creation' }
-FDFileDialogPresenter class >> openOn: aCollectionOfFDBookMark [
-	self flag: #customize 
-]
-
-{ #category : #'instance creation' }
-FDFileDialogPresenter class >> openOn: aDirectory WithAcceptAction: acceptBlock WithThisBookMark: aCollectionOfFileReference [
-	self flag: #customize.
+FDFileDialogPresenter class >> openOn: aDirectory WithAcceptAction: acceptBlock WithCustomBookMark: aCollectionOfFDBookMarkForCustomBookmark withFixedBookmark: aCollectionOfFDBookMarkForFixedBookMark withaSetOfFilter: aFilterSet [
 	OkActionBlock := acceptBlock.
 	Directory := aDirectory.
-	CustomBookmarks := aCollectionOfFileReference.
+	CustomBookmarks := aCollectionOfFDBookMarkForCustomBookmark.
+	FixedBookMark := aCollectionOfFDBookMarkForFixedBookMark.
+	FilterSet := aFilterSet.
 	^ self new
 		openDialogWithSpec;
 		yourself
