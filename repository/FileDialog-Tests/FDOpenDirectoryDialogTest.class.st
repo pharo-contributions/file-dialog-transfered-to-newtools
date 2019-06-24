@@ -21,4 +21,5 @@ FDOpenDirectoryDialogTest >> testSelectDirectory [
 		equals: root / dialog filesList selection selectedItem basename.
 	window triggerOkAction.
 	self assert: selectedDirectory equals: root / 'dir'
+
 ]

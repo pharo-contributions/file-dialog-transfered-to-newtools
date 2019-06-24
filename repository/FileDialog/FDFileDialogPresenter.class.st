@@ -15,16 +15,19 @@ Class {
 	#name : #FDFileDialogPresenter,
 	#superclass : #ComposablePresenter,
 	#instVars : [
+
 		'nameText',
 		'filesList',
 		'currentDirectory',
 		'nameLabel',
+
 		'showHiddenFiles',
 		'filter',
 		'filtersDropList',
 		'fileFilters',
 		'currentFolderLabel',
 		'filesListContent',
+
 		'hiddenFilter',
 		'okActionBlock',
 		'fixedBookMarks',
@@ -66,6 +69,7 @@ FDFileDialogPresenter class >> buildCommandsGroupWith: presenter forRoot: rootCo
 				register: (FDCreatDirectoryCommand forSpec context: presenter);
 				register: (FDToggleHiddenFilesCommand forSpec context: presenter);
 				register: (FDAddBookMarkCommand forSpec context: presenter);
+
 				yourself);
 		register:
 			((CmCommandGroup named: 'bookmark menu') asSpecGroup
@@ -116,7 +120,7 @@ FDFileDialogPresenter class >> defaultSpec [
 			(SpecBoxLayout newHorizontal
 				add: #bookmarksTreeTable
 					withConstraints: [ :contraint | contraint width: 200 ];
-				add:
+			add:
 					(SpecBoxLayout newVertical
 						add: #currentFolderLabel
 							withConstraints: [ :contraint | contraint height: self toolbarHeight ];
@@ -210,6 +214,7 @@ FDFileDialogPresenter >> bookmarksTreeTableAction [
 				ifNotNil: [ :selectedItem | 
 					selectedItem isComposite
 						ifFalse: [ self openFolder: selectedItem location ] ] ]
+
 ]
 
 { #category : #utility }
@@ -300,6 +305,7 @@ FDFileDialogPresenter >> customBookmarks [
 	^ customBookMarks
 ]
 
+
 { #category : #accessing }
 FDFileDialogPresenter >> defaultFolder [
 	^ FileLocator imageDirectory asFileReference
@@ -334,6 +340,7 @@ FDFileDialogPresenter >> filesList [
 { #category : #'initialize-actions' }
 FDFileDialogPresenter >> filesListAction [
 	filesList
+
 		whenSelectionChangedDo: [ :selectedFileReference | 
 			nameText
 				text:
@@ -357,8 +364,7 @@ FDFileDialogPresenter >> filterACollection: aCollectionOfFileReference [
 				removeAll:
 					(collection
 						select: [ :aFileReference | hiddenFilter filter: aFileReference ]) ].
-	^ collection
-]
+	^ collection]
 
 { #category : #'accessing - spec fields' }
 FDFileDialogPresenter >> filtersDropList [
