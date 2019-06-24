@@ -195,13 +195,6 @@ FDFileDialogPresenter class >> removeBookmark: aFolder [
 	self customBookmarks removeAllSuchThat: [ :each | each location = aFolder ]
 ]
 
-{ #category : #icons }
-FDFileDialogPresenter class >> textIcons [
-	<icons>
-	^ {(#st -> (self iconNamed: #smallLeftFlush)).
-		(#txt -> (self iconNamed: #smallLeftFlush))}
-]
-
 { #category : #bookmarks }
 FDFileDialogPresenter >> addBookmark: aFolder [
 	self class addBookmark: aFolder.
