@@ -15,19 +15,16 @@ Class {
 	#name : #FDFileDialogPresenter,
 	#superclass : #ComposablePresenter,
 	#instVars : [
-
 		'nameText',
 		'filesList',
 		'currentDirectory',
 		'nameLabel',
-
 		'showHiddenFiles',
 		'filter',
 		'filtersDropList',
 		'fileFilters',
 		'currentFolderLabel',
 		'filesListContent',
-
 		'hiddenFilter',
 		'okActionBlock',
 		'fixedBookMarks',
@@ -37,11 +34,9 @@ Class {
 	#classVars : [
 		'CustomBookmarks',
 		'Directory',
+		'FilterSet',
 		'FixedBookMark',
 		'OkActionBlock'
-	],
-	#classInstVars : [
-		'customShortcut'
 	],
 	#category : #FileDialog
 }
@@ -99,7 +94,17 @@ FDFileDialogPresenter class >> customBookmarks: aCollection [
 	CustomBookmarks := aCollection
 ]
 
-{ #category : #bookmarks }
+{ #category : #defaultClassVariable }
+FDFileDialogPresenter class >> defaultCustomBookmarks [
+	^ {} asOrderedCollection
+]
+
+{ #category : #defaultClassVariable }
+FDFileDialogPresenter class >> defaultDirectory [
+	^ FileLocator imageDirectory asFileReference
+]
+
+{ #category : #defaultClassVariable }
 FDFileDialogPresenter class >> defaultFixedBookmarks [
 	| presets |
 	presets := OrderedCollection new.
@@ -111,6 +116,11 @@ FDFileDialogPresenter class >> defaultFixedBookmarks [
 	OSPlatform current isWindows
 		ifTrue: [ presets addAll: FDBookmark windowsDrives ].
 	^ presets
+]
+
+{ #category : #defaultClassVariable }
+FDFileDialogPresenter class >> defaultOkActionBlock [
+	^ [ :fileReference | self inform: 'you select the file' , fileReference basename ]
 ]
 
 { #category : #specs }
@@ -155,10 +165,11 @@ FDFileDialogPresenter class >> exampleModal [
 
 { #category : #'instance creation' }
 FDFileDialogPresenter class >> open [
-	OkActionBlock := [:fileReference |self inform: 'you select the file' ,  fileReference basename   ].
-	Directory := FileLocator imageDirectory asFileReference.
+	OkActionBlock := self defaultOkActionBlock.
+	Directory := self defaultDirectory.
 	FixedBookMark := self defaultFixedBookmarks.
-	CustomBookmarks := {} asOrderedCollection .
+	CustomBookmarks := self defaultCustomBookmarks.
+	FilterSet := self defaultFilterSet.
 	^ self new openDialogWithSpec
 ]
 
@@ -305,7 +316,6 @@ FDFileDialogPresenter >> customBookmarks [
 	^ customBookMarks
 ]
 
-
 { #category : #accessing }
 FDFileDialogPresenter >> defaultFolder [
 	^ FileLocator imageDirectory asFileReference
@@ -364,7 +374,8 @@ FDFileDialogPresenter >> filterACollection: aCollectionOfFileReference [
 				removeAll:
 					(collection
 						select: [ :aFileReference | hiddenFilter filter: aFileReference ]) ].
-	^ collection]
+	^ collection
+]
 
 { #category : #'accessing - spec fields' }
 FDFileDialogPresenter >> filtersDropList [
@@ -446,8 +457,12 @@ FDFileDialogPresenter >> initializeFilesList [
 
 { #category : #'initialize-widgets' }
 FDFileDialogPresenter >> initializeFiltersDropList [
+	| filterItems |
+	filterItems := FilterSet copy.
+	filterItems asOrderedCollection  add: FDDefaultFilter new.
+	filterItems := filterItems asSet.
 	filtersDropList
-		items: FDAbstractFilter actions;
+		items:  filterItems asOrderedCollection ;
 		displayBlock: [ :item | item name ];
 		selectedIndex:
 			((filtersDropList listItems collect: #name)
