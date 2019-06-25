@@ -17,16 +17,6 @@ FDFileFilterTest >> testDefaultFilterShouldReturnEveryTimeTrue [
 ]
 
 { #category : #tests }
-FDFileFilterTest >> testFilterExtensions [
-
-	self
-		assert:
-			(root children
-				select: [ :fileReference | FDDefaultFilter new filter: fileReference ])
-		equals: beforeFilter
-]
-
-{ #category : #tests }
 FDFileFilterTest >> testHiddenFilter [
 	self
 		assert:

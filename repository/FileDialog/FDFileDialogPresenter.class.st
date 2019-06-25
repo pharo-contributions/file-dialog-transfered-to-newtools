@@ -390,6 +390,21 @@ FDFileDialogPresenter >> filterACollection: aCollectionOfFileReference [
 	^ collection
 ]
 
+{ #category : #'api-customization' }
+FDFileDialogPresenter >> filtersCustomization: aCollectionOfFilter [
+	"i always add the filter 'no filter'"
+
+	filtersDropList
+		items:
+			(aCollectionOfFilter asOrderedCollection
+				add: FDDefaultFilter new;
+				yourself) asSet asOrderedCollection.
+	filtersDropList
+		selectedIndex:
+			((filtersDropList listItems collect: #name)
+				indexOf: FDDefaultFilter new name)
+]
+
 { #category : #accessing }
 FDFileDialogPresenter >> filtersDropList [
 	^ filtersDropList
