@@ -197,7 +197,7 @@ FDFileDialogPresenter class >> removeBookmark: aFolder [
 	self customBookmarks removeAllSuchThat: [ :each | each location = aFolder ]
 ]
 
-{ #category : #bookmarks }
+{ #category : #'api-customization' }
 FDFileDialogPresenter >> addBookmark: aFolder [
 	| bookmark |
 	bookmark := self creatAnFDBookMark: aFolder.
@@ -277,10 +277,11 @@ FDFileDialogPresenter >> currentDirectory [
 	^ currentDirectory ifNil: [ currentDirectory := self defaultFolder ]
 ]
 
-{ #category : #accessing }
-FDFileDialogPresenter >> currentDirectory: anObject [
-	currentDirectory := anObject.
-	self rebuild
+{ #category : #'api-customization' }
+FDFileDialogPresenter >> currentDirectory: aDirectory [
+	aDirectory isDirectory ifFalse: [ ^ self inform: 'you have to give me directory' ].
+	currentDirectory := aDirectory .
+	self openFolder: aDirectory 
 ]
 
 { #category : #accessing }
@@ -315,7 +316,7 @@ FDFileDialogPresenter >> currentFolderTitleFor: aString [
 	^ '... ' , (aString last: (aString size * (max / optimal)) rounded) , self delimiter
 ]
 
-{ #category : #bookmarks }
+{ #category : #'api-customization' }
 FDFileDialogPresenter >> customBookmarks [
 	^ customBookMarks
 ]
@@ -367,7 +368,7 @@ FDFileDialogPresenter >> filesListAction [
 				ifTrue: [ self openFolder: selectedItem selectedItem ] ]
 ]
 
-{ #category : #bookmarks }
+{ #category : #'api-customization' }
 FDFileDialogPresenter >> fillCustomBookmarksWith: aCollectionOFBookmark [
 	"you have to give me aCollection of FDBookmark"
 
@@ -559,7 +560,7 @@ FDFileDialogPresenter >> rebuild [
 	self buildWithSpec
 ]
 
-{ #category : #bookmarks }
+{ #category : #'api-customization' }
 FDFileDialogPresenter >> removeBookmark: aBookmark [
 	customBookMarks collection remove: aBookmark.
 	bookmarksTreeTable roots: self upadateBookmarksTreeTable

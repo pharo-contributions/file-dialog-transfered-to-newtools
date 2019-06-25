@@ -156,6 +156,14 @@ FDFileDialogTest >> testWhenAddBookmarkShouldBeInCustomBookmarks [
 ]
 
 { #category : #tests }
+FDFileDialogTest >> testWhenChangeDirectoryShouldFilesListContainsHisChildren [
+	|newDirectory|
+	newDirectory := ((root / 'dir') asFileReference).
+	dialog currentDirectory: newDirectory.
+	self assert: (dialog filesList items includesAll: newDirectory children)   
+]
+
+{ #category : #tests }
 FDFileDialogTest >> testWhenOpenADirectoryShouldDisplayHisChildrenFilterByCurrentFilter [
 	dialog filtersDropList
 		selectedIndex:
