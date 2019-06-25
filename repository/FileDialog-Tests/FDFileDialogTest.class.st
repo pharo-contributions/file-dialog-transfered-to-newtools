@@ -118,6 +118,25 @@ FDFileDialogTest >> testRemoveABookmarkShouldNotBeInBookmarkTreeTable [
 		deny: ((dialog bookmarksTreeTable roots collect: #name) includes: bookmark)
 ]
 
+{ #category : #'as yet unclassified' }
+FDFileDialogTest >> testWhenAddACollectionOfBookmarkToCustomBookmarkShouldBeAddedToBookmarkTreeTable [
+	| aCollectionOfBookmark |
+	aCollectionOfBookmark := {((root / 'dir') asFileReference).
+	((root / 'dir.ext') asFileReference)}
+		collect:
+			[ :eachItem | FDBookmark name: eachItem basename location: eachItem path icon: nil ].
+	dialog fillCustomBookmarksWith: aCollectionOfBookmark.
+	self
+		assert: (dialog customBookmarks collection includesAll: aCollectionOfBookmark).
+	self
+		assert:
+			((dialog bookmarksTreeTable roots
+				at:
+					((dialog bookmarksTreeTable roots collect: #name)
+						indexOf: 'customBookMark')) collection
+				includesAll: aCollectionOfBookmark)
+]
+
 { #category : #tests }
 FDFileDialogTest >> testWhenAddBookmarkShouldBeInCustomBookmarks [
 	| contextActionMenu |

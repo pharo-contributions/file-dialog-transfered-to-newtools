@@ -367,6 +367,14 @@ FDFileDialogPresenter >> filesListAction [
 				ifTrue: [ self openFolder: selectedItem selectedItem ] ]
 ]
 
+{ #category : #bookmarks }
+FDFileDialogPresenter >> fillCustomBookmarksWith: aCollectionOFBookmark [
+	"you have to give me aCollection of FDBookmark"
+
+	customBookMarks collection: aCollectionOFBookmark.
+	bookmarksTreeTable roots: self upadateBookmarksTreeTable
+]
+
 { #category : #'initialize-actions' }
 FDFileDialogPresenter >> filterACollection: aCollectionOfFileReference [
 	| collection |
@@ -543,15 +551,6 @@ FDFileDialogPresenter >> openFolder: aFolder [
 	filesListContent := filesList items.
 	filesList unselectAll.
 	"self selectBookmarkFor: currentDirectory"
-]
-
-{ #category : #'instance creation' }
-FDFileDialogPresenter >> openModal [
-	| result |
-	self flag: #toRemove.
-	self whenSelected: [ :file | result := file ].
-	self openWithSpec modalRelativeTo: self currentWorld.
-	^ result
 ]
 
 { #category : #accessing }
