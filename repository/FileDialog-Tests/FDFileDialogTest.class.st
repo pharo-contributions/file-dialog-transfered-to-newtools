@@ -41,6 +41,34 @@ FDFileDialogTest >> tearDown [
 ]
 
 { #category : #tests }
+FDFileDialogTest >> testAddABookmarkShouldBeInBookmarkTreeTable [
+	self
+		deny:
+			(dialog customBookmarks collection
+				includes: (dialog creatAnFDBookMark: (root / 'dir') asFileReference)).
+	dialog addBookmark: (root / 'dir') asFileReference.
+	self
+		assert:
+			(dialog customBookmarks collection
+				includes: (dialog creatAnFDBookMark: (root / 'dir') asFileReference))
+]
+
+{ #category : #tests }
+FDFileDialogTest >> testAddTwiceSameDirectoryToCustomBookmarkShouldCystomBookContainsOnlyOnce [
+	self
+		deny:
+			(dialog customBookmarks collection
+				includes: (dialog creatAnFDBookMark: (root / 'dir') asFileReference)).
+	dialog addBookmark: (root / 'dir') asFileReference.
+	dialog addBookmark: (root / 'dir') asFileReference.
+	self
+		assert:
+			((dialog customBookmarks collection collect: #name)
+				count: [ :item | item = 'dir' ])
+		equals: 1
+]
+
+{ #category : #tests }
 FDFileDialogTest >> testCanonicalize [
 	| location |
 	location := FileLocator imageDirectory asFileReference.
@@ -76,6 +104,18 @@ FDFileDialogTest >> testOpenFolder [
 	self assert: dialog currentDirectory equals: root.
 	dialog openFolder: root / 'dir'.
 	self assert: dialog currentDirectory equals: root / 'dir'
+]
+
+{ #category : #tests }
+FDFileDialogTest >> testRemoveABookmarkShouldNotBeInBookmarkTreeTable [
+	| bookmark |
+	bookmark := dialog creatAnFDBookMark: (root / 'dir') asFileReference.
+	dialog addBookmark: (root / 'dir') asFileReference.
+	self assert: (dialog customBookmarks collection includes: bookmark).
+	dialog removeBookmark: bookmark.
+	self deny: (dialog customBookmarks collection includes: bookmark).
+	self
+		deny: ((dialog bookmarksTreeTable roots collect: #name) includes: bookmark)
 ]
 
 { #category : #tests }

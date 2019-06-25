@@ -175,7 +175,9 @@ FDFileDialogPresenter class >> open [
 	FixedBookMark := self defaultFixedBookmarks.
 	CustomBookmarks := self defaultCustomBookmarks.
 	FilterSet := self defaultFilterSet.
-	^ self new openDialogWithSpec
+	^ self new
+		openDialogWithSpec;
+		yourself
 ]
 
 { #category : #'instance creation' }
@@ -197,16 +199,15 @@ FDFileDialogPresenter class >> removeBookmark: aFolder [
 
 { #category : #bookmarks }
 FDFileDialogPresenter >> addBookmark: aFolder [
-	self class addBookmark: aFolder.
-	self refreshBookmarks
+	| bookmark |
+	bookmark := self creatAnFDBookMark: aFolder.
+	(customBookMarks collection includes: bookmark)
+		ifTrue: [ ^ self inform: 'you already have this bookmark' ].
+	customBookMarks collection add: bookmark.
+	bookmarksTreeTable roots: self upadateBookmarksTreeTable
 ]
 
-{ #category : #bookmarks }
-FDFileDialogPresenter >> bookmarks [
-	^ fixedBookMarks , self customBookmarks
-]
-
-{ #category : #'accessing - spec fields' }
+{ #category : #accessing }
 FDFileDialogPresenter >> bookmarksTreeTable [
 	^ bookmarksTreeTable
 ]
@@ -237,6 +238,14 @@ FDFileDialogPresenter >> confirm [
 		ifNotNil: [ :entry | 
 			okActionBlock value: entry.
 			self delete ]
+]
+
+{ #category : #bookmarks }
+FDFileDialogPresenter >> creatAnFDBookMark: aDirectory [
+	^ FDBookmark
+		name: aDirectory basename
+		location: aDirectory path
+		icon: nil
 ]
 
 { #category : #actions }
@@ -270,7 +279,8 @@ FDFileDialogPresenter >> currentDirectory [
 
 { #category : #accessing }
 FDFileDialogPresenter >> currentDirectory: anObject [
-	currentDirectory := anObject
+	currentDirectory := anObject.
+	self rebuild
 ]
 
 { #category : #accessing }
@@ -288,7 +298,7 @@ FDFileDialogPresenter >> currentFiles [
 						& (a basename asLowercase < b basename asLowercase) ] ]
 ]
 
-{ #category : #'accessing - spec fields' }
+{ #category : #accessing }
 FDFileDialogPresenter >> currentFolderLabel [
 	^ currentFolderLabel
 ]
@@ -336,7 +346,7 @@ FDFileDialogPresenter >> fileFilters: anArray [
 	filtersDropList items: fileFilters
 ]
 
-{ #category : #'accessing - spec fields' }
+{ #category : #accessing }
 FDFileDialogPresenter >> filesList [
 	^ filesList
 ]
@@ -371,9 +381,14 @@ FDFileDialogPresenter >> filterACollection: aCollectionOfFileReference [
 	^ collection
 ]
 
-{ #category : #'accessing - spec fields' }
+{ #category : #accessing }
 FDFileDialogPresenter >> filtersDropList [
 	^ filtersDropList
+]
+
+{ #category : #accessing }
+FDFileDialogPresenter >> fixedBookmarks [
+	^ fixedBookMarks
 ]
 
 { #category : #accessing }
@@ -503,19 +518,14 @@ FDFileDialogPresenter >> isRootDirectory: aDirectory [
 	^ aDirectory isRoot or: [ OSPlatform current isWindows and: [ aDirectory parent isRoot ] ]
 ]
 
-{ #category : #'accessing - spec fields' }
+{ #category : #accessing }
 FDFileDialogPresenter >> nameLabel [
 	^ nameLabel
 ]
 
-{ #category : #'accessing - spec fields' }
+{ #category : #accessing }
 FDFileDialogPresenter >> nameText [
 	^ nameText
-]
-
-{ #category : #accessing }
-FDFileDialogPresenter >> noRemovableBookmarks [
-	^ fixedBookMarks
 ]
 
 { #category : #'instance creation' }
@@ -544,10 +554,16 @@ FDFileDialogPresenter >> openModal [
 	^ result
 ]
 
+{ #category : #accessing }
+FDFileDialogPresenter >> rebuild [
+	self needRebuild: true.
+	self buildWithSpec
+]
+
 { #category : #bookmarks }
 FDFileDialogPresenter >> removeBookmark: aBookmark [
-	self class removeBookmark: aBookmark location.
-	self refreshBookmarks
+	customBookMarks collection remove: aBookmark.
+	bookmarksTreeTable roots: self upadateBookmarksTreeTable
 ]
 
 { #category : #utility }
@@ -557,7 +573,7 @@ FDFileDialogPresenter >> selectBookmarkFor: aDirectory [
 	"is there withIndexDetect: ?"
 
 	bookmarksTreeTable
-		selectIndex: ((self bookmarks collect: #location) indexOf: aDirectory)
+		selectIndex: ((self unionBookmarks collect: #location) indexOf: aDirectory)
 ]
 
 { #category : #actions }
@@ -588,8 +604,14 @@ FDFileDialogPresenter >> toggleHiddenFiles [
 	filesList items: (self filterACollection: self currentFiles) 
 ]
 
+{ #category : #bookmarks }
+FDFileDialogPresenter >> unionBookmarks [
+	^ fixedBookMarks , customBookMarks
+]
+
 { #category : #'initialize-widgets' }
 FDFileDialogPresenter >> upadateBookmarksTreeTable [
+	self flag: #renameIt.
 	^ {fixedBookMarks.
 	customBookMarks}
 ]

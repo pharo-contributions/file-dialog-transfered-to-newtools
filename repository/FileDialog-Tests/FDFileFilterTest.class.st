@@ -56,25 +56,3 @@ FDFileFilterTest >> testPNGFilterShouldFilterOnlyPNGFile [
 				select: [ :fileReference | filterBis filter: fileReference ])
 				allSatisfy: [ :item | (item basename endsWith: '.png' )or:[ item isDirectory]  ])
 ]
-
-{ #category : #tests }
-FDFileFilterTest >> testJPGFilterShouldFilterOnlyJPGFile [
-	| filterBis |
-	filterBis := FDDotJPGFilter new.
-	self
-		assert:
-			((root children
-				select: [ :fileReference | filterBis filter: fileReference ])
-				allSatisfy: [ :item | (item basename endsWith: '.jpg') or: [ item isDirectory ] ])
-]
-
-{ #category : #tests }
-FDFileFilterTest >> testPNGFilterShouldFilterOnlyPNGFile [
-	| filterBis |
-	filterBis := FDDotPNGFilter new.
-	self
-		assert:
-			((root children
-				select: [ :fileReference | filterBis filter: fileReference ])
-				allSatisfy: [ :item | (item basename endsWith: '.png' )or:[ item isDirectory]  ])
-]
