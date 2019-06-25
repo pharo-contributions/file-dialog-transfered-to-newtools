@@ -168,6 +168,15 @@ FDFileDialogPresenter class >> exampleModal [
 		openDialogWithSpec) inspect
 ]
 
+{ #category : #'class initialization' }
+FDFileDialogPresenter class >> initialize [
+	OkActionBlock := self defaultOkActionBlock.
+	Directory := self defaultDirectory.
+	FixedBookMark := self defaultFixedBookmarks.
+	CustomBookmarks := self defaultCustomBookmarks.
+	FilterSet := self defaultFilterSet.
+]
+
 { #category : #'instance creation' }
 FDFileDialogPresenter class >> open [
 	OkActionBlock := self defaultOkActionBlock.
