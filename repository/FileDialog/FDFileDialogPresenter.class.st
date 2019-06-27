@@ -13,7 +13,7 @@ https://github.com/peteruhnak/file-dialog
 "
 Class {
 	#name : #FDFileDialogPresenter,
-	#superclass : #ComposablePresenter,
+	#superclass : #SpPresenter,
 	#instVars : [
 		'nameText',
 		'filesList',
@@ -184,18 +184,6 @@ FDFileDialogPresenter class >> open [
 	FixedBookMark := self defaultFixedBookmarks.
 	CustomBookmarks := self defaultCustomBookmarks.
 	FilterSet := self defaultFilterSet.
-	^ self new
-		openDialogWithSpec;
-		yourself
-]
-
-{ #category : #'instance creation' }
-FDFileDialogPresenter class >> openOn: aDirectory WithAcceptAction: acceptBlock WithCustomBookMark: aCollectionOfFDBookMarkForCustomBookmark withFixedBookmark: aCollectionOfFDBookMarkForFixedBookMark withaSetOfFilter: aFilterSet [
-	OkActionBlock := acceptBlock.
-	Directory := aDirectory.
-	CustomBookmarks := aCollectionOfFDBookMarkForCustomBookmark.
-	FixedBookMark := aCollectionOfFDBookMarkForFixedBookMark.
-	FilterSet := aFilterSet.
 	^ self new
 		openDialogWithSpec;
 		yourself
@@ -476,6 +464,12 @@ FDFileDialogPresenter >> initializeBookmarksTreeTable [
 		contextMenu: [ (self rootCommandsGroup / 'bookmark menu') beRoot asMenuPresenter ]
 ]
 
+{ #category : #'initialize-widgets' }
+FDFileDialogPresenter >> initializeCurrentMethod [
+	currentFolderLabel
+		label: (self currentFolderTitleFor: currentDirectory pathString)
+]
+
 { #category : #initialization }
 FDFileDialogPresenter >> initializeDialogWindow: aDialogWindowPresenter [
 	super initializeDialogWindow: aDialogWindowPresenter.
@@ -538,6 +532,7 @@ FDFileDialogPresenter >> initializeWidgets [
 	(nameLabel := self newLabel) label: 'Name:'.
 	(nameText := self newTextInput) autoAccept: true.
 	filtersDropList := self newDropList.
+	self initializeCurrentMethod.
 	self initializeBookmarksTreeTable.
 	self initializeFilesList.
 	self initializeFiltersDropList.
