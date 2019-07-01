@@ -71,13 +71,6 @@ Class {
 	#category : #FileDialog
 }
 
-{ #category : #TOREMOVE }
-FDFileDialogPresenter class >> addBookmark: aFolder [
-	self customBookmarks detect: [ :each | each location = aFolder ] ifFound: [ ^ self ].
-	self customBookmarks
-		add: (FDBookmark name: aFolder basename location: aFolder icon: (self iconNamed: #open))
-]
-
 { #category : #icons }
 FDFileDialogPresenter class >> allIcons [
 	<script: 'self allIcons inspect'>
@@ -100,28 +93,6 @@ FDFileDialogPresenter class >> buildCommandsGroupWith: presenter forRoot: rootCo
 			((CmCommandGroup named: 'bookmark menu') asSpecGroup
 				register: (FDRemoveBookMarkCommand forSpec context: presenter);
 				yourself)
-]
-
-{ #category : #TOREMOVE }
-FDFileDialogPresenter class >> convertBookmarks: aDictionary [
-	"convert bookmarks from old OrderedDictionary of location->#(name icon) to FDBookmark instances"
-
-	^ aDictionary associations asOrderedCollection
-		collect: [ :pair | FDBookmark name: pair value first location: pair key icon: pair value second ]
-]
-
-{ #category : #TOREMOVE }
-FDFileDialogPresenter class >> customBookmarks [
-	CustomBookmarks isDictionary
-		ifTrue: [ CustomBookmarks := self convertBookmarks: CustomBookmarks ].
-	^ CustomBookmarks ifNil: [ CustomBookmarks := OrderedCollection new ]
-]
-
-{ #category : #TOREMOVE }
-FDFileDialogPresenter class >> customBookmarks: aCollection [
-	self assert: [ aCollection isKindOf: OrderedCollection ].
-	self assert: [ aCollection allSatisfy: [ :each | each isKindOf: FDAbstractBookMark ] ].
-	CustomBookmarks := aCollection
 ]
 
 { #category : #defaultClassVariable }
