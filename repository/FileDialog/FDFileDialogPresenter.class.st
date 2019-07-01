@@ -436,11 +436,11 @@ FDFileDialogPresenter >> initialTitle [
 
 { #category : #initialization }
 FDFileDialogPresenter >> initialize [
+	self flag: 'add customozation on hiddenFilter'.
 	super initialize.
 	showHiddenFiles := false.
 	okActionBlock := OkActionBlock.
-	hiddenFilter := FDHidenFileFilter new.
-	"self defaultFolder: Directory"
+	hiddenFilter := FDHidenFileFilter new
 ]
 
 { #category : #'initialize-widgets' }
@@ -459,7 +459,6 @@ FDFileDialogPresenter >> initializeBookmarksTreeTable [
 			child isComposite
 				ifTrue: [ child collection ]
 				ifFalse: [ {} ] ].
-	"self selectBookmarkFor: self currentDirectory."
 	bookmarksTreeTable
 		contextMenu: [ (self rootCommandsGroup / 'bookmark menu') beRoot asMenuPresenter ]
 ]
@@ -505,6 +504,18 @@ FDFileDialogPresenter >> initializeFiltersDropList [
 				indexOf: FDDefaultFilter new name)
 ]
 
+{ #category : #'initialize-value' }
+FDFileDialogPresenter >> initializeGroupBookmark [
+	fixedBookMarks := FDGroupBookMark
+		CreatWithname: 'fixeBookMark'
+		WithContent: FixedBookMark copy
+		withIconName: ''.
+	customBookMarks := FDGroupBookMark
+		CreatWithname: 'customBookMark'
+		WithContent: CustomBookmarks copy
+		withIconName: ''
+]
+
 { #category : #initialization }
 FDFileDialogPresenter >> initializePresenter [
 	self bookmarksTreeTableAction.
@@ -517,15 +528,8 @@ FDFileDialogPresenter >> initializePresenter [
 
 { #category : #initialization }
 FDFileDialogPresenter >> initializeWidgets [
-	fixedBookMarks := FDGroupBookMark
-		CreatWithname: 'fixeBookMark'
-		WithContent: FixedBookMark copy
-		withIconName: ''.
-	customBookMarks := FDGroupBookMark
-		CreatWithname: 'customBookMark'
-		WithContent: CustomBookmarks copy
-		withIconName: ''.
-	currentDirectory := Directory.
+	self initializeGroupBookmark.
+	currentDirectory := Directory copy.
 	bookmarksTreeTable := self newTreeTable.
 	currentFolderLabel := self newLabel.
 	filesList := self newList.
@@ -622,7 +626,7 @@ FDFileDialogPresenter >> unionBookmarks [
 	^ fixedBookMarks , customBookMarks
 ]
 
-{ #category : #'initialize-widgets' }
+{ #category : #utility }
 FDFileDialogPresenter >> upadateBookmarksTreeTable [
 	self flag: #renameIt.
 	^ {fixedBookMarks.
