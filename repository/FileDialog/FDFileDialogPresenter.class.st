@@ -274,13 +274,6 @@ FDFileDialogPresenter >> currentDirectory [
 	^ currentDirectory ifNil: [ currentDirectory := self defaultFolder ]
 ]
 
-{ #category : #'api-customization' }
-FDFileDialogPresenter >> currentDirectory: aDirectory [
-	aDirectory isDirectory ifFalse: [ ^ self inform: 'you have to give me directory' ].
-	currentDirectory := aDirectory .
-	self openFolder: aDirectory 
-]
-
 { #category : #utility }
 FDFileDialogPresenter >> currentFiles [
 	^ (((self isRootDirectory: currentDirectory)
@@ -337,6 +330,7 @@ FDFileDialogPresenter >> delimiter [
 
 { #category : #TOREMOVE }
 FDFileDialogPresenter >> fileFilters: anArray [
+	self flag: 'to remove when migrate FDMorphicUIManager'.
 	anArray ifEmpty: [ ^ self ].
 	anArray anyOne isString
 		ifTrue: [ fileFilters := {(anArray joinUsing: ', ') -> anArray} ]
@@ -558,11 +552,6 @@ FDFileDialogPresenter >> nameLabel [
 { #category : #accessing }
 FDFileDialogPresenter >> nameText [
 	^ nameText
-]
-
-{ #category : #TOREMOVE }
-FDFileDialogPresenter >> open [
-	^ self openDialogWithSpec
 ]
 
 { #category : #actions }

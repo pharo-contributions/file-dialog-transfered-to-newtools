@@ -31,7 +31,7 @@ FDFileDialogTest >> fileListAllMustBeFilterByPNGFIlter [
 { #category : #running }
 FDFileDialogTest >> setUp [
 	super setUp.
-	(dialog := self dialogClass new) currentDirectory: root
+	(dialog := self dialogClass new) defaultFolder: root
 ]
 
 { #category : #tests }
@@ -95,12 +95,12 @@ FDFileDialogTest >> testIsRootDirectoryWindowsDrive [
 { #category : #tests }
 FDFileDialogTest >> testOpen [
 	"will it even open?"
-	window := dialog open.
+	window := dialog openDialogWithSpec.
 ]
 
 { #category : #tests }
 FDFileDialogTest >> testOpenFolder [
-	window := dialog open.
+	window := dialog openDialogWithSpec.
 	self assert: dialog currentDirectory equals: root.
 	dialog openFolder: root / 'dir'.
 	self assert: dialog currentDirectory equals: root / 'dir'
@@ -157,10 +157,11 @@ FDFileDialogTest >> testWhenAddBookmarkShouldBeInCustomBookmarks [
 
 { #category : #tests }
 FDFileDialogTest >> testWhenChangeDirectoryShouldFilesListContainsHisChildren [
-	|newDirectory|
-	newDirectory := ((root / 'dir') asFileReference).
-	dialog currentDirectory: newDirectory.
-	self assert: (dialog filesList items includesAll: newDirectory children)   
+	| newDirectory |
+	newDirectory := (root / 'dir') asFileReference.
+	dialog defaultFolder: newDirectory.
+	self
+		assert: (dialog filesList items includesAll: newDirectory children)
 ]
 
 { #category : #tests }
