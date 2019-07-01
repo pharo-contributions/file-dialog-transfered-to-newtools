@@ -1,6 +1,6 @@
 Class {
 	#name : #FDDotJPGFilter,
-	#superclass : #FDAbstractSimpleFilter,
+	#superclass : #FDAbstractCompositeFilter,
 	#category : #'FileDialog-filterStrategie'
 }
 

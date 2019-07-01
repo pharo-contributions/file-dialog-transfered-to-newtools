@@ -1,6 +1,6 @@
 Class {
 	#name : #FDDotPNGFilter,
-	#superclass : #FDAbstractSimpleFilter,
+	#superclass : #FDAbstractCompositeFilter,
 	#category : #'FileDialog-filterStrategie'
 }
 
