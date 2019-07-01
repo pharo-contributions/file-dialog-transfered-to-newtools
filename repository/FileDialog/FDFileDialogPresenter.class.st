@@ -130,20 +130,20 @@ FDFileDialogPresenter class >> defaultOkActionBlock [
 
 { #category : #specs }
 FDFileDialogPresenter class >> defaultSpec [
-	^ SpecBoxLayout newVertical
+	^ SpBoxLayout newVertical
 		add:
-			(SpecBoxLayout newHorizontal
+			(SpBoxLayout newHorizontal
 				add: #bookmarksTreeTable
 					withConstraints: [ :contraint | contraint width: 200 ];
 			add:
-					(SpecBoxLayout newVertical
+					(SpBoxLayout newVertical
 						add: #currentFolderLabel
 							withConstraints: [ :contraint | contraint height: self toolbarHeight ];
 						add: #filesList;
 						yourself);
 				yourself);
 		add:
-			(SpecBoxLayout newHorizontal 
+			(SpBoxLayout newHorizontal 
 				add: #nameLabel
 					withConstraints: [ :contraint | contraint width: 50 ];
 				add: #nameText;
