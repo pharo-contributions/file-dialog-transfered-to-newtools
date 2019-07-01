@@ -26,7 +26,6 @@ FDAddBookMarkCommand >> execute [
 				yourself).
 	self context bookmarksTreeTable
 		roots: self context upadateBookmarksTreeTable.
-	self context bookmarksTreeTable update
 ]
 
 { #category : #hooks }

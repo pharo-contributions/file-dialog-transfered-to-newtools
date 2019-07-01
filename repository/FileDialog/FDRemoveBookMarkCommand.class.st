@@ -8,7 +8,7 @@ Class {
 FDRemoveBookMarkCommand >> canBeRun [
 	| selectedItem |
 	 ^ ((selectedItem := self context selectedBookMark) isNotNil)
-		and: [ (self context noRemovableBookmarks includes: selectedItem) not ]
+		and: [ (self context fixedBookmarks includes: selectedItem) not ]
 ]
 
 { #category : #hooks }

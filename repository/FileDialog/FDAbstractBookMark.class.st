@@ -5,7 +5,7 @@ Class {
 		'name',
 		'icon'
 	],
-	#category : #FileDialog
+	#category : #'FileDialog-bookMark'
 }
 
 { #category : #accessing }

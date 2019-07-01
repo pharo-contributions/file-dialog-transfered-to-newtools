@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'collection'
 	],
-	#category : #FileDialog
+	#category : #'FileDialog-bookMark'
 }
 
 { #category : #'as yet unclassified' }

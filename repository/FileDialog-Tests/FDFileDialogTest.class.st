@@ -31,13 +31,41 @@ FDFileDialogTest >> fileListAllMustBeFilterByPNGFIlter [
 { #category : #running }
 FDFileDialogTest >> setUp [
 	super setUp.
-	(dialog := self dialogClass new) defaultFolder: root
+	(dialog := self dialogClass new) currentDirectory: root
 ]
 
 { #category : #tests }
 FDFileDialogTest >> tearDown [
 	super tearDown.
 	window ifNotNil: #delete
+]
+
+{ #category : #tests }
+FDFileDialogTest >> testAddABookmarkShouldBeInBookmarkTreeTable [
+	self
+		deny:
+			(dialog customBookmarks collection
+				includes: (dialog creatAnFDBookMark: (root / 'dir') asFileReference)).
+	dialog addBookmark: (root / 'dir') asFileReference.
+	self
+		assert:
+			(dialog customBookmarks collection
+				includes: (dialog creatAnFDBookMark: (root / 'dir') asFileReference))
+]
+
+{ #category : #tests }
+FDFileDialogTest >> testAddTwiceSameDirectoryToCustomBookmarkShouldCystomBookContainsOnlyOnce [
+	self
+		deny:
+			(dialog customBookmarks collection
+				includes: (dialog creatAnFDBookMark: (root / 'dir') asFileReference)).
+	dialog addBookmark: (root / 'dir') asFileReference.
+	dialog addBookmark: (root / 'dir') asFileReference.
+	self
+		assert:
+			((dialog customBookmarks collection collect: #name)
+				count: [ :item | item = 'dir' ])
+		equals: 1
 ]
 
 { #category : #tests }
@@ -79,6 +107,37 @@ FDFileDialogTest >> testOpenFolder [
 ]
 
 { #category : #tests }
+FDFileDialogTest >> testRemoveABookmarkShouldNotBeInBookmarkTreeTable [
+	| bookmark |
+	bookmark := dialog creatAnFDBookMark: (root / 'dir') asFileReference.
+	dialog addBookmark: (root / 'dir') asFileReference.
+	self assert: (dialog customBookmarks collection includes: bookmark).
+	dialog removeBookmark: bookmark.
+	self deny: (dialog customBookmarks collection includes: bookmark).
+	self
+		deny: ((dialog bookmarksTreeTable roots collect: #name) includes: bookmark)
+]
+
+{ #category : #'as yet unclassified' }
+FDFileDialogTest >> testWhenAddACollectionOfBookmarkToCustomBookmarkShouldBeAddedToBookmarkTreeTable [
+	| aCollectionOfBookmark |
+	aCollectionOfBookmark := {((root / 'dir') asFileReference).
+	((root / 'dir.ext') asFileReference)}
+		collect:
+			[ :eachItem | FDBookmark name: eachItem basename location: eachItem path icon: nil ].
+	dialog fillCustomBookmarksWith: aCollectionOfBookmark.
+	self
+		assert: (dialog customBookmarks collection includesAll: aCollectionOfBookmark).
+	self
+		assert:
+			((dialog bookmarksTreeTable roots
+				at:
+					((dialog bookmarksTreeTable roots collect: #name)
+						indexOf: 'customBookMark')) collection
+				includesAll: aCollectionOfBookmark)
+]
+
+{ #category : #tests }
 FDFileDialogTest >> testWhenAddBookmarkShouldBeInCustomBookmarks [
 	| contextActionMenu |
 	contextActionMenu := FDAddBookMarkCommand new
@@ -94,6 +153,39 @@ FDFileDialogTest >> testWhenAddBookmarkShouldBeInCustomBookmarks [
 					((dialog bookmarksTreeTable roots collect: #name)
 						indexOf: 'customBookMark')) collection collect: #name)
 				includes: 'dir')
+]
+
+{ #category : #tests }
+FDFileDialogTest >> testWhenChangeDirectoryShouldFilesListContainsHisChildren [
+	|newDirectory|
+	newDirectory := ((root / 'dir') asFileReference).
+	dialog currentDirectory: newDirectory.
+	self assert: (dialog filesList items includesAll: newDirectory children)   
+]
+
+{ #category : #tests }
+FDFileDialogTest >> testWhenCustomizeFilterShouldFilterDropListPresenterIncludeIt [
+	| aCollectionOfFilter |
+	aCollectionOfFilter := {FDDefaultFilter new.
+	FDDotJPGFilter new}.
+	dialog filtersCustomization: aCollectionOfFilter.
+	self
+		assert: dialog filtersDropList selectedItem name
+		equals: FDDefaultFilter new name.
+	self
+		assert: (dialog filtersDropList listItems includesAll: aCollectionOfFilter)
+]
+
+{ #category : #tests }
+FDFileDialogTest >> testWhenCustomizeFilterWithoutDefaultFilterShouldFilterDropListPresenterIncludeDefaultFilterAndSelectIt [
+	| aCollectionOfFilter |
+	aCollectionOfFilter := {FDDotJPGFilter new}.
+	dialog filtersCustomization: aCollectionOfFilter.
+	self
+		assert: dialog filtersDropList selectedItem name
+		equals: FDDefaultFilter new name.
+	self
+		assert: (dialog filtersDropList listItems includesAll: aCollectionOfFilter)
 ]
 
 { #category : #tests }
