@@ -1,7 +1,11 @@
 "
 I am an abstract base class for different styles of opening/saving.
 
-Don't use me directly -- instead use one of my children.
+## author 
+
+main Author : peteruhnak
+Migrator Spec 1 to Spec 2 : CafeKrem (github pseudo)
+if you have question please send me a mail : dutriezcle@gmail.com
 
 ## Examples
 
@@ -10,6 +14,32 @@ see class-side
 ## Website
 
 https://github.com/peteruhnak/file-dialog
+
+## HOW TO RUN 
+
+FDOpenFileDialog open
+open is define in FDFileDialogPresenter class side 
+Don't use me directly -- instead use one of my children.
+
+## CUSTOMIZATION 
+
+I define some method to customize your son of FileDialogPresenter
+
+whenSelected: aBlock 
+	this method is use to define the action of the accept button
+		
+filtersCustomization: aCollection 
+	this method is use to define a set of Filter (choose one or more among FDAbstractFilter son)
+	THERE IS ALWAYS THE DEFAULT FILTER (this filter filterNothing)
+	
+fillCustomBookmarksWith: aCollectionOfFDBookmark
+	this method is use to define a collection of bookmark for the variable 'customBookMarks'
+	
+defaultFolder: aPath
+	this method will open tou fileDialog on a aPath , this path must exist and be a directory
+	
+	
+
 "
 Class {
 	#name : #FDFileDialogPresenter,
@@ -41,7 +71,7 @@ Class {
 	#category : #FileDialog
 }
 
-{ #category : #adding }
+{ #category : #TOREMOVE }
 FDFileDialogPresenter class >> addBookmark: aFolder [
 	self customBookmarks detect: [ :each | each location = aFolder ] ifFound: [ ^ self ].
 	self customBookmarks
@@ -72,7 +102,7 @@ FDFileDialogPresenter class >> buildCommandsGroupWith: presenter forRoot: rootCo
 				yourself)
 ]
 
-{ #category : #adding }
+{ #category : #TOREMOVE }
 FDFileDialogPresenter class >> convertBookmarks: aDictionary [
 	"convert bookmarks from old OrderedDictionary of location->#(name icon) to FDBookmark instances"
 
@@ -80,14 +110,14 @@ FDFileDialogPresenter class >> convertBookmarks: aDictionary [
 		collect: [ :pair | FDBookmark name: pair value first location: pair key icon: pair value second ]
 ]
 
-{ #category : #adding }
+{ #category : #TOREMOVE }
 FDFileDialogPresenter class >> customBookmarks [
 	CustomBookmarks isDictionary
 		ifTrue: [ CustomBookmarks := self convertBookmarks: CustomBookmarks ].
 	^ CustomBookmarks ifNil: [ CustomBookmarks := OrderedCollection new ]
 ]
 
-{ #category : #adding }
+{ #category : #TOREMOVE }
 FDFileDialogPresenter class >> customBookmarks: aCollection [
 	self assert: [ aCollection isKindOf: OrderedCollection ].
 	self assert: [ aCollection allSatisfy: [ :each | each isKindOf: FDAbstractBookMark ] ].
@@ -179,22 +209,12 @@ FDFileDialogPresenter class >> initialize [
 
 { #category : #'instance creation' }
 FDFileDialogPresenter class >> open [
-	OkActionBlock := self defaultOkActionBlock.
-	Directory := self defaultDirectory.
-	FixedBookMark := self defaultFixedBookmarks.
-	CustomBookmarks := self defaultCustomBookmarks.
-	FilterSet := self defaultFilterSet.
 	^ self new
 		openDialogWithSpec;
 		yourself
 ]
 
-{ #category : #adding }
-FDFileDialogPresenter class >> removeBookmark: aFolder [
-	self customBookmarks removeAllSuchThat: [ :each | each location = aFolder ]
-]
-
-{ #category : #'api-customization' }
+{ #category : #actions }
 FDFileDialogPresenter >> addBookmark: aFolder [
 	| bookmark |
 	bookmark := self creatAnFDBookMark: aFolder.
@@ -306,7 +326,7 @@ FDFileDialogPresenter >> currentFolderTitleFor: aString [
 	^ '... ' , (aString last: (aString size * (max / optimal)) rounded) , self delimiter
 ]
 
-{ #category : #'api-customization' }
+{ #category : #accessing }
 FDFileDialogPresenter >> customBookmarks [
 	^ customBookMarks
 ]
@@ -367,7 +387,7 @@ FDFileDialogPresenter >> fillCustomBookmarksWith: aCollectionOFBookmark [
 	bookmarksTreeTable roots: self upadateBookmarksTreeTable
 ]
 
-{ #category : #'api-customization' }
+{ #category : #utility }
 FDFileDialogPresenter >> filterACollection: aCollectionOfFileReference [
 	| collection |
 	collection := aCollectionOfFileReference
@@ -566,7 +586,7 @@ FDFileDialogPresenter >> openFolder: aFolder [
 	"self selectBookmarkFor: currentDirectory"
 ]
 
-{ #category : #'api-customization' }
+{ #category : #actions }
 FDFileDialogPresenter >> removeBookmark: aBookmark [
 	customBookMarks collection remove: aBookmark.
 	bookmarksTreeTable roots: self upadateBookmarksTreeTable
