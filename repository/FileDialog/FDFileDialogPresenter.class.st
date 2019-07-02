@@ -59,14 +59,17 @@ Class {
 		'okActionBlock',
 		'fixedBookMarks',
 		'customBookMarks',
-		'bookmarksTreeTable'
+		'bookmarksTreeTable',
+		'previewContentPresenter',
+		'previewer'
 	],
 	#classVars : [
 		'CustomBookmarks',
 		'Directory',
 		'FilterSet',
 		'FixedBookMark',
-		'OkActionBlock'
+		'OkActionBlock',
+		'Previewer'
 	],
 	#category : #FileDialog
 }
@@ -129,6 +132,11 @@ FDFileDialogPresenter class >> defaultOkActionBlock [
 	^ [ :fileReference | self inform: 'you select the file' , fileReference basename ]
 ]
 
+{ #category : #defaultClassVariable }
+FDFileDialogPresenter class >> defaultPreviewer [
+	^ nil
+]
+
 { #category : #specs }
 FDFileDialogPresenter class >> defaultSpec [
 	^ SpBoxLayout newVertical
@@ -176,6 +184,36 @@ FDFileDialogPresenter class >> initialize [
 	FixedBookMark := self defaultFixedBookmarks.
 	CustomBookmarks := self defaultCustomBookmarks.
 	FilterSet := self defaultFilterSet.
+	Previewer := self defaultPreviewer
+]
+
+{ #category : #'as yet unclassified' }
+FDFileDialogPresenter class >> layoutPreviewer [
+	^ SpBoxLayout newHorizontal
+		add:
+			(SpBoxLayout newVertical
+				add:
+					(SpBoxLayout newHorizontal
+						add: #bookmarksTreeTable
+							withConstraints: [ :contraint | contraint width: 200 ];
+						add:
+							(SpBoxLayout newVertical
+								add: #currentFolderLabel
+									withConstraints: [ :contraint | contraint height: self toolbarHeight ];
+								add: #filesList;
+								yourself);
+						yourself);
+				add:
+					(SpBoxLayout newHorizontal
+						add: #nameLabel
+							withConstraints: [ :contraint | contraint width: 50 ];
+						add: #nameText;
+						add: #filtersDropList
+							withConstraints: [ :contraint | contraint width: 200 ];
+						yourself)
+					withConstraints: [ :contraint | contraint height: self toolbarHeight ] yourself);
+		add: #previewContentPresenter;
+		yourself
 ]
 
 { #category : #'instance creation' }
@@ -337,7 +375,6 @@ FDFileDialogPresenter >> filesList [
 { #category : #'initialize-actions' }
 FDFileDialogPresenter >> filesListAction [
 	filesList
-
 		whenSelectionChangedDo: [ :selectedFileReference | 
 			nameText
 				text:
@@ -347,7 +384,16 @@ FDFileDialogPresenter >> filesListAction [
 	filesList
 		whenActivatedDo: [ :selectedItem | 
 			selectedItem selectedItem isDirectory
-				ifTrue: [ self openFolder: selectedItem selectedItem ] ]
+				ifTrue: [ self openFolder: selectedItem selectedItem ] ].
+	filesList
+		whenSelectionChangedDo: [ :selectedFileReference | 
+			previewer
+				ifNotNil: [ (previewer canBeUsedOn: selectedFileReference selectedItem)
+						ifTrue: [ previewContentPresenter := previewer
+								previewOn: selectedFileReference selectedItem.
+							self window rebuildWithSpecLayout: self class layoutPreviewer ]
+						ifFalse: [ previewContentPresenter := nil.
+							self window rebuildWithSpecLayout: self class defaultSpec ] ] ]
 ]
 
 { #category : #'api-customization' }
@@ -425,7 +471,10 @@ FDFileDialogPresenter >> initialize [
 	super initialize.
 	showHiddenFiles := false.
 	okActionBlock := OkActionBlock.
-	hiddenFilter := FDHidenFileFilter new
+	hiddenFilter := FDHidenFileFilter new.
+	previewer := Previewer.
+	previewContentPresenter := nil
+	
 ]
 
 { #category : #'initialize-widgets' }
@@ -555,6 +604,26 @@ FDFileDialogPresenter >> openFolder: aFolder [
 	filesListContent := filesList items.
 	filesList unselectAll.
 	"self selectBookmarkFor: currentDirectory"
+]
+
+{ #category : #accessing }
+FDFileDialogPresenter >> previewContentPresenter [
+	^ previewContentPresenter
+]
+
+{ #category : #accessing }
+FDFileDialogPresenter >> previewContentPresenter: anObject [
+	previewContentPresenter := anObject
+]
+
+{ #category : #accessing }
+FDFileDialogPresenter >> previewer [
+	^ previewer
+]
+
+{ #category : #'api-customization' }
+FDFileDialogPresenter >> previewer: anObject [
+	previewer := anObject
 ]
 
 { #category : #actions }

@@ -5,12 +5,12 @@ Class {
 }
 
 { #category : #testing }
-FDJPGPreviewer class >> canBeUsedOn: aFileReference [
+FDJPGPreviewer >> canBeUsedOn: aFileReference [
 	^ FDDotJPGFilter new filter: aFileReference
 ]
 
 { #category : #'as yet unclassified' }
-FDJPGPreviewer class >> previewOn: aFileReference [
+FDJPGPreviewer >> previewOn: aFileReference [
 	^ SpImagePresenter new
 		image:
 			(aFileReference

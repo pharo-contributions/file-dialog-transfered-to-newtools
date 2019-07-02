@@ -19,16 +19,16 @@ Class {
 }
 
 { #category : #testing }
-FDAbstractPreviewer class >> canBeUsedOn: aFileReference [
-		^ self subclassResponsibility
-]
-
-{ #category : #testing }
 FDAbstractPreviewer class >> isAbstract [
 	^ self = FDAbstractPreviewer
 ]
 
+{ #category : #testing }
+FDAbstractPreviewer >> canBeUsedOn: aFileReference [
+		^ self subclassResponsibility
+]
+
 { #category : #'as yet unclassified' }
-FDAbstractPreviewer class >> previewOn: aFileReference [
+FDAbstractPreviewer >> previewOn: aFileReference [
 	^ self subclassResponsibility 
 ]

@@ -76,6 +76,14 @@ FDFileDialogTest >> testCanonicalize [
 ]
 
 { #category : #tests }
+FDFileDialogTest >> testCustomizationWhenChangeCollectionOfPreviewerShouldBeSet [
+	| previewerUtil |
+	previewerUtil := FDJPGPreviewer new.
+	dialog previewer: previewerUtil.
+	self assert: dialog previewer equals: previewerUtil
+]
+
+{ #category : #tests }
 FDFileDialogTest >> testInitializeFilterDropListSelectedItemShouldBeDefaultFilter [
 	self assert: dialog filtersDropList selectedItem name equals: FDDefaultFilter new name
 ]
@@ -187,6 +195,37 @@ FDFileDialogTest >> testWhenCustomizeFilterWithoutDefaultFilterShouldFilterDropL
 		equals: FDDefaultFilter new name.
 	self
 		assert: (dialog filtersDropList listItems includesAll: aCollectionOfFilter)
+]
+
+{ #category : #tests }
+FDFileDialogTest >> testWhenFilesListSelectionChangedAndIsAJPGShouldpreviewContentPresenterIsNotNil [
+	| previewerUtil |
+	previewerUtil := FDJPGPreviewer new.
+	dialog previewer: previewerUtil.
+	window := dialog openWithSpec.
+	self
+		should:
+			(dialog filesList
+				selectIndex: ((dialog filesList items collect: #basename) indexOf: 'banana.jpg'))
+		raise: Error new.
+	self
+		assert: dialog filesList selection selectedItem basename
+		equals: 'banana.jpg'.
+	self deny: dialog previewContentPresenter isNil
+]
+
+{ #category : #tests }
+FDFileDialogTest >> testWhenFilesListSelectionChangedAndIsNotAJPGShouldpreviewContentPresenterNil [
+	| previewerUtil |
+	previewerUtil := FDJPGPreviewer new.
+	dialog previewer: previewerUtil.
+	window := dialog openWithSpec.
+	dialog filesList
+		selectIndex: ((dialog filesList items collect: #basename) indexOf: 'patate.png').
+	self
+		assert: dialog filesList selection selectedItem basename
+		equals: 'patate.png'.
+	self assert: dialog previewContentPresenter isNil
 ]
 
 { #category : #tests }
