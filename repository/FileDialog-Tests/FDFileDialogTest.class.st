@@ -204,14 +204,13 @@ FDFileDialogTest >> testWhenFilesListSelectionChangedAndIsAJPGShouldpreviewConte
 	dialog previewer: previewerUtil.
 	window := dialog openWithSpec.
 	self
-		should:
-			(dialog filesList
-				selectIndex: ((dialog filesList items collect: #basename) indexOf: 'banana.jpg'))
-		raise: Error new.
+		should: [ dialog filesList
+				selectIndex: ((dialog filesList items collect: #basename) indexOf: 'banana.jpg') ]
+			"raise an error because banane.jpg don't respect the jpg format"
+		raise: Error.
 	self
 		assert: dialog filesList selection selectedItem basename
 		equals: 'banana.jpg'.
-	self deny: dialog previewContentPresenter isNil
 ]
 
 { #category : #tests }
