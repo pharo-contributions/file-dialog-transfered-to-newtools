@@ -78,7 +78,7 @@ FDFileDialogTest >> testCanonicalize [
 { #category : #tests }
 FDFileDialogTest >> testCustomizationWhenChangeCollectionOfPreviewerShouldBeSet [
 	| previewerUtil |
-	previewerUtil := FDJPGPreviewer new.
+	previewerUtil := FDPNGPreviewer new.
 	dialog previewer: previewerUtil.
 	self assert: dialog previewer equals: previewerUtil
 ]
@@ -200,7 +200,7 @@ FDFileDialogTest >> testWhenCustomizeFilterWithoutDefaultFilterShouldFilterDropL
 { #category : #tests }
 FDFileDialogTest >> testWhenFilesListSelectionChangedAndIsAJPGShouldpreviewContentPresenterIsNotNil [
 	| previewerUtil |
-	previewerUtil := FDJPGPreviewer new.
+	previewerUtil := FDPNGPreviewer new.
 	dialog previewer: previewerUtil.
 	window := dialog openWithSpec.
 	self
@@ -216,7 +216,7 @@ FDFileDialogTest >> testWhenFilesListSelectionChangedAndIsAJPGShouldpreviewConte
 { #category : #tests }
 FDFileDialogTest >> testWhenFilesListSelectionChangedAndIsNotAJPGShouldpreviewContentPresenterNil [
 	| previewerUtil |
-	previewerUtil := FDJPGPreviewer new.
+	previewerUtil := FDPNGPreviewer new.
 	dialog previewer: previewerUtil.
 	window := dialog openWithSpec.
 	dialog filesList
