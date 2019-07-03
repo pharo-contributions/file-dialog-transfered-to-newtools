@@ -173,6 +173,44 @@ FDFileDialogTest >> testWhenChangeDirectoryShouldFilesListContainsHisChildren [
 ]
 
 { #category : #tests }
+FDFileDialogTest >> testWhenClickAnAfterHistoryButtonIfThereAreHistoryShouldComeBackTheGoodDirectory [
+	| itemsBefore |
+	itemsBefore := dialog filesList items.
+	dialog filesList
+		selectIndex: ((dialog filesList items collect: #basename) indexOf: 'dir').
+	dialog filesList
+		doActivateAtIndex: ((dialog filesList items collect: #basename) indexOf: 'dir').
+	self
+		assertCollection: (dialog filesList items collect: #basename)
+		hasSameElements: {'klm.jpg' . 'klm.png' . '..'}.
+	dialog lastDirectoryVisitBeforeButton click.
+	self
+		assertCollection: dialog filesList items
+		hasSameElements: itemsBefore.
+	dialog lastDirectoryVisitAfterButton click.
+	self
+		assertCollection: (dialog filesList items collect: #basename)
+		hasSameElements: {'klm.jpg' . 'klm.png' . '..'}
+]
+
+{ #category : #tests }
+FDFileDialogTest >> testWhenClickAnBeforeHistoryButtonIfThereAreHistoryShouldComeBackToTheLastDirectoryVisited [
+	| itemsBefore |
+	itemsBefore := dialog filesList items.
+	dialog filesList
+		selectIndex: ((dialog filesList items collect: #basename) indexOf: 'dir').
+	dialog filesList
+		doActivateAtIndex: ((dialog filesList items collect: #basename) indexOf: 'dir').
+	self
+		assertCollection: (dialog filesList items collect: #basename)
+		hasSameElements: {'klm.jpg' . 'klm.png' . '..'}.
+	dialog lastDirectoryVisitBeforeButton click.
+	self
+		assertCollection: dialog filesList items
+		hasSameElements: itemsBefore
+]
+
+{ #category : #tests }
 FDFileDialogTest >> testWhenCustomizeFilterShouldFilterDropListPresenterIncludeIt [
 	| aCollectionOfFilter |
 	aCollectionOfFilter := {FDDefaultFilter new.
@@ -243,7 +281,7 @@ FDFileDialogTest >> testWhenOpenADirectoryShouldDisplayHisChildrenFilterByCurren
 { #category : #tests }
 FDFileDialogTest >> testWhenPathTextInputPresenterAcceptShouldChangeFileListWithTheGoodContent [
 	dialog currentPathTextInputPresenter 
-		text: dialog currentPathTextInputPresenter text , 'dir/'.
+		text: dialog currentPathTextInputPresenter text , '/dir/'.
 	dialog currentPathTextInputPresenter accept.
 	self
 		assertCollection: (dialog filesList items collect: #basename)

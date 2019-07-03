@@ -62,7 +62,10 @@ Class {
 		'bookmarksTreeTable',
 		'previewContentPresenter',
 		'previewer',
-		'currentPathTextInputPresenter'
+		'currentPathTextInputPresenter',
+		'lastDirectoryVisitBeforeButton',
+		'lastDirectoryVisitAfterButton',
+		'readPointerHistoryParcour'
 	],
 	#classVars : [
 		'CustomBookmarks',
@@ -145,22 +148,29 @@ FDFileDialogPresenter class >> defaultSpec [
 			(SpBoxLayout newHorizontal
 				add: #bookmarksTreeTable
 					withConstraints: [ :contraint | contraint width: 200 ];
-			add:
+				add:
 					(SpBoxLayout newVertical
-						add: #currentPathTextInputPresenter
+						add:
+							(SpBoxLayout newHorizontal
+								add: #lastDirectoryVisitBeforeButton
+									withConstraints: [ :contraint | contraint width: 30 ];
+								add: #lastDirectoryVisitAfterButton
+									withConstraints: [ :contraint | contraint width: 30 ];
+								add: #currentPathTextInputPresenter;
+								yourself)
 							withConstraints: [ :contraint | contraint height: self toolbarHeight ];
 						add: #filesList;
 						yourself);
 				yourself);
 		add:
-			(SpBoxLayout newHorizontal 
+			(SpBoxLayout newHorizontal
 				add: #nameLabel
 					withConstraints: [ :contraint | contraint width: 50 ];
 				add: #nameText;
 				add: #filtersDropList
 					withConstraints: [ :contraint | contraint width: 200 ];
-				yourself)withConstraints: [ :contraint | contraint height: self toolbarHeight]
-			yourself
+				yourself)
+			withConstraints: [ :contraint | contraint height: self toolbarHeight ] yourself
 ]
 
 { #category : #example }
@@ -233,6 +243,15 @@ FDFileDialogPresenter class >> previewExample [
 	presenter openDialogWithSpec.
 	presenter inspect.
 	^ presenter
+]
+
+{ #category : #actions }
+FDFileDialogPresenter >> ChangeDirectoryApplyToPresenter: aFolder [
+	currentDirectory := aFolder canonicalize.
+	currentPathTextInputPresenter text: currentDirectory fullName.
+	filesList items: (self filterACollection: self currentFiles).
+	filesListContent := filesList items.
+	filesList unselectAll
 ]
 
 { #category : #actions }
@@ -564,7 +583,9 @@ FDFileDialogPresenter >> initializePresenter [
 		transmitTo: filesList
 		transform:
 			[ :filterBis | filesListContent select: [ :item | filterBis filter: item ] ].
-	self currentPathTextInputAction
+	self currentPathTextInputAction.
+	self lastDirectoryVisitiBeforeButtonAction.
+	self lastDirectoryVisitiAfterButtonAction
 ]
 
 { #category : #initialization }
@@ -577,7 +598,13 @@ FDFileDialogPresenter >> initializeWidgets [
 	(nameLabel := self newLabel) label: 'Name:'.
 	(nameText := self newTextInput) autoAccept: true.
 	filtersDropList := self newDropList.
+	lastDirectoryVisitBeforeButton := self newButton.
+	lastDirectoryVisitAfterButton := self newButton.
+	readPointerHistoryParcour := DoubleLink value: currentDirectory.
 	currentPathTextInputPresenter text: currentDirectory fullName.
+	lastDirectoryVisitAfterButton
+		icon: (self iconNamed: #glamorousDiveRight).
+	lastDirectoryVisitBeforeButton icon: (self iconNamed: #back).
 	self initializeBookmarksTreeTable.
 	self initializeFilesList.
 	self initializeFiltersDropList.
@@ -592,6 +619,39 @@ FDFileDialogPresenter >> isRootDirectory: aDirectory [
 ]
 
 { #category : #accessing }
+FDFileDialogPresenter >> lastDirectoryVisitAfterButton [
+	^ lastDirectoryVisitAfterButton
+]
+
+{ #category : #accessing }
+FDFileDialogPresenter >> lastDirectoryVisitBeforeButton [
+	^ lastDirectoryVisitBeforeButton
+]
+
+{ #category : #'initialize-actions' }
+FDFileDialogPresenter >> lastDirectoryVisitiAfterButtonAction [
+	lastDirectoryVisitAfterButton
+		action: [ readPointerHistoryParcour hasSuccessor
+				ifFalse: [ self
+						inform:
+							'this button is use to go after clicking on <- button to return on the last directory' ]
+				ifTrue: [ self
+						ChangeDirectoryApplyToPresenter: readPointerHistoryParcour nextLink value.
+					readPointerHistoryParcour := readPointerHistoryParcour nextLink ] ]
+]
+
+{ #category : #'initialize-actions' }
+FDFileDialogPresenter >> lastDirectoryVisitiBeforeButtonAction [
+	lastDirectoryVisitBeforeButton
+		action: [ readPointerHistoryParcour hasPredecessor
+				ifFalse: [ self inform: 'this button is used to go to the last directory ' ]
+				ifTrue: [ self
+						ChangeDirectoryApplyToPresenter: readPointerHistoryParcour previousLink value.
+					readPointerHistoryParcour := readPointerHistoryParcour
+						previousLink ] ]
+]
+
+{ #category : #accessing }
 FDFileDialogPresenter >> nameLabel [
 	^ nameLabel
 ]
@@ -603,11 +663,16 @@ FDFileDialogPresenter >> nameText [
 
 { #category : #actions }
 FDFileDialogPresenter >> openFolder: aFolder [
-	currentDirectory := self canonicalize: aFolder.
-	currentPathTextInputPresenter text: currentDirectory fullName.
-	filesList items: (self filterACollection: self currentFiles).
-	filesListContent := filesList items.
-	filesList unselectAll
+	self ChangeDirectoryApplyToPresenter: aFolder.
+	(readPointerHistoryParcour value children includes: currentDirectory)
+		ifTrue: [ readPointerHistoryParcour
+				nextLink:
+					((DoubleLink
+						value: currentDirectory)
+						previousLink: readPointerHistoryParcour;
+						yourself).
+			readPointerHistoryParcour := readPointerHistoryParcour nextLink ]
+		ifFalse: [ readPointerHistoryParcour value: currentDirectory ]
 ]
 
 { #category : #accessing }
@@ -628,6 +693,11 @@ FDFileDialogPresenter >> previewer [
 { #category : #'api-customization' }
 FDFileDialogPresenter >> previewer: anObject [
 	previewer := anObject
+]
+
+{ #category : #accessing }
+FDFileDialogPresenter >> readPointerHistoryParcour [
+	^ readPointerHistoryParcour
 ]
 
 { #category : #actions }
