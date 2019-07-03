@@ -31,7 +31,7 @@ FDFileDialogTest >> fileListAllMustBeFilterByPNGFIlter [
 { #category : #running }
 FDFileDialogTest >> setUp [
 	super setUp.
-	(dialog := self dialogClass new) currentDirectory: root
+	(dialog := self dialogClass new) defaultFolder: root
 ]
 
 { #category : #tests }
@@ -76,6 +76,14 @@ FDFileDialogTest >> testCanonicalize [
 ]
 
 { #category : #tests }
+FDFileDialogTest >> testCustomizationWhenChangeCollectionOfPreviewerShouldBeSet [
+	| previewerUtil |
+	previewerUtil := FDPNGPreviewer new.
+	dialog previewer: previewerUtil.
+	self assert: dialog previewer equals: previewerUtil
+]
+
+{ #category : #tests }
 FDFileDialogTest >> testInitializeFilterDropListSelectedItemShouldBeDefaultFilter [
 	self assert: dialog filtersDropList selectedItem name equals: FDDefaultFilter new name
 ]
@@ -95,12 +103,12 @@ FDFileDialogTest >> testIsRootDirectoryWindowsDrive [
 { #category : #tests }
 FDFileDialogTest >> testOpen [
 	"will it even open?"
-	window := dialog open.
+	window := dialog openDialogWithSpec.
 ]
 
 { #category : #tests }
 FDFileDialogTest >> testOpenFolder [
-	window := dialog open.
+	window := dialog openDialogWithSpec.
 	self assert: dialog currentDirectory equals: root.
 	dialog openFolder: root / 'dir'.
 	self assert: dialog currentDirectory equals: root / 'dir'
@@ -157,10 +165,11 @@ FDFileDialogTest >> testWhenAddBookmarkShouldBeInCustomBookmarks [
 
 { #category : #tests }
 FDFileDialogTest >> testWhenChangeDirectoryShouldFilesListContainsHisChildren [
-	|newDirectory|
-	newDirectory := ((root / 'dir') asFileReference).
-	dialog currentDirectory: newDirectory.
-	self assert: (dialog filesList items includesAll: newDirectory children)   
+	| newDirectory |
+	newDirectory := (root / 'dir') asFileReference.
+	dialog defaultFolder: newDirectory.
+	self
+		assert: (dialog filesList items includesAll: newDirectory children)
 ]
 
 { #category : #tests }
@@ -186,6 +195,36 @@ FDFileDialogTest >> testWhenCustomizeFilterWithoutDefaultFilterShouldFilterDropL
 		equals: FDDefaultFilter new name.
 	self
 		assert: (dialog filtersDropList listItems includesAll: aCollectionOfFilter)
+]
+
+{ #category : #tests }
+FDFileDialogTest >> testWhenFilesListSelectionChangedAndIsAJPGShouldpreviewContentPresenterIsNotNil [
+	| previewerUtil |
+	previewerUtil := FDPNGPreviewer new.
+	dialog previewer: previewerUtil.
+	window := dialog openWithSpec.
+	self
+		should: [ dialog filesList
+				selectIndex: ((dialog filesList items collect: #basename) indexOf: 'banana.jpg') ]
+			"raise an error because banane.jpg don't respect the jpg format"
+		raise: Error.
+	self
+		assert: dialog filesList selection selectedItem basename
+		equals: 'banana.jpg'.
+]
+
+{ #category : #tests }
+FDFileDialogTest >> testWhenFilesListSelectionChangedAndIsNotAJPGShouldpreviewContentPresenterNil [
+	| previewerUtil |
+	previewerUtil := FDPNGPreviewer new.
+	dialog previewer: previewerUtil.
+	window := dialog openWithSpec.
+	dialog filesList
+		selectIndex: ((dialog filesList items collect: #basename) indexOf: 'patate.png').
+	self
+		assert: dialog filesList selection selectedItem basename
+		equals: 'patate.png'.
+	self assert: dialog previewContentPresenter isNil
 ]
 
 { #category : #tests }

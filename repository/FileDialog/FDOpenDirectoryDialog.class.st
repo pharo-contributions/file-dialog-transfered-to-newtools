@@ -11,13 +11,13 @@ Class {
 
 { #category : #specs }
 FDOpenDirectoryDialog class >> defaultSpec [
-	^ SpecBoxLayout newVertical
+	^ SpBoxLayout newVertical
 		add:
-			(SpecBoxLayout newHorizontal
+			(SpBoxLayout newHorizontal
 				add: #bookmarksTreeTable
 					withConstraints: [ :contraint | contraint width: 150 ];
 				add:
-					(SpecBoxLayout newVertical
+					(SpBoxLayout newVertical
 						add: #currentFolderLabel
 							withConstraints: [ :contraint | contraint height: self toolbarHeight ];
 						add: #filesList;

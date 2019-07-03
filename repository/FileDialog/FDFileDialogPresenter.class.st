@@ -1,7 +1,11 @@
 "
 I am an abstract base class for different styles of opening/saving.
 
-Don't use me directly -- instead use one of my children.
+## author 
+
+main Author : peteruhnak
+Migrator Spec 1 to Spec 2 : CafeKrem (github pseudo)
+if you have question please send me a mail : dutriezcle@gmail.com
 
 ## Examples
 
@@ -10,6 +14,32 @@ see class-side
 ## Website
 
 https://github.com/peteruhnak/file-dialog
+
+## HOW TO RUN 
+
+FDOpenFileDialog open
+open is define in FDFileDialogPresenter class side 
+Don't use me directly -- instead use one of my children.
+
+## CUSTOMIZATION 
+
+I define some method to customize your son of FileDialogPresenter
+
+whenSelected: aBlock 
+	this method is use to define the action of the accept button
+		
+filtersCustomization: aCollection 
+	this method is use to define a set of Filter (choose one or more among FDAbstractFilter son)
+	THERE IS ALWAYS THE DEFAULT FILTER (this filter filterNothing)
+	
+fillCustomBookmarksWith: aCollectionOfFDBookmark
+	this method is use to define a collection of bookmark for the variable 'customBookMarks'
+	
+defaultFolder: aPath
+	this method will open tou fileDialog on a aPath , this path must exist and be a directory
+	
+	
+
 "
 Class {
 	#name : #FDFileDialogPresenter,
@@ -29,24 +59,20 @@ Class {
 		'okActionBlock',
 		'fixedBookMarks',
 		'customBookMarks',
-		'bookmarksTreeTable'
+		'bookmarksTreeTable',
+		'previewContentPresenter',
+		'previewer'
 	],
 	#classVars : [
 		'CustomBookmarks',
 		'Directory',
 		'FilterSet',
 		'FixedBookMark',
-		'OkActionBlock'
+		'OkActionBlock',
+		'Previewer'
 	],
 	#category : #FileDialog
 }
-
-{ #category : #adding }
-FDFileDialogPresenter class >> addBookmark: aFolder [
-	self customBookmarks detect: [ :each | each location = aFolder ] ifFound: [ ^ self ].
-	self customBookmarks
-		add: (FDBookmark name: aFolder basename location: aFolder icon: (self iconNamed: #open))
-]
 
 { #category : #icons }
 FDFileDialogPresenter class >> allIcons [
@@ -70,28 +96,6 @@ FDFileDialogPresenter class >> buildCommandsGroupWith: presenter forRoot: rootCo
 			((CmCommandGroup named: 'bookmark menu') asSpecGroup
 				register: (FDRemoveBookMarkCommand forSpec context: presenter);
 				yourself)
-]
-
-{ #category : #adding }
-FDFileDialogPresenter class >> convertBookmarks: aDictionary [
-	"convert bookmarks from old OrderedDictionary of location->#(name icon) to FDBookmark instances"
-
-	^ aDictionary associations asOrderedCollection
-		collect: [ :pair | FDBookmark name: pair value first location: pair key icon: pair value second ]
-]
-
-{ #category : #adding }
-FDFileDialogPresenter class >> customBookmarks [
-	CustomBookmarks isDictionary
-		ifTrue: [ CustomBookmarks := self convertBookmarks: CustomBookmarks ].
-	^ CustomBookmarks ifNil: [ CustomBookmarks := OrderedCollection new ]
-]
-
-{ #category : #adding }
-FDFileDialogPresenter class >> customBookmarks: aCollection [
-	self assert: [ aCollection isKindOf: OrderedCollection ].
-	self assert: [ aCollection allSatisfy: [ :each | each isKindOf: FDAbstractBookMark ] ].
-	CustomBookmarks := aCollection
 ]
 
 { #category : #defaultClassVariable }
@@ -128,22 +132,27 @@ FDFileDialogPresenter class >> defaultOkActionBlock [
 	^ [ :fileReference | self inform: 'you select the file' , fileReference basename ]
 ]
 
+{ #category : #defaultClassVariable }
+FDFileDialogPresenter class >> defaultPreviewer [
+	^ nil
+]
+
 { #category : #specs }
 FDFileDialogPresenter class >> defaultSpec [
-	^ SpecBoxLayout newVertical
+	^ SpBoxLayout newVertical
 		add:
-			(SpecBoxLayout newHorizontal
+			(SpBoxLayout newHorizontal
 				add: #bookmarksTreeTable
 					withConstraints: [ :contraint | contraint width: 200 ];
 			add:
-					(SpecBoxLayout newVertical
+					(SpBoxLayout newVertical
 						add: #currentFolderLabel
 							withConstraints: [ :contraint | contraint height: self toolbarHeight ];
 						add: #filesList;
 						yourself);
 				yourself);
 		add:
-			(SpecBoxLayout newHorizontal 
+			(SpBoxLayout newHorizontal 
 				add: #nameLabel
 					withConstraints: [ :contraint | contraint width: 50 ];
 				add: #nameText;
@@ -175,26 +184,47 @@ FDFileDialogPresenter class >> initialize [
 	FixedBookMark := self defaultFixedBookmarks.
 	CustomBookmarks := self defaultCustomBookmarks.
 	FilterSet := self defaultFilterSet.
+	Previewer := self defaultPreviewer
+]
+
+{ #category : #specs }
+FDFileDialogPresenter class >> layoutPreviewer [
+	^ SpBoxLayout newHorizontal
+		add:
+			(SpBoxLayout newVertical
+				add:
+					(SpBoxLayout newHorizontal
+						add: #bookmarksTreeTable
+							withConstraints: [ :contraint | contraint width: 200 ];
+						add:
+							(SpBoxLayout newVertical
+								add: #currentFolderLabel
+									withConstraints: [ :contraint | contraint height: self toolbarHeight ];
+								add: #filesList;
+								yourself);
+						yourself);
+				add:
+					(SpBoxLayout newHorizontal
+						add: #nameLabel
+							withConstraints: [ :contraint | contraint width: 50 ];
+						add: #nameText;
+						add: #filtersDropList
+							withConstraints: [ :contraint | contraint width: 200 ];
+						yourself)
+					withConstraints: [ :contraint | contraint height: self toolbarHeight ] yourself)
+			withConstraints: [ :contraint | contraint height: 200 ];
+		add: #previewContentPresenter;
+		yourself
 ]
 
 { #category : #'instance creation' }
 FDFileDialogPresenter class >> open [
-	OkActionBlock := self defaultOkActionBlock.
-	Directory := self defaultDirectory.
-	FixedBookMark := self defaultFixedBookmarks.
-	CustomBookmarks := self defaultCustomBookmarks.
-	FilterSet := self defaultFilterSet.
 	^ self new
 		openDialogWithSpec;
 		yourself
 ]
 
-{ #category : #adding }
-FDFileDialogPresenter class >> removeBookmark: aFolder [
-	self customBookmarks removeAllSuchThat: [ :each | each location = aFolder ]
-]
-
-{ #category : #'api-customization' }
+{ #category : #actions }
 FDFileDialogPresenter >> addBookmark: aFolder [
 	| bookmark |
 	bookmark := self creatAnFDBookMark: aFolder.
@@ -227,7 +257,7 @@ FDFileDialogPresenter >> canonicalize: aFileReference [
 		ifFalse: [ "<= P6" aFileReference pathString asFileReference ]
 ]
 
-{ #category : #actions }
+{ #category : #utility }
 FDFileDialogPresenter >> confirm [
 	nameText text isNotEmpty
 		ifFalse: [ ^ self inform: 'you have to select a file' ].
@@ -237,7 +267,7 @@ FDFileDialogPresenter >> confirm [
 			self delete ]
 ]
 
-{ #category : #bookmarks }
+{ #category : #utility }
 FDFileDialogPresenter >> creatAnFDBookMark: aDirectory [
 	^ FDBookmark
 		name: aDirectory basename
@@ -245,12 +275,12 @@ FDFileDialogPresenter >> creatAnFDBookMark: aDirectory [
 		icon: nil
 ]
 
-{ #category : #actions }
+{ #category : #utility }
 FDFileDialogPresenter >> createDirectory [
 	^ self createDirectory: 'new-folder'
 ]
 
-{ #category : #actions }
+{ #category : #utility }
 FDFileDialogPresenter >> createDirectory: initialName [
 	| name path |
 	name := (UIManager default
@@ -274,14 +304,7 @@ FDFileDialogPresenter >> currentDirectory [
 	^ currentDirectory ifNil: [ currentDirectory := self defaultFolder ]
 ]
 
-{ #category : #'api-customization' }
-FDFileDialogPresenter >> currentDirectory: aDirectory [
-	aDirectory isDirectory ifFalse: [ ^ self inform: 'you have to give me directory' ].
-	currentDirectory := aDirectory .
-	self openFolder: aDirectory 
-]
-
-{ #category : #accessing }
+{ #category : #utility }
 FDFileDialogPresenter >> currentFiles [
 	^ (((self isRootDirectory: currentDirectory)
 		ifTrue: [ {} ]
@@ -313,30 +336,31 @@ FDFileDialogPresenter >> currentFolderTitleFor: aString [
 	^ '... ' , (aString last: (aString size * (max / optimal)) rounded) , self delimiter
 ]
 
-{ #category : #'api-customization' }
+{ #category : #accessing }
 FDFileDialogPresenter >> customBookmarks [
 	^ customBookMarks
 ]
 
-{ #category : #accessing }
+{ #category : #utility }
 FDFileDialogPresenter >> defaultFolder [
 	^ FileLocator imageDirectory asFileReference
 ]
 
-{ #category : #public }
+{ #category : #'api-customization' }
 FDFileDialogPresenter >> defaultFolder: aPath [
 	(aPath isNotNil and: [ aPath asFileReference exists ])
 		ifTrue: [ self openFolder: aPath asFileReference ]
 		ifFalse: [ self openFolder: self defaultFolder ]
 ]
 
-{ #category : #accessing }
+{ #category : #utility }
 FDFileDialogPresenter >> delimiter [
 	^ FileSystem disk delimiter asString
 ]
 
-{ #category : #public }
+{ #category : #TOREMOVE }
 FDFileDialogPresenter >> fileFilters: anArray [
+	self flag: 'to remove when migrate FDMorphicUIManager'.
 	anArray ifEmpty: [ ^ self ].
 	anArray anyOne isString
 		ifTrue: [ fileFilters := {(anArray joinUsing: ', ') -> anArray} ]
@@ -352,7 +376,6 @@ FDFileDialogPresenter >> filesList [
 { #category : #'initialize-actions' }
 FDFileDialogPresenter >> filesListAction [
 	filesList
-
 		whenSelectionChangedDo: [ :selectedFileReference | 
 			nameText
 				text:
@@ -362,7 +385,16 @@ FDFileDialogPresenter >> filesListAction [
 	filesList
 		whenActivatedDo: [ :selectedItem | 
 			selectedItem selectedItem isDirectory
-				ifTrue: [ self openFolder: selectedItem selectedItem ] ]
+				ifTrue: [ self openFolder: selectedItem selectedItem ] ].
+	filesList
+		whenSelectionChangedDo: [ :selectedFileReference | 
+			previewer
+				ifNotNil: [ (previewer canBeUsedOn: selectedFileReference selectedItem)
+						ifTrue: [ previewContentPresenter := previewer
+								previewOn: selectedFileReference selectedItem.
+							self window rebuildWithSpecLayout: self class layoutPreviewer ]
+						ifFalse: [ previewContentPresenter := nil.
+							self window rebuildWithSpecLayout: self class defaultSpec ] ] ]
 ]
 
 { #category : #'api-customization' }
@@ -373,7 +405,7 @@ FDFileDialogPresenter >> fillCustomBookmarksWith: aCollectionOFBookmark [
 	bookmarksTreeTable roots: self upadateBookmarksTreeTable
 ]
 
-{ #category : #'initialize-actions' }
+{ #category : #utility }
 FDFileDialogPresenter >> filterACollection: aCollectionOfFileReference [
 	| collection |
 	collection := aCollectionOfFileReference
@@ -412,7 +444,7 @@ FDFileDialogPresenter >> fixedBookmarks [
 	^ fixedBookMarks
 ]
 
-{ #category : #accessing }
+{ #category : #utility }
 FDFileDialogPresenter >> iconFor: anEntry [
 	| ext |
 	anEntry isDirectory
@@ -424,34 +456,37 @@ FDFileDialogPresenter >> iconFor: anEntry [
 		ifAbsent: [ self iconNamed: #page ]
 ]
 
-{ #category : #api }
+{ #category : #'initialize-value' }
 FDFileDialogPresenter >> initialExtent [
-	^ 550 @ 550
+	^ 700 @ 700
 ]
 
-{ #category : #api }
+{ #category : #'initialize-value' }
 FDFileDialogPresenter >> initialTitle [
 	^ self subclassResponsibility
 ]
 
 { #category : #initialization }
 FDFileDialogPresenter >> initialize [
+	self flag: 'add customozation on hiddenFilter'.
 	super initialize.
 	showHiddenFiles := false.
 	okActionBlock := OkActionBlock.
 	hiddenFilter := FDHidenFileFilter new.
-	"self defaultFolder: Directory"
+	previewer := Previewer.
+	previewContentPresenter := nil
+	
 ]
 
 { #category : #'initialize-widgets' }
 FDFileDialogPresenter >> initializeBookmarksTreeTable [
 	bookmarksTreeTable
 		addColumn:
-			((ImageTableColumn evaluated: [ :each | each icon ])
+			((SpImageTableColumn evaluated: [ :each | each icon ])
 				width: 50;
 				yourself);
 		addColumn:
-			(StringTableColumn
+			(SpStringTableColumn
 				evaluated: [ :fdGroupBookMark | fdGroupBookMark name ]).
 	bookmarksTreeTable
 		roots: self upadateBookmarksTreeTable;
@@ -459,7 +494,6 @@ FDFileDialogPresenter >> initializeBookmarksTreeTable [
 			child isComposite
 				ifTrue: [ child collection ]
 				ifFalse: [ {} ] ].
-	"self selectBookmarkFor: self currentDirectory."
 	bookmarksTreeTable
 		contextMenu: [ (self rootCommandsGroup / 'bookmark menu') beRoot asMenuPresenter ]
 ]
@@ -505,6 +539,18 @@ FDFileDialogPresenter >> initializeFiltersDropList [
 				indexOf: FDDefaultFilter new name)
 ]
 
+{ #category : #'initialize-value' }
+FDFileDialogPresenter >> initializeGroupBookmark [
+	fixedBookMarks := FDGroupBookMark
+		CreatWithname: 'fixeBookMark'
+		WithContent: FixedBookMark copy
+		withIconName: ''.
+	customBookMarks := FDGroupBookMark
+		CreatWithname: 'customBookMark'
+		WithContent: CustomBookmarks copy
+		withIconName: ''
+]
+
 { #category : #initialization }
 FDFileDialogPresenter >> initializePresenter [
 	self bookmarksTreeTableAction.
@@ -517,15 +563,8 @@ FDFileDialogPresenter >> initializePresenter [
 
 { #category : #initialization }
 FDFileDialogPresenter >> initializeWidgets [
-	fixedBookMarks := FDGroupBookMark
-		CreatWithname: 'fixeBookMark'
-		WithContent: FixedBookMark copy
-		withIconName: ''.
-	customBookMarks := FDGroupBookMark
-		CreatWithname: 'customBookMark'
-		WithContent: CustomBookmarks copy
-		withIconName: ''.
-	currentDirectory := Directory.
+	self initializeGroupBookmark.
+	currentDirectory := Directory copy.
 	bookmarksTreeTable := self newTreeTable.
 	currentFolderLabel := self newLabel.
 	filesList := self newList.
@@ -556,11 +595,6 @@ FDFileDialogPresenter >> nameText [
 	^ nameText
 ]
 
-{ #category : #'instance creation' }
-FDFileDialogPresenter >> open [
-	^ self openDialogWithSpec
-]
-
 { #category : #actions }
 FDFileDialogPresenter >> openFolder: aFolder [
 	currentDirectory := self canonicalize: aFolder.
@@ -574,12 +608,26 @@ FDFileDialogPresenter >> openFolder: aFolder [
 ]
 
 { #category : #accessing }
-FDFileDialogPresenter >> rebuild [
-	self needRebuild: true.
-	self buildWithSpec
+FDFileDialogPresenter >> previewContentPresenter [
+	^ previewContentPresenter
+]
+
+{ #category : #accessing }
+FDFileDialogPresenter >> previewContentPresenter: anObject [
+	previewContentPresenter := anObject
+]
+
+{ #category : #accessing }
+FDFileDialogPresenter >> previewer [
+	^ previewer
 ]
 
 { #category : #'api-customization' }
+FDFileDialogPresenter >> previewer: anObject [
+	previewer := anObject
+]
+
+{ #category : #actions }
 FDFileDialogPresenter >> removeBookmark: aBookmark [
 	customBookMarks collection remove: aBookmark.
 	bookmarksTreeTable roots: self upadateBookmarksTreeTable
@@ -623,19 +671,19 @@ FDFileDialogPresenter >> toggleHiddenFiles [
 	filesList items: (self filterACollection: self currentFiles) 
 ]
 
-{ #category : #bookmarks }
+{ #category : #utility }
 FDFileDialogPresenter >> unionBookmarks [
 	^ fixedBookMarks , customBookMarks
 ]
 
-{ #category : #'initialize-widgets' }
+{ #category : #utility }
 FDFileDialogPresenter >> upadateBookmarksTreeTable [
 	self flag: #renameIt.
 	^ {fixedBookMarks.
 	customBookMarks}
 ]
 
-{ #category : #public }
+{ #category : #'api-customization' }
 FDFileDialogPresenter >> whenSelected: aOneArgBlock [
 	okActionBlock := aOneArgBlock
 ]
