@@ -198,32 +198,32 @@ FDFileDialogTest >> testWhenCustomizeFilterWithoutDefaultFilterShouldFilterDropL
 ]
 
 { #category : #tests }
-FDFileDialogTest >> testWhenFilesListSelectionChangedAndIsAJPGShouldpreviewContentPresenterIsNotNil [
+FDFileDialogTest >> testWhenFilesListSelectionChangedAndIsAPNGShouldpreviewContentPresenterIsNotNil [
 	| previewerUtil |
 	previewerUtil := FDPNGPreviewer new.
 	dialog previewer: previewerUtil.
 	window := dialog openWithSpec.
 	self
 		should: [ dialog filesList
-				selectIndex: ((dialog filesList items collect: #basename) indexOf: 'banana.jpg') ]
+				selectIndex: ((dialog filesList items collect: #basename) indexOf: 'patate.png') ]
 			"raise an error because banane.jpg don't respect the jpg format"
 		raise: Error.
 	self
 		assert: dialog filesList selection selectedItem basename
-		equals: 'banana.jpg'.
+		equals: 'patate.png'.
 ]
 
 { #category : #tests }
-FDFileDialogTest >> testWhenFilesListSelectionChangedAndIsNotAJPGShouldpreviewContentPresenterNil [
+FDFileDialogTest >> testWhenFilesListSelectionChangedAndIsNotAPNGShouldpreviewContentPresenterNil [
 	| previewerUtil |
 	previewerUtil := FDPNGPreviewer new.
 	dialog previewer: previewerUtil.
 	window := dialog openWithSpec.
 	dialog filesList
-		selectIndex: ((dialog filesList items collect: #basename) indexOf: 'patate.png').
+		selectIndex: ((dialog filesList items collect: #basename) indexOf: 'banana.jpg').
 	self
 		assert: dialog filesList selection selectedItem basename
-		equals: 'patate.png'.
+		equals: 'banana.jpg'.
 	self assert: dialog previewContentPresenter isNil
 ]
 

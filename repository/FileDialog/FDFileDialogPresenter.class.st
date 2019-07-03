@@ -223,6 +223,17 @@ FDFileDialogPresenter class >> open [
 		yourself
 ]
 
+{ #category : #'as yet unclassified' }
+FDFileDialogPresenter class >> previewExample [
+	<example>
+	| presenter |
+	presenter := FDOpenFileDialog new.
+	presenter previewer: FDPNGPreviewer new.
+	presenter openDialogWithSpec.
+	presenter inspect.
+	^ presenter
+]
+
 { #category : #actions }
 FDFileDialogPresenter >> addBookmark: aFolder [
 	| bookmark |
@@ -391,9 +402,11 @@ FDFileDialogPresenter >> filesListAction [
 				ifNotNil: [ (previewer canBeUsedOn: selectedFileReference selectedItem)
 						ifTrue: [ previewContentPresenter := previewer
 								previewOn: selectedFileReference selectedItem.
-							self window rebuildWithSpecLayout: self class layoutPreviewer ]
+							self window rebuildWithSpecLayout: self class layoutPreviewer.
+							self window extent: 800@800 ]
 						ifFalse: [ previewContentPresenter := nil.
-							self window rebuildWithSpecLayout: self class defaultSpec ] ] ]
+							self window rebuildWithSpecLayout: self class defaultSpec.
+							self window extent: 800@800 ] ] ]
 ]
 
 { #category : #'api-customization' }
