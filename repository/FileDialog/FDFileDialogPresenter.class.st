@@ -187,7 +187,7 @@ FDFileDialogPresenter class >> initialize [
 	Previewer := self defaultPreviewer
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #specs }
 FDFileDialogPresenter class >> layoutPreviewer [
 	^ SpBoxLayout newHorizontal
 		add:
@@ -211,8 +211,8 @@ FDFileDialogPresenter class >> layoutPreviewer [
 						add: #filtersDropList
 							withConstraints: [ :contraint | contraint width: 200 ];
 						yourself)
-					withConstraints: [ :contraint | contraint height: self toolbarHeight ] yourself);
-		add: #previewContentPresenter;
+					withConstraints: [ :contraint | contraint height: self toolbarHeight ] yourself)withConstraints:  [:contraint |contraint height: 150  ];
+		add:  #previewContentPresenter withConstraints:  [:contraint |contraint height: 30 ] ;
 		yourself
 ]
 
@@ -457,7 +457,7 @@ FDFileDialogPresenter >> iconFor: anEntry [
 
 { #category : #'initialize-value' }
 FDFileDialogPresenter >> initialExtent [
-	^ 550 @ 550
+	^ 700 @ 700
 ]
 
 { #category : #'initialize-value' }
@@ -481,11 +481,11 @@ FDFileDialogPresenter >> initialize [
 FDFileDialogPresenter >> initializeBookmarksTreeTable [
 	bookmarksTreeTable
 		addColumn:
-			((ImageTableColumn evaluated: [ :each | each icon ])
+			((SpImageTableColumn evaluated: [ :each | each icon ])
 				width: 50;
 				yourself);
 		addColumn:
-			(StringTableColumn
+			(SpStringTableColumn
 				evaluated: [ :fdGroupBookMark | fdGroupBookMark name ]).
 	bookmarksTreeTable
 		roots: self upadateBookmarksTreeTable;

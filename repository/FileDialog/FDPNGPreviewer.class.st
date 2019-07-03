@@ -1,16 +1,18 @@
 Class {
-	#name : #FDJPGPreviewer,
+	#name : #FDPNGPreviewer,
 	#superclass : #FDAbstractPreviewer,
 	#category : #'FileDialog-previewerStrategie'
 }
 
 { #category : #testing }
-FDJPGPreviewer >> canBeUsedOn: aFileReference [
-	^ FDDotJPGFilter new filter: aFileReference
+FDPNGPreviewer >> canBeUsedOn: aFileReference [
+	^ aFileReference isNotNil
+		and: [ aFileReference isFile
+				and: [ aFileReference basename endsWith: '.png' ] ]
 ]
 
 { #category : #'as yet unclassified' }
-FDJPGPreviewer >> previewOn: aFileReference [
+FDPNGPreviewer >> previewOn: aFileReference [
 	^ SpImagePresenter new
 		image:
 			(aFileReference
