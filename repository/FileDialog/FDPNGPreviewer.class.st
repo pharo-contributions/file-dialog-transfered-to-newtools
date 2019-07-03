@@ -6,9 +6,11 @@ Class {
 
 { #category : #testing }
 FDPNGPreviewer >> canBeUsedOn: aFileReference [
-	^ aFileReference isNotNil
-		and: [ aFileReference isFile
-				and: [ aFileReference basename endsWith: '.png' ] ]
+	aFileReference ifNil: [ ^ false ].
+	aFileReference mimeTypes
+		ifNil: [ ^ false ]
+		ifNotNil:
+			[ :item | ^ item anySatisfy: [ :each | each matches: ZnMimeType imagePng ] ]
 ]
 
 { #category : #'as yet unclassified' }
