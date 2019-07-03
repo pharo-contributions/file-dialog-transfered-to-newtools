@@ -61,7 +61,8 @@ Class {
 		'customBookMarks',
 		'bookmarksTreeTable',
 		'previewContentPresenter',
-		'previewer'
+		'previewer',
+		'currentPathTextInputPresenter'
 	],
 	#classVars : [
 		'CustomBookmarks',
@@ -146,7 +147,7 @@ FDFileDialogPresenter class >> defaultSpec [
 					withConstraints: [ :contraint | contraint width: 200 ];
 			add:
 					(SpBoxLayout newVertical
-						add: #currentFolderLabel
+						add: #currentPathTextInputPresenter
 							withConstraints: [ :contraint | contraint height: self toolbarHeight ];
 						add: #filesList;
 						yourself);
@@ -164,7 +165,7 @@ FDFileDialogPresenter class >> defaultSpec [
 
 { #category : #example }
 FDFileDialogPresenter class >> example [
-	^ FDOpenFileDialog open extent: 600@500 ; yourself
+	^ FDOpenFileDialog open extent: 600@500 ; inspect ; yourself
 ]
 
 { #category : #example }
@@ -198,7 +199,7 @@ FDFileDialogPresenter class >> layoutPreviewer [
 							withConstraints: [ :contraint | contraint width: 200 ];
 						add:
 							(SpBoxLayout newVertical
-								add: #currentFolderLabel
+								add: #currentPathTextInputPresenter
 									withConstraints: [ :contraint | contraint height: self toolbarHeight ];
 								add: #filesList;
 								yourself);
@@ -329,21 +330,19 @@ FDFileDialogPresenter >> currentFiles [
 						& (a basename asLowercase < b basename asLowercase) ] ]
 ]
 
-{ #category : #accessing }
-FDFileDialogPresenter >> currentFolderLabel [
-	^ currentFolderLabel
+{ #category : #'initialize-actions' }
+FDFileDialogPresenter >> currentPathTextInputAction [
+	currentPathTextInputPresenter
+		whenTextIsAcceptedDo: [ :text | 
+			text asFileReference exists
+				ifFalse: [ self
+						inform: 'you have to write an absolute path and an existing one' ]
+				ifTrue: [ self openFolder: text asFileReference ] ]
 ]
 
-{ #category : #utility }
-FDFileDialogPresenter >> currentFolderTitleFor: aString [
-	| e optimal max leftBarWidth |
-	e := self window ifNil: [ self initialExtent ] ifNotNil: [ self window window extent ].
-	leftBarWidth := 200.
-	optimal := (LabelMorph contents: aString) optimalExtent x.
-	max := e x - leftBarWidth.
-	optimal < max
-		ifTrue: [ ^ aString , self delimiter ].
-	^ '... ' , (aString last: (aString size * (max / optimal)) rounded) , self delimiter
+{ #category : #accessing }
+FDFileDialogPresenter >> currentPathTextInputPresenter [
+	^ currentPathTextInputPresenter
 ]
 
 { #category : #accessing }
@@ -510,12 +509,6 @@ FDFileDialogPresenter >> initializeBookmarksTreeTable [
 		contextMenu: [ (self rootCommandsGroup / 'bookmark menu') beRoot asMenuPresenter ]
 ]
 
-{ #category : #'initialize-widgets' }
-FDFileDialogPresenter >> initializeCurrentMethod [
-	currentFolderLabel
-		label: (self currentFolderTitleFor: currentDirectory pathString)
-]
-
 { #category : #initialization }
 FDFileDialogPresenter >> initializeDialogWindow: aDialogWindowPresenter [
 	super initializeDialogWindow: aDialogWindowPresenter.
@@ -571,6 +564,7 @@ FDFileDialogPresenter >> initializePresenter [
 		transmitTo: filesList
 		transform:
 			[ :filterBis | filesListContent select: [ :item | filterBis filter: item ] ].
+	self currentPathTextInputAction
 ]
 
 { #category : #initialization }
@@ -578,12 +572,12 @@ FDFileDialogPresenter >> initializeWidgets [
 	self initializeGroupBookmark.
 	currentDirectory := Directory copy.
 	bookmarksTreeTable := self newTreeTable.
-	currentFolderLabel := self newLabel.
 	filesList := self newList.
+	currentPathTextInputPresenter := self newTextInput.
 	(nameLabel := self newLabel) label: 'Name:'.
 	(nameText := self newTextInput) autoAccept: true.
 	filtersDropList := self newDropList.
-	self initializeCurrentMethod.
+	currentPathTextInputPresenter text: currentDirectory fullName.
 	self initializeBookmarksTreeTable.
 	self initializeFilesList.
 	self initializeFiltersDropList.
@@ -610,13 +604,10 @@ FDFileDialogPresenter >> nameText [
 { #category : #actions }
 FDFileDialogPresenter >> openFolder: aFolder [
 	currentDirectory := self canonicalize: aFolder.
-	currentFolderLabel
-		label: (self currentFolderTitleFor: currentDirectory pathString);
-		help: currentDirectory pathString , self delimiter.
+	currentPathTextInputPresenter text: currentDirectory fullName.
 	filesList items: (self filterACollection: self currentFiles).
 	filesListContent := filesList items.
-	filesList unselectAll.
-	"self selectBookmarkFor: currentDirectory"
+	filesList unselectAll
 ]
 
 { #category : #accessing }

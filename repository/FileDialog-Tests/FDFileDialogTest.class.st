@@ -240,6 +240,16 @@ FDFileDialogTest >> testWhenOpenADirectoryShouldDisplayHisChildrenFilterByCurren
 	self fileListAllMustBeFilterByPNGFIlter
 ]
 
+{ #category : #tests }
+FDFileDialogTest >> testWhenPathTextInputPresenterAcceptShouldChangeFileListWithTheGoodContent [
+	dialog currentPathTextInputPresenter 
+		text: dialog currentPathTextInputPresenter text , 'dir/'.
+	dialog currentPathTextInputPresenter accept.
+	self
+		assertCollection: (dialog filesList items collect: #basename)
+		hasSameElements: {'klm.png' . 'klm.jpg' . '..'}
+]
+
 { #category : #'as yet unclassified' }
 FDFileDialogTest >> testWhenToggleShowHiddenFileShouldHiddenFileAppear [
 	self deny: dialog showHiddenFiles.
