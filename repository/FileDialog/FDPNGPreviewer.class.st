@@ -19,6 +19,5 @@ FDPNGPreviewer >> previewOn: aFileReference [
 		image:
 			(aFileReference
 				binaryReadStreamDo: [ :stream | PNGReadWriter formFromStream: stream ]);
-				autoScale: false;
 		yourself
 ]

@@ -211,9 +211,8 @@ FDFileDialogPresenter class >> layoutPreviewer [
 						add: #filtersDropList
 							withConstraints: [ :contraint | contraint width: 200 ];
 						yourself)
-					withConstraints: [ :contraint | contraint height: self toolbarHeight ] yourself)
-			withConstraints: [ :contraint | contraint height: 200 ];
-		add: #previewContentPresenter;
+					withConstraints: [ :contraint | contraint height: self toolbarHeight ] yourself)withConstraints:  [:contraint |contraint height: 150  ];
+		add:  #previewContentPresenter withConstraints:  [:contraint |contraint height: 30 ] ;
 		yourself
 ]
 
