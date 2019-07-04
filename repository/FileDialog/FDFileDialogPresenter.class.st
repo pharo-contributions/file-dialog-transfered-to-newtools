@@ -646,9 +646,7 @@ FDFileDialogPresenter >> nameText [
 { #category : #actions }
 FDFileDialogPresenter >> openFolder: aFolder [
 	self ChangeDirectoryApplyToPresenter: aFolder.
-	(readPointerHistoryParcour basename = '..'
-		and:
-			[ readPointerHistoryParcour value children includes: currentDirectory ])
+	(readPointerHistoryParcour value children includes: currentDirectory)
 		ifTrue: [ readPointerHistoryParcour
 				nextLink:
 					((DoubleLink value: currentDirectory)
