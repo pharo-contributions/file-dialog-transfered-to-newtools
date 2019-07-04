@@ -69,13 +69,6 @@ FDFileDialogTest >> testAddTwiceSameDirectoryToCustomBookmarkShouldCystomBookCon
 ]
 
 { #category : #tests }
-FDFileDialogTest >> testCanonicalize [
-	| location |
-	location := FileLocator imageDirectory asFileReference.
-	self assert: (dialog canonicalize: location / '..') fullName equals: location parent fullName
-]
-
-{ #category : #tests }
 FDFileDialogTest >> testCustomizationWhenChangeCollectionOfPreviewerShouldBeSet [
 	| previewerUtil |
 	previewerUtil := FDPNGPreviewer new.
