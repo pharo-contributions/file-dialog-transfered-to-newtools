@@ -41,34 +41,6 @@ FDFileDialogTest >> tearDown [
 ]
 
 { #category : #tests }
-FDFileDialogTest >> testAddABookmarkShouldBeInBookmarkTreeTable [
-	self
-		deny:
-			(dialog customBookmarks collection
-				includes: (dialog creatAnFDBookMark: (root / 'dir') asFileReference)).
-	dialog addBookmark: (root / 'dir') asFileReference.
-	self
-		assert:
-			(dialog customBookmarks collection
-				includes: (dialog creatAnFDBookMark: (root / 'dir') asFileReference))
-]
-
-{ #category : #tests }
-FDFileDialogTest >> testAddTwiceSameDirectoryToCustomBookmarkShouldCystomBookContainsOnlyOnce [
-	self
-		deny:
-			(dialog customBookmarks collection
-				includes: (dialog creatAnFDBookMark: (root / 'dir') asFileReference)).
-	dialog addBookmark: (root / 'dir') asFileReference.
-	dialog addBookmark: (root / 'dir') asFileReference.
-	self
-		assert:
-			((dialog customBookmarks collection collect: #name)
-				count: [ :item | item = 'dir' ])
-		equals: 1
-]
-
-{ #category : #tests }
 FDFileDialogTest >> testCustomizationWhenChangeCollectionOfPreviewerShouldBeSet [
 	| previewerUtil |
 	previewerUtil := FDPNGPreviewer new.
@@ -107,35 +79,23 @@ FDFileDialogTest >> testOpenFolder [
 	self assert: dialog currentDirectory equals: root / 'dir'
 ]
 
-{ #category : #tests }
-FDFileDialogTest >> testRemoveABookmarkShouldNotBeInBookmarkTreeTable [
-	| bookmark |
-	bookmark := dialog creatAnFDBookMark: (root / 'dir') asFileReference.
-	dialog addBookmark: (root / 'dir') asFileReference.
-	self assert: (dialog customBookmarks collection includes: bookmark).
-	dialog removeBookmark: bookmark.
-	self deny: (dialog customBookmarks collection includes: bookmark).
-	self
-		deny: ((dialog bookmarksTreeTable roots collect: #name) includes: bookmark)
-]
-
 { #category : #'as yet unclassified' }
 FDFileDialogTest >> testWhenAddACollectionOfBookmarkToCustomBookmarkShouldBeAddedToBookmarkTreeTable [
 	| aCollectionOfBookmark |
-	aCollectionOfBookmark := {((root / 'dir') asFileReference).
-	((root / 'dir.ext') asFileReference)}
+	aCollectionOfBookmark := {(root / 'dir') asFileReference.
+	(root / 'dir.ext') asFileReference}
 		collect:
 			[ :eachItem | FDBookmark name: eachItem basename location: eachItem path icon: nil ].
-	dialog fillCustomBookmarksWith: aCollectionOfBookmark.
+	dialog
+		bookmarks:
+			{(FDGroupBookMark
+				CreatWithname: 'aTestBookmark'
+				WithContent: aCollectionOfBookmark
+				withIconName: '')}.
 	self
-		assert: (dialog customBookmarks collection includesAll: aCollectionOfBookmark).
-	self
-		assert:
-			((dialog bookmarksTreeTable roots
-				at:
-					((dialog bookmarksTreeTable roots collect: #name)
-						indexOf: 'customBookMark')) collection
-				includesAll: aCollectionOfBookmark)
+		assertCollection: (dialog bookmarksTreeTable roots at: 1) collection
+		hasSameElements: aCollectionOfBookmark.
+	self assert: dialog bookmarksTreeTable roots size equals: 1
 ]
 
 { #category : #tests }

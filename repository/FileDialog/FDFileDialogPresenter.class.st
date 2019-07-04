@@ -54,18 +54,17 @@ Class {
 		'filesListContent',
 		'hiddenFilter',
 		'okActionBlock',
-		'fixedBookMarks',
-		'customBookMarks',
 		'bookmarksTreeTable',
 		'previewContentPresenter',
 		'previewer',
 		'currentPathTextInputPresenter',
 		'lastDirectoryVisitBeforeButton',
 		'lastDirectoryVisitAfterButton',
-		'readPointerHistoryParcour'
+		'readPointerHistoryParcour',
+		'bookmarks'
 	],
 	#classVars : [
-		'Boomarks',
+		'Bookmarks',
 		'CustomBookmarks',
 		'Directory',
 		'FilterSet',
@@ -91,16 +90,24 @@ FDFileDialogPresenter class >> buildCommandsGroupWith: presenter forRoot: rootCo
 			((CmCommandGroup named: 'interact with file') asSpecGroup
 				register: (FDCreatDirectoryCommand forSpec context: presenter);
 				register: (FDToggleHiddenFilesCommand forSpec context: presenter);
-				yourself);
-		register:
-			((CmCommandGroup named: 'bookmark menu') asSpecGroup
-				register: (FDRemoveBookMarkCommand forSpec context: presenter);
 				yourself)
 ]
 
 { #category : #defaultClassVariable }
-FDFileDialogPresenter class >> defaultCustomBookmarks [
-	^ {} asOrderedCollection
+FDFileDialogPresenter class >> defaultBookmarks [
+	| presets |
+	presets := OrderedCollection new.
+	presets add: FDBookmark image.
+	presets add: FDBookmark home.
+	OSPlatform current isUnix
+		ifTrue: [ presets add: FDBookmark root.
+			presets add: FDBookmark tmp ].
+	OSPlatform current isWindows
+		ifTrue: [ presets addAll: FDBookmark windowsDrives ].
+	^ {(FDGroupBookMark
+		CreatWithname: 'fixed bookmarks'
+		WithContent: presets
+		withIconName: '')}
 ]
 
 { #category : #defaultClassVariable }
@@ -111,20 +118,6 @@ FDFileDialogPresenter class >> defaultDirectory [
 { #category : #defaultClassVariable }
 FDFileDialogPresenter class >> defaultFilterSet [
 	^ FDAbstractFilter actions
-]
-
-{ #category : #defaultClassVariable }
-FDFileDialogPresenter class >> defaultFixedBookmarks [
-	| presets |
-	presets := OrderedCollection new.
-	presets add: FDBookmark image.
-	presets add: FDBookmark home.
-	OSPlatform current isUnix
-		ifTrue: [ presets add: FDBookmark root.
-			presets add: FDBookmark tmp ].
-	OSPlatform current isWindows
-		ifTrue: [ presets addAll: FDBookmark windowsDrives ].
-	^ presets
 ]
 
 { #category : #defaultClassVariable }
@@ -188,10 +181,9 @@ FDFileDialogPresenter class >> exampleModal [
 FDFileDialogPresenter class >> initialize [
 	OkActionBlock := self defaultOkActionBlock.
 	Directory := self defaultDirectory.
-	FixedBookMark := self defaultFixedBookmarks.
-	CustomBookmarks := self defaultCustomBookmarks.
 	FilterSet := self defaultFilterSet.
-	Previewer := self defaultPreviewer
+	Previewer := self defaultPreviewer.
+	Bookmarks := self defaultBookmarks.
 ]
 
 { #category : #specs }
@@ -251,14 +243,15 @@ FDFileDialogPresenter >> ChangeDirectoryApplyToPresenter: aFolder [
 	filesList unselectAll
 ]
 
-{ #category : #actions }
-FDFileDialogPresenter >> addBookmark: aFolder [
-	| bookmark |
-	bookmark := self creatAnFDBookMark: aFolder.
-	(customBookMarks collection includes: bookmark)
-		ifTrue: [ ^ self inform: 'you already have this bookmark' ].
-	customBookMarks collection add: bookmark.
-	bookmarksTreeTable roots: self upadateBookmarksTreeTable
+{ #category : #utility }
+FDFileDialogPresenter >> bookmarks [
+	^ bookmarks
+]
+
+{ #category : #'api-customization' }
+FDFileDialogPresenter >> bookmarks: aCollectionOfFDGroupBookMark [
+	bookmarks := aCollectionOfFDGroupBookMark.
+	bookmarksTreeTable roots: aCollectionOfFDGroupBookMark
 ]
 
 { #category : #accessing }
@@ -354,11 +347,6 @@ FDFileDialogPresenter >> currentPathTextInputPresenter [
 	^ currentPathTextInputPresenter
 ]
 
-{ #category : #accessing }
-FDFileDialogPresenter >> customBookmarks [
-	^ customBookMarks
-]
-
 { #category : #utility }
 FDFileDialogPresenter >> defaultFolder [
 	^ FileLocator imageDirectory asFileReference
@@ -407,14 +395,6 @@ FDFileDialogPresenter >> filesListAction [
 							self window extent: 800@800 ] ] ]
 ]
 
-{ #category : #'api-customization' }
-FDFileDialogPresenter >> fillCustomBookmarksWith: aCollectionOFBookmark [
-	"you have to give me aCollection of FDBookmark"
-
-	customBookMarks collection: aCollectionOFBookmark.
-	bookmarksTreeTable roots: self upadateBookmarksTreeTable
-]
-
 { #category : #utility }
 FDFileDialogPresenter >> filterACollection: aCollectionOfFileReference [
 	| collection |
@@ -447,11 +427,6 @@ FDFileDialogPresenter >> filtersCustomization: aCollectionOfFilter [
 { #category : #accessing }
 FDFileDialogPresenter >> filtersDropList [
 	^ filtersDropList
-]
-
-{ #category : #accessing }
-FDFileDialogPresenter >> fixedBookmarks [
-	^ fixedBookMarks
 ]
 
 { #category : #utility }
@@ -499,13 +474,11 @@ FDFileDialogPresenter >> initializeBookmarksTreeTable [
 			(SpStringTableColumn
 				evaluated: [ :fdGroupBookMark | fdGroupBookMark name ]).
 	bookmarksTreeTable
-		roots: self upadateBookmarksTreeTable;
+		roots: bookmarks;
 		children: [ :child | 
 			child isComposite
 				ifTrue: [ child collection ]
-				ifFalse: [ {} ] ].
-	bookmarksTreeTable
-		contextMenu: [ (self rootCommandsGroup / 'bookmark menu') beRoot asMenuPresenter ]
+				ifFalse: [ {} ] ]
 ]
 
 { #category : #initialization }
@@ -543,18 +516,6 @@ FDFileDialogPresenter >> initializeFiltersDropList [
 				indexOf: FDDefaultFilter new name)
 ]
 
-{ #category : #'initialize-value' }
-FDFileDialogPresenter >> initializeGroupBookmark [
-	fixedBookMarks := FDGroupBookMark
-		CreatWithname: 'fixeBookMark'
-		WithContent: FixedBookMark copy
-		withIconName: ''.
-	customBookMarks := FDGroupBookMark
-		CreatWithname: 'customBookMark'
-		WithContent: CustomBookmarks copy
-		withIconName: ''
-]
-
 { #category : #initialization }
 FDFileDialogPresenter >> initializePresenter [
 	self bookmarksTreeTableAction.
@@ -570,8 +531,8 @@ FDFileDialogPresenter >> initializePresenter [
 
 { #category : #initialization }
 FDFileDialogPresenter >> initializeWidgets [
-	self initializeGroupBookmark.
 	currentDirectory := Directory copy.
+	bookmarks := Bookmarks copy.
 	bookmarksTreeTable := self newTreeTable.
 	filesList := self newList.
 	currentPathTextInputPresenter := self newTextInput.
@@ -682,12 +643,6 @@ FDFileDialogPresenter >> readPointerHistoryParcour [
 	^ readPointerHistoryParcour
 ]
 
-{ #category : #actions }
-FDFileDialogPresenter >> removeBookmark: aBookmark [
-	customBookMarks collection remove: aBookmark.
-	bookmarksTreeTable roots: self upadateBookmarksTreeTable
-]
-
 { #category : #utility }
 FDFileDialogPresenter >> selectBookmarkFor: aDirectory [
 	"bookmarksList' ListModel uses identity based comparison, so I need to select index instead"
@@ -695,7 +650,7 @@ FDFileDialogPresenter >> selectBookmarkFor: aDirectory [
 	"is there withIndexDetect: ?"
 
 	bookmarksTreeTable
-		selectIndex: ((self unionBookmarks collect: #location) indexOf: aDirectory)
+		selectIndex: ((bookmarksTreeTable items collect: #location) indexOf: aDirectory)
 ]
 
 { #category : #actions }
@@ -724,18 +679,6 @@ FDFileDialogPresenter >> showHiddenFiles [
 FDFileDialogPresenter >> toggleHiddenFiles [
 	showHiddenFiles := showHiddenFiles not.
 	filesList items: (self filterACollection: self currentFiles) 
-]
-
-{ #category : #utility }
-FDFileDialogPresenter >> unionBookmarks [
-	^ fixedBookMarks , customBookMarks
-]
-
-{ #category : #utility }
-FDFileDialogPresenter >> upadateBookmarksTreeTable [
-	self flag: #renameIt.
-	^ {fixedBookMarks.
-	customBookMarks}
 ]
 
 { #category : #'api-customization' }
