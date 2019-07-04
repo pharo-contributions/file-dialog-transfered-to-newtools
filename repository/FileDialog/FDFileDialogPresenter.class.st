@@ -91,8 +91,6 @@ FDFileDialogPresenter class >> buildCommandsGroupWith: presenter forRoot: rootCo
 			((CmCommandGroup named: 'interact with file') asSpecGroup
 				register: (FDCreatDirectoryCommand forSpec context: presenter);
 				register: (FDToggleHiddenFilesCommand forSpec context: presenter);
-				register: (FDAddBookMarkCommand forSpec context: presenter);
-
 				yourself);
 		register:
 			((CmCommandGroup named: 'bookmark menu') asSpecGroup
@@ -182,7 +180,7 @@ FDFileDialogPresenter class >> exampleModal [
 
 	OkActionBlock := [ :fileRefence | fileRefence inspect ].
 	^ (FDOpenDirectoryDialog new
-		defaultFolder: FileLocator imageDirectory asFileReference;
+		defaultFolder: '/home/cdutriez' asFileReference ;
 		openDialogWithSpec) inspect
 ]
 
