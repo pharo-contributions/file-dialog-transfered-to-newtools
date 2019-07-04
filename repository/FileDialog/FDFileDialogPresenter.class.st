@@ -50,10 +50,7 @@ Class {
 		'currentDirectory',
 		'nameLabel',
 		'showHiddenFiles',
-		'filter',
 		'filtersDropList',
-		'fileFilters',
-		'currentFolderLabel',
 		'filesListContent',
 		'hiddenFilter',
 		'okActionBlock',
@@ -68,6 +65,7 @@ Class {
 		'readPointerHistoryParcour'
 	],
 	#classVars : [
+		'Boomarks',
 		'CustomBookmarks',
 		'Directory',
 		'FilterSet',
@@ -247,6 +245,7 @@ FDFileDialogPresenter class >> previewExample [
 
 { #category : #actions }
 FDFileDialogPresenter >> ChangeDirectoryApplyToPresenter: aFolder [
+	self flag: 'I have to rename it but I have no idea'.
 	currentDirectory := aFolder canonicalize.
 	currentPathTextInputPresenter text: currentDirectory fullName.
 	filesList items: (self filterACollection: self currentFiles).
@@ -377,16 +376,6 @@ FDFileDialogPresenter >> defaultFolder: aPath [
 { #category : #utility }
 FDFileDialogPresenter >> delimiter [
 	^ FileSystem disk delimiter asString
-]
-
-{ #category : #TOREMOVE }
-FDFileDialogPresenter >> fileFilters: anArray [
-	self flag: 'to remove when migrate FDMorphicUIManager'.
-	anArray ifEmpty: [ ^ self ].
-	anArray anyOne isString
-		ifTrue: [ fileFilters := {(anArray joinUsing: ', ') -> anArray} ]
-		ifFalse: [ fileFilters := anArray ].
-	filtersDropList items: fileFilters
 ]
 
 { #category : #accessing }
