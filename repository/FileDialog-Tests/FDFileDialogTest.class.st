@@ -41,41 +41,6 @@ FDFileDialogTest >> tearDown [
 ]
 
 { #category : #tests }
-FDFileDialogTest >> testAddABookmarkShouldBeInBookmarkTreeTable [
-	self
-		deny:
-			(dialog customBookmarks collection
-				includes: (dialog creatAnFDBookMark: (root / 'dir') asFileReference)).
-	dialog addBookmark: (root / 'dir') asFileReference.
-	self
-		assert:
-			(dialog customBookmarks collection
-				includes: (dialog creatAnFDBookMark: (root / 'dir') asFileReference))
-]
-
-{ #category : #tests }
-FDFileDialogTest >> testAddTwiceSameDirectoryToCustomBookmarkShouldCystomBookContainsOnlyOnce [
-	self
-		deny:
-			(dialog customBookmarks collection
-				includes: (dialog creatAnFDBookMark: (root / 'dir') asFileReference)).
-	dialog addBookmark: (root / 'dir') asFileReference.
-	dialog addBookmark: (root / 'dir') asFileReference.
-	self
-		assert:
-			((dialog customBookmarks collection collect: #name)
-				count: [ :item | item = 'dir' ])
-		equals: 1
-]
-
-{ #category : #tests }
-FDFileDialogTest >> testCanonicalize [
-	| location |
-	location := FileLocator imageDirectory asFileReference.
-	self assert: (dialog canonicalize: location / '..') fullName equals: location parent fullName
-]
-
-{ #category : #tests }
 FDFileDialogTest >> testCustomizationWhenChangeCollectionOfPreviewerShouldBeSet [
 	| previewerUtil |
 	previewerUtil := FDPNGPreviewer new.
@@ -114,53 +79,23 @@ FDFileDialogTest >> testOpenFolder [
 	self assert: dialog currentDirectory equals: root / 'dir'
 ]
 
-{ #category : #tests }
-FDFileDialogTest >> testRemoveABookmarkShouldNotBeInBookmarkTreeTable [
-	| bookmark |
-	bookmark := dialog creatAnFDBookMark: (root / 'dir') asFileReference.
-	dialog addBookmark: (root / 'dir') asFileReference.
-	self assert: (dialog customBookmarks collection includes: bookmark).
-	dialog removeBookmark: bookmark.
-	self deny: (dialog customBookmarks collection includes: bookmark).
-	self
-		deny: ((dialog bookmarksTreeTable roots collect: #name) includes: bookmark)
-]
-
 { #category : #'as yet unclassified' }
 FDFileDialogTest >> testWhenAddACollectionOfBookmarkToCustomBookmarkShouldBeAddedToBookmarkTreeTable [
 	| aCollectionOfBookmark |
-	aCollectionOfBookmark := {((root / 'dir') asFileReference).
-	((root / 'dir.ext') asFileReference)}
+	aCollectionOfBookmark := {(root / 'dir') asFileReference.
+	(root / 'dir.ext') asFileReference}
 		collect:
 			[ :eachItem | FDBookmark name: eachItem basename location: eachItem path icon: nil ].
-	dialog fillCustomBookmarksWith: aCollectionOfBookmark.
+	dialog
+		bookmarks:
+			{(FDGroupBookMark
+				CreatWithname: 'aTestBookmark'
+				WithContent: aCollectionOfBookmark
+				withIconName: '')}.
 	self
-		assert: (dialog customBookmarks collection includesAll: aCollectionOfBookmark).
-	self
-		assert:
-			((dialog bookmarksTreeTable roots
-				at:
-					((dialog bookmarksTreeTable roots collect: #name)
-						indexOf: 'customBookMark')) collection
-				includesAll: aCollectionOfBookmark)
-]
-
-{ #category : #tests }
-FDFileDialogTest >> testWhenAddBookmarkShouldBeInCustomBookmarks [
-	| contextActionMenu |
-	contextActionMenu := FDAddBookMarkCommand new
-		context: dialog;
-		yourself.
-	dialog filesList
-		selectIndex: ((dialog filesList items collect: #basename) indexOf: 'dir').
-	contextActionMenu execute.
-	self
-		assert:
-			(((dialog bookmarksTreeTable roots
-				at:
-					((dialog bookmarksTreeTable roots collect: #name)
-						indexOf: 'customBookMark')) collection collect: #name)
-				includes: 'dir')
+		assertCollection: (dialog bookmarksTreeTable roots at: 1) collection
+		hasSameElements: aCollectionOfBookmark.
+	self assert: dialog bookmarksTreeTable roots size equals: 1
 ]
 
 { #category : #tests }
@@ -170,6 +105,44 @@ FDFileDialogTest >> testWhenChangeDirectoryShouldFilesListContainsHisChildren [
 	dialog defaultFolder: newDirectory.
 	self
 		assert: (dialog filesList items includesAll: newDirectory children)
+]
+
+{ #category : #tests }
+FDFileDialogTest >> testWhenClickAnAfterHistoryButtonIfThereAreHistoryShouldComeBackTheGoodDirectory [
+	| itemsBefore |
+	itemsBefore := dialog filesList items.
+	dialog filesList
+		selectIndex: ((dialog filesList items collect: #basename) indexOf: 'dir').
+	dialog filesList
+		doActivateAtIndex: ((dialog filesList items collect: #basename) indexOf: 'dir').
+	self
+		assertCollection: (dialog filesList items collect: #basename)
+		hasSameElements: {'klm.jpg' . 'klm.png' . '..'}.
+	dialog lastDirectoryVisitBeforeButton click.
+	self
+		assertCollection: dialog filesList items
+		hasSameElements: itemsBefore.
+	dialog lastDirectoryVisitAfterButton click.
+	self
+		assertCollection: (dialog filesList items collect: #basename)
+		hasSameElements: {'klm.jpg' . 'klm.png' . '..'}
+]
+
+{ #category : #tests }
+FDFileDialogTest >> testWhenClickAnBeforeHistoryButtonIfThereAreHistoryShouldComeBackToTheLastDirectoryVisited [
+	| itemsBefore |
+	itemsBefore := dialog filesList items.
+	dialog filesList
+		selectIndex: ((dialog filesList items collect: #basename) indexOf: 'dir').
+	dialog filesList
+		doActivateAtIndex: ((dialog filesList items collect: #basename) indexOf: 'dir').
+	self
+		assertCollection: (dialog filesList items collect: #basename)
+		hasSameElements: {'klm.jpg' . 'klm.png' . '..'}.
+	dialog lastDirectoryVisitBeforeButton click.
+	self
+		assertCollection: dialog filesList items
+		hasSameElements: itemsBefore
 ]
 
 { #category : #tests }
@@ -198,32 +171,32 @@ FDFileDialogTest >> testWhenCustomizeFilterWithoutDefaultFilterShouldFilterDropL
 ]
 
 { #category : #tests }
-FDFileDialogTest >> testWhenFilesListSelectionChangedAndIsAJPGShouldpreviewContentPresenterIsNotNil [
+FDFileDialogTest >> testWhenFilesListSelectionChangedAndIsAPNGShouldpreviewContentPresenterIsNotNil [
 	| previewerUtil |
 	previewerUtil := FDPNGPreviewer new.
 	dialog previewer: previewerUtil.
 	window := dialog openWithSpec.
 	self
 		should: [ dialog filesList
-				selectIndex: ((dialog filesList items collect: #basename) indexOf: 'banana.jpg') ]
+				selectIndex: ((dialog filesList items collect: #basename) indexOf: 'patate.png') ]
 			"raise an error because banane.jpg don't respect the jpg format"
 		raise: Error.
 	self
 		assert: dialog filesList selection selectedItem basename
-		equals: 'banana.jpg'.
+		equals: 'patate.png'.
 ]
 
 { #category : #tests }
-FDFileDialogTest >> testWhenFilesListSelectionChangedAndIsNotAJPGShouldpreviewContentPresenterNil [
+FDFileDialogTest >> testWhenFilesListSelectionChangedAndIsNotAPNGShouldpreviewContentPresenterNil [
 	| previewerUtil |
 	previewerUtil := FDPNGPreviewer new.
 	dialog previewer: previewerUtil.
 	window := dialog openWithSpec.
 	dialog filesList
-		selectIndex: ((dialog filesList items collect: #basename) indexOf: 'patate.png').
+		selectIndex: ((dialog filesList items collect: #basename) indexOf: 'banana.jpg').
 	self
 		assert: dialog filesList selection selectedItem basename
-		equals: 'patate.png'.
+		equals: 'banana.jpg'.
 	self assert: dialog previewContentPresenter isNil
 ]
 
@@ -238,6 +211,16 @@ FDFileDialogTest >> testWhenOpenADirectoryShouldDisplayHisChildrenFilterByCurren
 		selectIndex: ((dialog filesList items collect: #basename) indexOf: 'dir').
 		dialog filesList clickOnSelectedItem.
 	self fileListAllMustBeFilterByPNGFIlter
+]
+
+{ #category : #tests }
+FDFileDialogTest >> testWhenPathTextInputPresenterAcceptShouldChangeFileListWithTheGoodContent [
+	dialog currentPathTextInputPresenter 
+		text: dialog currentPathTextInputPresenter text , '/dir/'.
+	dialog currentPathTextInputPresenter accept.
+	self
+		assertCollection: (dialog filesList items collect: #basename)
+		hasSameElements: {'klm.png' . 'klm.jpg' . '..'}
 ]
 
 { #category : #'as yet unclassified' }

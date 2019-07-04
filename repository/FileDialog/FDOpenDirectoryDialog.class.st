@@ -17,8 +17,8 @@ FDOpenDirectoryDialog class >> defaultSpec [
 				add: #bookmarksTreeTable
 					withConstraints: [ :contraint | contraint width: 150 ];
 				add:
-					(SpBoxLayout newVertical
-						add: #currentFolderLabel
+					(SpBoxLayout newVertical  
+						add: #currentPathTextInputPresenter
 							withConstraints: [ :contraint | contraint height: self toolbarHeight ];
 						add: #filesList;
 						yourself);
