@@ -74,16 +74,6 @@ FDBookmark >> hash [
 	^ (self icon hash bitXor: self location hash) bitXor: self name hash
 ]
 
-{ #category : #accessing }
-FDBookmark >> icon [
-	^ icon
-]
-
-{ #category : #accessing }
-FDBookmark >> icon: anIcon [
-	icon := anIcon
-]
-
 { #category : #testing }
 FDBookmark >> isComposite [
 	^ false
@@ -97,16 +87,6 @@ FDBookmark >> location [
 { #category : #accessing }
 FDBookmark >> location: aFileReference [
 	location := aFileReference
-]
-
-{ #category : #accessing }
-FDBookmark >> name [
-	^ name
-]
-
-{ #category : #accessing }
-FDBookmark >> name: aString [
-	name := aString
 ]
 
 { #category : #printing }

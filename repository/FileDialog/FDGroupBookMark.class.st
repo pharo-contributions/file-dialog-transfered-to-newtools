@@ -1,3 +1,6 @@
+"
+i'm use to dispay group of bookmark
+"
 Class {
 	#name : #FDGroupBookMark,
 	#superclass : #FDAbstractBookMark,
@@ -26,27 +29,7 @@ FDGroupBookMark >> collection: anObject [
 	collection := anObject
 ]
 
-{ #category : #accessing }
-FDGroupBookMark >> icon [
-	^ icon
-]
-
-{ #category : #accessing }
-FDGroupBookMark >> icon: anObject [
-	icon := anObject
-]
-
 { #category : #testing }
 FDGroupBookMark >> isComposite [
 	^ true
-]
-
-{ #category : #accessing }
-FDGroupBookMark >> name [
-	^ name
-]
-
-{ #category : #accessing }
-FDGroupBookMark >> name: anObject [
-	name := anObject
 ]

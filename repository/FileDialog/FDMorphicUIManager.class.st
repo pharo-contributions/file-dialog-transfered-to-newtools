@@ -6,7 +6,7 @@ To use me by default, see class-side.
 Class {
 	#name : #FDMorphicUIManager,
 	#superclass : #MorphicUIManager,
-	#category : #FileDialog
+	#category : #'FileDialog-UI'
 }
 
 { #category : #public }

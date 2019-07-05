@@ -1,3 +1,7 @@
+"
+i'm manage ContextMenu to display/NotDisplay hidenFile 
+
+"
 Class {
 	#name : #FDToggleHiddenFilesCommand,
 	#superclass : #CmCommand,

@@ -24,7 +24,7 @@ FDOpenFileDialog new
 Class {
 	#name : #FDOpenFileDialog,
 	#superclass : #FDFileDialogPresenter,
-	#category : #FileDialog
+	#category : #'FileDialog-UI'
 }
 
 { #category : #api }

@@ -72,7 +72,7 @@ Class {
 		'OkActionBlock',
 		'Previewer'
 	],
-	#category : #FileDialog
+	#category : #'FileDialog-UI'
 }
 
 { #category : #icons }
@@ -117,7 +117,7 @@ FDFileDialogPresenter class >> defaultDirectory [
 
 { #category : #defaultClassVariable }
 FDFileDialogPresenter class >> defaultFilterSet [
-	^ FDAbstractFilter actions
+	^ FDAbstractPredicate actions
 ]
 
 { #category : #defaultClassVariable }
@@ -400,12 +400,12 @@ FDFileDialogPresenter >> filterACollection: aCollectionOfFileReference [
 	| collection |
 	collection := aCollectionOfFileReference
 		select:
-			[ :fileReference | filtersDropList selectedItem filter: fileReference ].
+			[ :fileReference | filtersDropList selectedItem predicate: fileReference ].
 	showHiddenFiles
 		ifFalse: [ collection
 				removeAll:
 					(collection
-						select: [ :aFileReference | hiddenFilter filter: aFileReference ]) ].
+						select: [ :aFileReference | hiddenFilter predicate: aFileReference ]) ].
 	^ collection
 ]
 
@@ -416,12 +416,12 @@ FDFileDialogPresenter >> filtersCustomization: aCollectionOfFilter [
 	filtersDropList
 		items:
 			(aCollectionOfFilter asOrderedCollection
-				add: FDDefaultFilter new;
+				add: FDDefaultPredicate new;
 				yourself) asSet asOrderedCollection.
 	filtersDropList
 		selectedIndex:
 			((filtersDropList listItems collect: #name)
-				indexOf: FDDefaultFilter new name)
+				indexOf: FDDefaultPredicate new name)
 ]
 
 { #category : #accessing }
@@ -457,7 +457,7 @@ FDFileDialogPresenter >> initialize [
 	super initialize.
 	showHiddenFiles := false.
 	okActionBlock := OkActionBlock.
-	hiddenFilter := FDHidenFileFilter new.
+	hiddenFilter := FDHidenFilePredicate new.
 	previewer := Previewer.
 	previewContentPresenter := nil
 	
@@ -506,14 +506,14 @@ FDFileDialogPresenter >> initializeFilesList [
 FDFileDialogPresenter >> initializeFiltersDropList [
 	| filterItems |
 	filterItems := FilterSet copy.
-	filterItems asOrderedCollection  add: FDDefaultFilter new.
+	filterItems asOrderedCollection  add: FDDefaultPredicate new.
 	filterItems := filterItems asSet.
 	filtersDropList
 		items:  filterItems asOrderedCollection ;
 		displayBlock: [ :item | item name ];
 		selectedIndex:
 			((filtersDropList listItems collect: #name)
-				indexOf: FDDefaultFilter new name)
+				indexOf: FDDefaultPredicate new name)
 ]
 
 { #category : #initialization }
@@ -523,7 +523,7 @@ FDFileDialogPresenter >> initializePresenter [
 	filtersDropList
 		transmitTo: filesList
 		transform:
-			[ :filterBis | filesListContent select: [ :item | filterBis filter: item ] ].
+			[ :filterBis | filesListContent select: [ :item | filterBis predicate: item ] ].
 	self currentPathTextInputAction.
 	self lastDirectoryVisitiBeforeButtonAction.
 	self lastDirectoryVisitiAfterButtonAction

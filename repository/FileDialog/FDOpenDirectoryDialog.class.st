@@ -6,7 +6,7 @@ So no files will be shown in the file/folder listings.
 Class {
 	#name : #FDOpenDirectoryDialog,
 	#superclass : #FDFileDialogPresenter,
-	#category : #FileDialog
+	#category : #'FileDialog-UI'
 }
 
 { #category : #specs }
