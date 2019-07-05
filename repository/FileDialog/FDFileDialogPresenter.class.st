@@ -157,9 +157,9 @@ FDFileDialogPresenter class >> defaultPreviewer [
 FDFileDialogPresenter class >> defaultSpec [
 	^ SpBoxLayout newVertical
 		add:
-			(SpBoxLayout newHorizontal
-				add: #bookmarksTreeTable
-					withConstraints: [ :contraint | contraint width: 200 ];
+			(SpPanedLayout newHorizontal
+				position: 200;
+				add: #bookmarksTreeTable;
 				add:
 					(SpBoxLayout newVertical
 						add:
@@ -183,6 +183,14 @@ FDFileDialogPresenter class >> defaultSpec [
 					withConstraints: [ :contraint | contraint width: 200 ];
 				yourself)
 			withConstraints: [ :contraint | contraint height: self toolbarHeight ] yourself
+]
+
+{ #category : #'as yet unclassified' }
+FDFileDialogPresenter class >> examplePreviewer [
+	| presenter |
+	presenter := FDOpenFileDialog new.
+	presenter previewer: FDPNGPreviewer new.
+	presenter openDialogWithSpec
 ]
 
 { #category : #example }
@@ -231,13 +239,13 @@ FDFileDialogPresenter class >> initialize [
 
 { #category : #specs }
 FDFileDialogPresenter class >> layoutPreviewer [
-	^ SpBoxLayout newHorizontal
+	^ SpPanedLayout newHorizontal
 		add:
 			(SpBoxLayout newVertical
 				add:
-					(SpBoxLayout newHorizontal
-						add: #bookmarksTreeTable
-							withConstraints: [ :contraint | contraint width: 200 ];
+					(SpPanedLayout newHorizontal
+						position: 200;
+						add: #bookmarksTreeTable;
 						add:
 							(SpBoxLayout newVertical
 								add: #currentPathTextInputPresenter
@@ -253,8 +261,9 @@ FDFileDialogPresenter class >> layoutPreviewer [
 						add: #filtersDropList
 							withConstraints: [ :contraint | contraint width: 200 ];
 						yourself)
-					withConstraints: [ :contraint | contraint height: self toolbarHeight ] yourself)withConstraints:  [:contraint |contraint height: 150  ];
-		add:  #previewContentPresenter withConstraints:  [:contraint |contraint width: 30; height: 30 ] ;
+					withConstraints: [ :contraint | contraint height: self toolbarHeight ];
+				yourself);
+		add: #previewContentPresenter;
 		yourself
 ]
 
@@ -424,11 +433,11 @@ FDFileDialogPresenter >> filesListAction [
 				ifNotNil: [ (previewer canBeUsedOn: selectedFileReference selectedItem)
 						ifTrue: [ previewContentPresenter := previewer
 								previewOn: selectedFileReference selectedItem.
-							self window rebuildWithSpecLayout: self class layoutPreviewer.
-							self window extent: 800@800 ]
+							self needRebuild: false.
+							self buildWithSpecLayout: self class layoutPreviewer ]
 						ifFalse: [ previewContentPresenter := nil.
-							self window rebuildWithSpecLayout: self class defaultSpec.
-							self window extent: 800@800 ] ] ]
+							self needRebuild: false.
+							self buildWithSpec ] ] ]
 ]
 
 { #category : #utility }
