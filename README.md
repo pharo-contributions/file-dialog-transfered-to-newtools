@@ -3,18 +3,6 @@
 
 A simple replacement for Pharo's native file/folder selection dialog.
 
-## migration RoadMap to Spec 2  
-
-- [X] 1st step 
-	- [X] fix all warning 
--[ ] 2nd step 
-	- [ ] manage shortcuts 
-	- [X] use Strastegie pattern for filtering 
-	- [X] migrate contextMenu to commander 2
--[ ] 3rd step 
-	- [ ] add previewSystem ( when select an png it show the picture ) 
-	
-
 ![](figures/file-dialog-3.png)
 
 ## Features
@@ -69,21 +57,14 @@ You can also use the classes directly — there are just minor differences in th
 
 ### API
 
-The user-facing API is in the `public` protocol of `FDFileDialog`
+The user-facing API is in the `api-customization` protocol of `FDFileDialogPresenter`
 
 * `defaultFolder: aPath` — where should the dialog open, the default is the imageDirectory
 * `defaultName: aString` — prefill the file name input
-* `extensionFilters: aCollection` — a collection of `label -> extensions` filters
-* `fileFilters: aCollection` — a collection of `label -> pattern` filters
-* `whenSelected: aBlock` — a one arg block executed when a file was selected
+* `filtersCustomization: aCollectionOfFDAbstractPredicate` — a collection of FDAbstractPredicate
+* `okActionBlock: aBlock` — a one arg block executed when a file was selected
+* `previewer: aPreviewer` _ a son of FDAbstractPreviewer that returning a Spec widget 
 * `openModal` — when you open the dialog as modal, you will get the selected value as a return instead of using the block
-
-`extensionFilters:` is just a convenience for `fileFilters:` automatically adding labels & stuff, so the following is equivalent
-
-```
-extensionFilters: { 'STON files' -> #(ston json) }
-fileFilters: { 'STON files (*.ston, *.json)' -> #('*.ston' '*.json') }
-```
 
 ## Custom Icons
 
