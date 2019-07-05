@@ -4,6 +4,11 @@
 A simple replacement for Pharo's native file/folder selection dialog.
 ![](figures/file-dialog-3.png)
 
+
+
+
+
+
 ## Features
 
 * list of most common places (home, root, image directory, temp)
