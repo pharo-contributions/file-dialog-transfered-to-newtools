@@ -1,25 +1,10 @@
 "
 My responsibility is to provide dialog for selecting Files.
 
+see my super for more information about customization
 
-Example of modal use
+examples see class side method example
 
-[[[  
-FDOpenFileDialog new openModal
-]]]
-
-Example of modal use
-
-[[[ 
-FDOpenFileDialog new
-	whenSelected: [ :file | file inspect ];
-	extensionFilters: {
-		'All images' -> #(jpg png gif svg).
-		'All files' -> #()
-	};
-	defaultFolder: FileLocator imageDirectory asFileReference;
-	open
-]]]
 "
 Class {
 	#name : #FDOpenFileDialog,

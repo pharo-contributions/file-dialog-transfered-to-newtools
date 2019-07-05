@@ -1,3 +1,7 @@
+"
+i define simple predicate 
+	see my super class for more information
+"
 Class {
 	#name : #FDAbstractSimplePredicate,
 	#superclass : #FDAbstractPredicate,

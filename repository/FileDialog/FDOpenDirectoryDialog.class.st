@@ -2,6 +2,8 @@
 My responsibility is to provide dialog for selecting Directories.
 
 So no files will be shown in the file/folder listings.
+
+see my super for more information about customization
 "
 Class {
 	#name : #FDOpenDirectoryDialog,
@@ -15,10 +17,17 @@ FDOpenDirectoryDialog class >> defaultSpec [
 		add:
 			(SpBoxLayout newHorizontal
 				add: #bookmarksTreeTable
-					withConstraints: [ :contraint | contraint width: 150 ];
+					withConstraints: [ :contraint | contraint width: 200 ];
 				add:
-					(SpBoxLayout newVertical  
-						add: #currentPathTextInputPresenter
+					(SpBoxLayout newVertical
+						add:
+							(SpBoxLayout newHorizontal
+								add: #lastDirectoryVisitBeforeButton
+									withConstraints: [ :contraint | contraint width: 30 ];
+								add: #lastDirectoryVisitAfterButton
+									withConstraints: [ :contraint | contraint width: 30 ];
+								add: #currentPathTextInputPresenter;
+								yourself)
 							withConstraints: [ :contraint | contraint height: self toolbarHeight ];
 						add: #filesList;
 						yourself);
@@ -27,9 +36,11 @@ FDOpenDirectoryDialog class >> defaultSpec [
 ]
 
 { #category : #examples }
-FDOpenDirectoryDialog class >> main [
+FDOpenDirectoryDialog class >> example [
 	<example>
-		^ self new openDialogWithSpec 
+	^ (self new
+		okActionBlock: [ :selectedFileReference | selectedFileReference inspect ])
+		openDialogWithSpec inspect
 ]
 
 { #category : #api }

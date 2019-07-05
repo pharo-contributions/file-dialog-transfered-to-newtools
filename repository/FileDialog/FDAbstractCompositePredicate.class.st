@@ -1,3 +1,7 @@
+"
+i define compose predicate 
+	see my super class for more information
+"
 Class {
 	#name : #FDAbstractCompositePredicate,
 	#superclass : #FDAbstractPredicate,

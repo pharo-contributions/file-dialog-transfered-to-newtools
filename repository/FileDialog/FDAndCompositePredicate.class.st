@@ -17,6 +17,7 @@ FDAndCompositePredicate >> name [
 { #category : #accessing }
 FDAndCompositePredicate >> predicate: aFileReference [
 	^ collectionOfFDAbstractFilter
-		reduceLeft:
-			[ :itemN0 :itemN1 | (itemN0 predicate: aFileReference) and: [ itemN1 predicate: aFileReference ] ]
+		reduceLeft: [ :itemN0 :itemN1 | 
+			(itemN0 predicate: aFileReference)
+				and: [ itemN1 predicate: aFileReference ] ]
 ]
