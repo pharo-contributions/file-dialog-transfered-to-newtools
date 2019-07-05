@@ -205,7 +205,7 @@ FDFileDialogPresenter class >> fullExample [
 	presenter filtersCustomization: { FDJPGAndPNGPredicate new }."with you add filter"
 	presenter defaultFolder: FileLocator home asFileReference.
 	presenter okActionBlock: [:selectedFileReference |selectedFileReference inspect  ]."you will define the action of the OK button"
-	presenter bookmarks: { FDGroupBookMark CreatWithname: 'exampleGroup' WithContent:  { FDBookmark image . FDBookmark home }  withIconName:  'group'}
+	presenter bookmarks: { FDGroupBookMark CreatWithname: 'exampleGroup' WithContent:  { FDBookmark image . FDBookmark home }  withIconName:  'group'}.
 	presenter openDialogWithSpec.
 	presenter inspect.
 	^ presenter

@@ -34,7 +34,7 @@ FDFileDialogTest >> setUp [
 	(dialog := self dialogClass new) defaultFolder: root
 ]
 
-{ #category : #tests }
+{ #category : #running }
 FDFileDialogTest >> tearDown [
 	super tearDown.
 	window ifNotNil: #delete
@@ -79,7 +79,7 @@ FDFileDialogTest >> testOpenFolder [
 	self assert: dialog currentDirectory equals: root / 'dir'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #tests }
 FDFileDialogTest >> testWhenAddACollectionOfBookmarkToCustomBookmarkShouldBeAddedToBookmarkTreeTable [
 	| aCollectionOfBookmark |
 	aCollectionOfBookmark := {(root / 'dir') asFileReference.
@@ -223,7 +223,7 @@ FDFileDialogTest >> testWhenPathTextInputPresenterAcceptShouldChangeFileListWith
 		hasSameElements: {'klm.png' . 'klm.jpg' . '..'}
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #tests }
 FDFileDialogTest >> testWhenToggleShowHiddenFileShouldHiddenFileAppear [
 	self deny: dialog showHiddenFiles.
 	dialog toggleHiddenFiles.
