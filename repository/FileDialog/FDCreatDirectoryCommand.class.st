@@ -1,3 +1,6 @@
+"
+i'm manage ContextMenu to creat Directory
+"
 Class {
 	#name : #FDCreatDirectoryCommand,
 	#superclass : #CmCommand,

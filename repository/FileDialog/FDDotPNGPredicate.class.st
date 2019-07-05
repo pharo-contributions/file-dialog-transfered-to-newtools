@@ -1,20 +1,20 @@
 Class {
-	#name : #FDDotPNGFilter,
-	#superclass : #FDAbstractCompositeFilter,
+	#name : #FDDotPNGPredicate,
+	#superclass : #FDAbstractCompositePredicate,
 	#category : #'FileDialog-filterStrategie'
 }
 
 { #category : #accessing }
-FDDotPNGFilter >> filter: aFileReference [
+FDDotPNGPredicate >> name [
+	^ 'png filter'
+]
+
+{ #category : #accessing }
+FDDotPNGPredicate >> predicate: aFileReference [
 	^ aFileReference isDirectory
 		or: [ aFileReference isFile
 				and: [ aFileReference basename
 						regex: '.*\.png'
 						matchesDo: [ :item | ^ true ].
 					^ false ] ]
-]
-
-{ #category : #accessing }
-FDDotPNGFilter >> name [
-	^ 'png filter'
 ]

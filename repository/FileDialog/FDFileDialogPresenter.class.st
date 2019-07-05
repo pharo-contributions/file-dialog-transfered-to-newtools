@@ -1,6 +1,9 @@
 "
 I am an abstract base class for different styles of opening/saving.
 
+
+
+
 ## author 
 
 main Author : peteruhnak
@@ -8,6 +11,11 @@ Migrator Spec 1 to Spec 2 : CafeKrem (github pseudo)
 if you have question please send me a mail : dutriezcle@gmail.com
 
 ## Examples
+
+|------------------------------------------|
+				look at this method 
+|---> FDFileDialogPresenter fullExample <--|
+|------------------------------------------|
 
 see class-side
 
@@ -29,16 +37,31 @@ whenSelected: aBlock
 	this method is use to define the action of the accept button
 		
 filtersCustomization: aCollection 
-	this method is use to define a set of Filter (choose one or more among FDAbstractFilter son)
+	this method is use to define a set of Filter (choose one or more among FDAbstractPredicate son or creat a new  predicate)
 	THERE IS ALWAYS THE DEFAULT FILTER (this filter filterNothing)
-	
-fillCustomBookmarksWith: aCollectionOfFDBookmark
-	this method is use to define a collection of bookmark for the variable 'customBookMarks'
-	
+	example: 
+		
+		(FDOpenFileDialog new filtersCustomization: { FDJPGAndPNGPredicate new }) openDialogWithSpec
+		
+bookmarks: aCollection Of FDAbstractBookMark
+	this method will set bookmarks use the class FDAbstractBookMark
+		you can create group with FDGroupBookMark or use FDBookMark to create bookmark
+		example : 
+		
+			class side method defaultBookmarks
+	  
 defaultFolder: aPath
 	this method will open tou fileDialog on a aPath , this path must exist and be a directory
+	example
+		
+		(FDOpenFileDialog new defaultFolder: '/home/cdutriez/' asFileReference) openDialogWithSpec 
 	
-	
+icons
+-----
+	if you want to add icons you just have to create a method with pragma <icons> and this method have to return an array of association 
+	example:
+		
+		see FDFileDialogPresenter textIcons method 
 
 "
 Class {
@@ -72,7 +95,7 @@ Class {
 		'OkActionBlock',
 		'Previewer'
 	],
-	#category : #FileDialog
+	#category : #'FileDialog-UI'
 }
 
 { #category : #icons }
@@ -117,7 +140,7 @@ FDFileDialogPresenter class >> defaultDirectory [
 
 { #category : #defaultClassVariable }
 FDFileDialogPresenter class >> defaultFilterSet [
-	^ FDAbstractFilter actions
+	^ FDAbstractPredicate actions
 ]
 
 { #category : #defaultClassVariable }
@@ -163,18 +186,38 @@ FDFileDialogPresenter class >> defaultSpec [
 ]
 
 { #category : #example }
-FDFileDialogPresenter class >> example [
-	^ FDOpenFileDialog open extent: 600@500 ; inspect ; yourself
+FDFileDialogPresenter class >> exampleSaveDialog [
+	<example>
+		^ FDSaveFileDialog new openDialogWithSpec 
 ]
 
 { #category : #example }
-FDFileDialogPresenter class >> exampleModal [
-	"modal returns the selected value"
+FDFileDialogPresenter class >> exampleSaveFileDialog [
+	^ FDSaveFileDialog new openDialogWithSpec
+]
 
-	OkActionBlock := [ :fileRefence | fileRefence inspect ].
-	^ (FDOpenDirectoryDialog new
-		defaultFolder: '/home/cdutriez' asFileReference ;
-		openDialogWithSpec) inspect
+{ #category : #example }
+FDFileDialogPresenter class >> fullExample [
+	<example>
+	| presenter |
+	presenter := FDOpenFileDialog new.
+	presenter previewer: FDPNGPreviewer new. "with this when you select a png file it will display it"
+	presenter filtersCustomization: { FDJPGAndPNGPredicate new }."with you add filter"
+	presenter defaultFolder: FileLocator home asFileReference.
+	presenter okActionBlock: [:selectedFileReference |selectedFileReference inspect  ]."you will define the action of the OK button"
+	presenter bookmarks: { FDGroupBookMark CreatWithname: 'exampleGroup' WithContent:  { FDBookmark image . FDBookmark home }  withIconName:  'group'}.
+	presenter openDialogWithSpec.
+	presenter inspect.
+	^ presenter
+]
+
+{ #category : #icons }
+FDFileDialogPresenter class >> imageIcons [
+	<icons>
+	^ {(#png -> (self iconNamed: #komitter)).
+	(#jpg -> (self iconNamed: #komitter)).
+	(#gif -> (self iconNamed: #komitter)).
+	(#svg -> (self iconNamed: #komitter))}
 ]
 
 { #category : #'class initialization' }
@@ -211,7 +254,7 @@ FDFileDialogPresenter class >> layoutPreviewer [
 							withConstraints: [ :contraint | contraint width: 200 ];
 						yourself)
 					withConstraints: [ :contraint | contraint height: self toolbarHeight ] yourself)withConstraints:  [:contraint |contraint height: 150  ];
-		add:  #previewContentPresenter withConstraints:  [:contraint |contraint height: 30 ] ;
+		add:  #previewContentPresenter withConstraints:  [:contraint |contraint width: 30; height: 30 ] ;
 		yourself
 ]
 
@@ -222,18 +265,14 @@ FDFileDialogPresenter class >> open [
 		yourself
 ]
 
-{ #category : #'as yet unclassified' }
-FDFileDialogPresenter class >> previewExample [
-	<example>
-	| presenter |
-	presenter := FDOpenFileDialog new.
-	presenter previewer: FDPNGPreviewer new.
-	presenter openDialogWithSpec.
-	presenter inspect.
-	^ presenter
+{ #category : #icons }
+FDFileDialogPresenter class >> textIcons [
+	<icons>
+	^ {(#st -> (self iconNamed: #smallLeftFlush)).
+	(#txt -> (self iconNamed: #smallLeftFlush))}
 ]
 
-{ #category : #actions }
+{ #category : #utility }
 FDFileDialogPresenter >> ChangeDirectoryApplyToPresenter: aFolder [
 	self flag: 'I have to rename it but I have no idea'.
 	currentDirectory := aFolder canonicalize.
@@ -272,6 +311,8 @@ FDFileDialogPresenter >> bookmarksTreeTableAction [
 
 { #category : #utility }
 FDFileDialogPresenter >> confirm [
+	self flag: #changeIt.
+	"it's horrible when we select a the bad selection (we select e file instead a directory) it's close it"
 	nameText text isNotEmpty
 		ifFalse: [ ^ self inform: 'you have to select a file' ].
 	self selectedEntry
@@ -359,11 +400,6 @@ FDFileDialogPresenter >> defaultFolder: aPath [
 		ifFalse: [ self openFolder: self defaultFolder ]
 ]
 
-{ #category : #utility }
-FDFileDialogPresenter >> delimiter [
-	^ FileSystem disk delimiter asString
-]
-
 { #category : #accessing }
 FDFileDialogPresenter >> filesList [
 	^ filesList
@@ -400,12 +436,12 @@ FDFileDialogPresenter >> filterACollection: aCollectionOfFileReference [
 	| collection |
 	collection := aCollectionOfFileReference
 		select:
-			[ :fileReference | filtersDropList selectedItem filter: fileReference ].
+			[ :fileReference | filtersDropList selectedItem predicate: fileReference ].
 	showHiddenFiles
 		ifFalse: [ collection
 				removeAll:
 					(collection
-						select: [ :aFileReference | hiddenFilter filter: aFileReference ]) ].
+						select: [ :aFileReference | hiddenFilter predicate: aFileReference ]) ].
 	^ collection
 ]
 
@@ -416,17 +452,25 @@ FDFileDialogPresenter >> filtersCustomization: aCollectionOfFilter [
 	filtersDropList
 		items:
 			(aCollectionOfFilter asOrderedCollection
-				add: FDDefaultFilter new;
+				add: FDDefaultPredicate new;
 				yourself) asSet asOrderedCollection.
 	filtersDropList
 		selectedIndex:
 			((filtersDropList listItems collect: #name)
-				indexOf: FDDefaultFilter new name)
+				indexOf: FDDefaultPredicate new name)
 ]
 
 { #category : #accessing }
 FDFileDialogPresenter >> filtersDropList [
 	^ filtersDropList
+]
+
+{ #category : #initialization }
+FDFileDialogPresenter >> filtersDropListAction [
+	filtersDropList
+		transmitTo: filesList
+		transform:
+			[ :filterBis | filesListContent select: [ :item | filterBis predicate: item ] ]
 ]
 
 { #category : #utility }
@@ -453,11 +497,10 @@ FDFileDialogPresenter >> initialTitle [
 
 { #category : #initialization }
 FDFileDialogPresenter >> initialize [
-	self flag: 'add customozation on hiddenFilter'.
 	super initialize.
 	showHiddenFiles := false.
 	okActionBlock := OkActionBlock.
-	hiddenFilter := FDHidenFileFilter new.
+	hiddenFilter := FDHidenFilePredicate new.
 	previewer := Previewer.
 	previewContentPresenter := nil
 	
@@ -506,24 +549,21 @@ FDFileDialogPresenter >> initializeFilesList [
 FDFileDialogPresenter >> initializeFiltersDropList [
 	| filterItems |
 	filterItems := FilterSet copy.
-	filterItems asOrderedCollection  add: FDDefaultFilter new.
+	filterItems asOrderedCollection  add: FDDefaultPredicate new.
 	filterItems := filterItems asSet.
 	filtersDropList
 		items:  filterItems asOrderedCollection ;
 		displayBlock: [ :item | item name ];
 		selectedIndex:
 			((filtersDropList listItems collect: #name)
-				indexOf: FDDefaultFilter new name)
+				indexOf: FDDefaultPredicate new name)
 ]
 
 { #category : #initialization }
 FDFileDialogPresenter >> initializePresenter [
 	self bookmarksTreeTableAction.
 	self filesListAction.
-	filtersDropList
-		transmitTo: filesList
-		transform:
-			[ :filterBis | filesListContent select: [ :item | filterBis filter: item ] ].
+	self filtersDropListAction.
 	self currentPathTextInputAction.
 	self lastDirectoryVisitiBeforeButtonAction.
 	self lastDirectoryVisitiAfterButtonAction
@@ -533,24 +573,33 @@ FDFileDialogPresenter >> initializePresenter [
 FDFileDialogPresenter >> initializeWidgets [
 	currentDirectory := Directory copy.
 	bookmarks := Bookmarks copy.
+	
 	bookmarksTreeTable := self newTreeTable.
 	filesList := self newList.
 	currentPathTextInputPresenter := self newTextInput.
-	(nameLabel := self newLabel) label: 'Name:'.
-	(nameText := self newTextInput) autoAccept: true.
+	nameLabel := self newLabel.
+	nameText := self newTextInput.
 	filtersDropList := self newDropList.
 	lastDirectoryVisitBeforeButton := self newButton.
 	lastDirectoryVisitAfterButton := self newButton.
+	
 	readPointerHistoryParcour := DoubleLink value: currentDirectory.
 	currentPathTextInputPresenter text: currentDirectory fullName.
 	lastDirectoryVisitAfterButton
 		icon: (self iconNamed: #glamorousDiveRight).
 	lastDirectoryVisitBeforeButton icon: (self iconNamed: #back).
+	nameLabel label: 'Name:'.
+	nameText autoAccept: true.
 	self initializeBookmarksTreeTable.
 	self initializeFilesList.
 	self initializeFiltersDropList.
 	self focusOrder
-		add: nameText;
+		add: bookmarksTreeTable;
+		add: lastDirectoryVisitBeforeButton;
+		add: lastDirectoryVisitAfterButton ;
+		add: currentPathTextInputPresenter;
+		add: filesList;
+		add: nameText;	
 		add: filtersDropList
 ]
 
@@ -602,7 +651,12 @@ FDFileDialogPresenter >> nameText [
 	^ nameText
 ]
 
-{ #category : #actions }
+{ #category : #'api-customization' }
+FDFileDialogPresenter >> okActionBlock: aOneArgBlock [
+	okActionBlock := aOneArgBlock
+]
+
+{ #category : #utility }
 FDFileDialogPresenter >> openFolder: aFolder [
 	self ChangeDirectoryApplyToPresenter: aFolder.
 	(readPointerHistoryParcour value children includes: currentDirectory)
@@ -644,16 +698,6 @@ FDFileDialogPresenter >> readPointerHistoryParcour [
 ]
 
 { #category : #utility }
-FDFileDialogPresenter >> selectBookmarkFor: aDirectory [
-	"bookmarksList' ListModel uses identity based comparison, so I need to select index instead"
-
-	"is there withIndexDetect: ?"
-
-	bookmarksTreeTable
-		selectIndex: ((bookmarksTreeTable items collect: #location) indexOf: aDirectory)
-]
-
-{ #category : #actions }
 FDFileDialogPresenter >> selectFile: aFile [
 	filesList selection selectedItem = aFile
 		ifFalse: [ filesList selectIndex: (filesList model items indexOf: aFile) ].
@@ -679,9 +723,4 @@ FDFileDialogPresenter >> showHiddenFiles [
 FDFileDialogPresenter >> toggleHiddenFiles [
 	showHiddenFiles := showHiddenFiles not.
 	filesList items: (self filterACollection: self currentFiles) 
-]
-
-{ #category : #'api-customization' }
-FDFileDialogPresenter >> whenSelected: aOneArgBlock [
-	okActionBlock := aOneArgBlock
 ]

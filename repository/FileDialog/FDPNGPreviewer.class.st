@@ -1,3 +1,8 @@
+"
+i'm creating 
+
+a SpImagePresenter of PNG file
+"
 Class {
 	#name : #FDPNGPreviewer,
 	#superclass : #FDAbstractPreviewer,

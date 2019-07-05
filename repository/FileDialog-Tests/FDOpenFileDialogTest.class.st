@@ -12,7 +12,7 @@ FDOpenFileDialogTest >> dialogClass [
 { #category : #tests }
 FDOpenFileDialogTest >> testSelectFile [
 	| selectedFile |
-	dialog whenSelected: [ :file | selectedFile := file ].
+	dialog okActionBlock: [ :file | selectedFile := file ].
 	window := dialog openDialogWithSpec.
 	self assert: dialog currentDirectory equals: root.
 	dialog selectFile: root / 'sth.ext'.

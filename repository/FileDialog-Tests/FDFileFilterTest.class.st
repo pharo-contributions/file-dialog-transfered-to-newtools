@@ -6,43 +6,45 @@ Class {
 
 { #category : #tests }
 FDFileFilterTest >> testDefaultFilterShouldReturnEveryTimeTrue [
-	| beforeFilter |
+	| beforeFilter defaultFilter |
 	beforeFilter := root children.
-	FDDefaultFilter new filter: root.
+	defaultFilter := FDDefaultPredicate new.
 	self
 		assert:
 			(root children
-				select: [ :fileReference | FDDefaultFilter new filter: fileReference ])
+				select: [ :fileReference | defaultFilter predicate: fileReference ])
 		equals: beforeFilter
 ]
 
 { #category : #tests }
 FDFileFilterTest >> testHiddenFilter [
+	| hiddenFilter |
+	hiddenFilter := FDHidenFilePredicate new.
 	self
 		assert:
-			((root children select: [ :item | FDHidenFileFilter new filter: item ])
+			((root children select: [ :item | hiddenFilter predicate: item ])
 				collect: #basename) asSet
-		equals: {  '.hidden-dir' . '.hidden'} asSet 
+		equals: {'.hidden-dir' . '.hidden'} asSet
 ]
 
 { #category : #tests }
 FDFileFilterTest >> testJPGFilterShouldFilterOnlyJPGFile [
 	| filterBis |
-	filterBis := FDDotJPGFilter new.
+	filterBis := FDDotJPGPredicate new.
 	self
 		assert:
 			((root children
-				select: [ :fileReference | filterBis filter: fileReference ])
+				select: [ :fileReference | filterBis predicate: fileReference ])
 				allSatisfy: [ :item | (item basename endsWith: '.jpg') or: [ item isDirectory ] ])
 ]
 
 { #category : #tests }
 FDFileFilterTest >> testPNGFilterShouldFilterOnlyPNGFile [
 	| filterBis |
-	filterBis := FDDotPNGFilter new.
+	filterBis := FDDotPNGPredicate new.
 	self
 		assert:
 			((root children
-				select: [ :fileReference | filterBis filter: fileReference ])
+				select: [ :fileReference | filterBis predicate: fileReference ])
 				allSatisfy: [ :item | (item basename endsWith: '.png' )or:[ item isDirectory]  ])
 ]

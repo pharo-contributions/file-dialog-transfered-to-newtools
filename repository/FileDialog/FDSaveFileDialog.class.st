@@ -4,7 +4,7 @@ My responsibility is to provide dialog for SAVING files.
 Class {
 	#name : #FDSaveFileDialog,
 	#superclass : #FDFileDialogPresenter,
-	#category : #FileDialog
+	#category : #'FileDialog-UI'
 }
 
 { #category : #api }
@@ -15,10 +15,11 @@ FDSaveFileDialog >> initialTitle [
 { #category : #initialization }
 FDSaveFileDialog >> initializePresenter [
 	| ec |
+	self flag: #StrangeItsDontWork.
 	super initializePresenter.
 	(ec := EntryCompletion new)
 		dataSourceBlock: [ :text | currentDirectory children collect: #basename ];
-		filterBlock: [ :opt :text | opt beginsWith: text ].
+		filterBlock: [ :opt :text |opt beginsWith: text ].
 	nameText entryCompletion: ec
 ]
 
