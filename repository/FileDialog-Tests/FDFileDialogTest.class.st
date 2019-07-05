@@ -50,7 +50,7 @@ FDFileDialogTest >> testCustomizationWhenChangeCollectionOfPreviewerShouldBeSet 
 
 { #category : #tests }
 FDFileDialogTest >> testInitializeFilterDropListSelectedItemShouldBeDefaultFilter [
-	self assert: dialog filtersDropList selectedItem name equals: FDDefaultFilter new name
+	self assert: dialog filtersDropList selectedItem name equals: FDDefaultPredicate new name
 ]
 
 { #category : #tests }
@@ -148,12 +148,12 @@ FDFileDialogTest >> testWhenClickAnBeforeHistoryButtonIfThereAreHistoryShouldCom
 { #category : #tests }
 FDFileDialogTest >> testWhenCustomizeFilterShouldFilterDropListPresenterIncludeIt [
 	| aCollectionOfFilter |
-	aCollectionOfFilter := {FDDefaultFilter new.
-	FDDotJPGFilter new}.
+	aCollectionOfFilter := {FDDefaultPredicate new.
+	FDDotJPGPredicate new}.
 	dialog filtersCustomization: aCollectionOfFilter.
 	self
 		assert: dialog filtersDropList selectedItem name
-		equals: FDDefaultFilter new name.
+		equals: FDDefaultPredicate new name.
 	self
 		assert: (dialog filtersDropList listItems includesAll: aCollectionOfFilter)
 ]
@@ -161,11 +161,11 @@ FDFileDialogTest >> testWhenCustomizeFilterShouldFilterDropListPresenterIncludeI
 { #category : #tests }
 FDFileDialogTest >> testWhenCustomizeFilterWithoutDefaultFilterShouldFilterDropListPresenterIncludeDefaultFilterAndSelectIt [
 	| aCollectionOfFilter |
-	aCollectionOfFilter := {FDDotJPGFilter new}.
+	aCollectionOfFilter := {FDDotJPGPredicate new}.
 	dialog filtersCustomization: aCollectionOfFilter.
 	self
 		assert: dialog filtersDropList selectedItem name
-		equals: FDDefaultFilter new name.
+		equals: FDDefaultPredicate new name.
 	self
 		assert: (dialog filtersDropList listItems includesAll: aCollectionOfFilter)
 ]
@@ -205,7 +205,7 @@ FDFileDialogTest >> testWhenOpenADirectoryShouldDisplayHisChildrenFilterByCurren
 	dialog filtersDropList
 		selectedIndex:
 			((dialog filtersDropList listItems collect: #name)
-				indexOf: FDDotPNGFilter new name).
+				indexOf: FDDotPNGPredicate new name).
 	self fileListAllMustBeFilterByPNGFIlter.
 	dialog filesList
 		selectIndex: ((dialog filesList items collect: #basename) indexOf: 'dir').

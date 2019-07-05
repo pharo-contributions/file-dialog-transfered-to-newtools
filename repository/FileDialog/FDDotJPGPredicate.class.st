@@ -1,11 +1,16 @@
 Class {
-	#name : #FDDotJPGFilter,
-	#superclass : #FDAbstractCompositeFilter,
+	#name : #FDDotJPGPredicate,
+	#superclass : #FDAbstractCompositePredicate,
 	#category : #'FileDialog-filterStrategie'
 }
 
 { #category : #accessing }
-FDDotJPGFilter >> filter: aFileReference [
+FDDotJPGPredicate >> name [
+	^ 'end with jpg'
+]
+
+{ #category : #accessing }
+FDDotJPGPredicate >> predicate: aFileReference [
 	^ aFileReference isDirectory
 		or: [ aFileReference isFile
 				and: [ 
@@ -13,9 +18,4 @@ FDDotJPGFilter >> filter: aFileReference [
 						regex: '.*\.jpg'
 						matchesDo: [ :item | ^ true ].
 					^ false ] ]
-]
-
-{ #category : #accessing }
-FDDotJPGFilter >> name [
-	^ 'end with jpg'
 ]

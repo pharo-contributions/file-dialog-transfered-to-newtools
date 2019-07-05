@@ -1,3 +1,15 @@
+"
+i'm an Abstract class to 
+
+my subclass must define:
+
+isComposite : return Boolean
+
+IV :
+
+icon <Form> 
+name <Form> 
+"
 Class {
 	#name : #FDAbstractBookMark,
 	#superclass : #Object,
@@ -10,7 +22,12 @@ Class {
 
 { #category : #accessing }
 FDAbstractBookMark >> icon [
-	^ self subclassResponsibility 
+	^ icon
+]
+
+{ #category : #accessing }
+FDAbstractBookMark >> icon: anObject [
+	icon := anObject
 ]
 
 { #category : #testing }
@@ -20,5 +37,10 @@ FDAbstractBookMark >> isComposite [
 
 { #category : #accessing }
 FDAbstractBookMark >> name [
-	^ self subclassResponsibility
+	^ name
+]
+
+{ #category : #accessing }
+FDAbstractBookMark >> name: anObject [
+	name := anObject
 ]
