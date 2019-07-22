@@ -188,6 +188,7 @@ FDFileDialogPresenter class >> defaultSpec [
 { #category : #example }
 FDFileDialogPresenter class >> examplePreviewer [
 	| presenter |
+	self flag: 'its dont work i think it''s because adapter are not rebuild see issue https://github.com/pharo-spec/Spec/issues/635'.
 	presenter := FDOpenFileDialog new.
 	presenter previewer: FDPNGPreviewer new.
 	presenter openDialogWithSpec
@@ -209,11 +210,30 @@ FDFileDialogPresenter class >> fullExample [
 	<example>
 	| presenter |
 	presenter := FDOpenFileDialog new.
-	presenter previewer: FDPNGPreviewer new. "with this when you select a png file it will display it"
-	presenter filtersCustomization: { FDJPGAndPNGPredicate new }."with you add filter"
+	
+	presenter previewer: FDPNGPreviewer new.	
+	self flag: 'its dont work i think it''s because adapter are not rebuild see issue https://github.com/pharo-spec/Spec/issues/635'.
+	"with this when you select a png file it will display it"
+	
+	presenter filtersCustomization: {FDJPGAndPNGPredicate new}.
+	"with you add filter and there always the 'no filter'"
+	
 	presenter defaultFolder: FileLocator home asFileReference.
-	presenter okActionBlock: [:selectedFileReference |selectedFileReference inspect  ]."you will define the action of the OK button"
-	presenter bookmarks: { FDGroupBookMark CreatWithname: 'exampleGroup' WithContent:  { FDBookmark image . FDBookmark home }  withIconName:  'group'}.
+	"it's open the FileDialog on this file"
+	
+	presenter okActionBlock: [ :selectedFileReference | selectedFileReference inspect ].
+	"you will define the action of the OK button "
+	
+	presenter
+		bookmarks:
+			{(FDGroupBookMark
+				CreatWithname: 'exampleGroup'
+				WithContent:
+					{FDBookmark image.
+					FDBookmark home}
+				withIconName: 'group')}.
+	"you define the bookmarks have to be instance of FDAbstractBookMark"
+	
 	presenter openDialogWithSpec.
 	presenter inspect.
 	^ presenter
