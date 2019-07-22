@@ -157,9 +157,9 @@ FDFileDialogPresenter class >> defaultPreviewer [
 FDFileDialogPresenter class >> defaultSpec [
 	^ SpBoxLayout newVertical
 		add:
-			(SpBoxLayout newHorizontal
-				add: #bookmarksTreeTable
-					withConstraints: [ :contraint | contraint width: 200 ];
+			(SpPanedLayout newHorizontal
+				position: 200;
+				add: #bookmarksTreeTable;
 				add:
 					(SpBoxLayout newVertical
 						add:
@@ -186,6 +186,15 @@ FDFileDialogPresenter class >> defaultSpec [
 ]
 
 { #category : #example }
+FDFileDialogPresenter class >> examplePreviewer [
+	| presenter |
+	self flag: 'its dont work i think it''s because adapter are not rebuild see issue https://github.com/pharo-spec/Spec/issues/635'.
+	presenter := FDOpenFileDialog new.
+	presenter previewer: FDPNGPreviewer new.
+	presenter openDialogWithSpec
+]
+
+{ #category : #example }
 FDFileDialogPresenter class >> exampleSaveDialog [
 	<example>
 		^ FDSaveFileDialog new openDialogWithSpec 
@@ -201,11 +210,30 @@ FDFileDialogPresenter class >> fullExample [
 	<example>
 	| presenter |
 	presenter := FDOpenFileDialog new.
-	presenter previewer: FDPNGPreviewer new. "with this when you select a png file it will display it"
-	presenter filtersCustomization: { FDJPGAndPNGPredicate new }."with you add filter"
+	
+	presenter previewer: FDPNGPreviewer new.	
+	self flag: 'its dont work i think it''s because adapter are not rebuild see issue https://github.com/pharo-spec/Spec/issues/635'.
+	"with this when you select a png file it will display it"
+	
+	presenter filtersCustomization: {FDJPGAndPNGPredicate new}.
+	"with you add filter and there always the 'no filter'"
+	
 	presenter defaultFolder: FileLocator home asFileReference.
-	presenter okActionBlock: [:selectedFileReference |selectedFileReference inspect  ]."you will define the action of the OK button"
-	presenter bookmarks: { FDGroupBookMark CreatWithname: 'exampleGroup' WithContent:  { FDBookmark image . FDBookmark home }  withIconName:  'group'}.
+	"it's open the FileDialog on this file"
+	
+	presenter okActionBlock: [ :selectedFileReference | selectedFileReference inspect ].
+	"you will define the action of the OK button "
+	
+	presenter
+		bookmarks:
+			{(FDGroupBookMark
+				CreatWithname: 'exampleGroup'
+				WithContent:
+					{FDBookmark image.
+					FDBookmark home}
+				withIconName: 'group')}.
+	"you define the bookmarks have to be instance of FDAbstractBookMark"
+	
 	presenter openDialogWithSpec.
 	presenter inspect.
 	^ presenter
@@ -231,13 +259,13 @@ FDFileDialogPresenter class >> initialize [
 
 { #category : #specs }
 FDFileDialogPresenter class >> layoutPreviewer [
-	^ SpBoxLayout newHorizontal
+	^ SpPanedLayout newHorizontal
 		add:
 			(SpBoxLayout newVertical
 				add:
-					(SpBoxLayout newHorizontal
-						add: #bookmarksTreeTable
-							withConstraints: [ :contraint | contraint width: 200 ];
+					(SpPanedLayout newHorizontal
+						position: 200;
+						add: #bookmarksTreeTable;
 						add:
 							(SpBoxLayout newVertical
 								add: #currentPathTextInputPresenter
@@ -253,8 +281,9 @@ FDFileDialogPresenter class >> layoutPreviewer [
 						add: #filtersDropList
 							withConstraints: [ :contraint | contraint width: 200 ];
 						yourself)
-					withConstraints: [ :contraint | contraint height: self toolbarHeight ] yourself)withConstraints:  [:contraint |contraint height: 150  ];
-		add:  #previewContentPresenter withConstraints:  [:contraint |contraint width: 30; height: 30 ] ;
+					withConstraints: [ :contraint | contraint height: self toolbarHeight ];
+				yourself);
+		add: #previewContentPresenter;
 		yourself
 ]
 
@@ -424,11 +453,11 @@ FDFileDialogPresenter >> filesListAction [
 				ifNotNil: [ (previewer canBeUsedOn: selectedFileReference selectedItem)
 						ifTrue: [ previewContentPresenter := previewer
 								previewOn: selectedFileReference selectedItem.
-							self window rebuildWithSpecLayout: self class layoutPreviewer.
-							self window extent: 800@800 ]
+							self needRebuild: false.
+							self buildWithSpecLayout: self class layoutPreviewer ]
 						ifFalse: [ previewContentPresenter := nil.
-							self window rebuildWithSpecLayout: self class defaultSpec.
-							self window extent: 800@800 ] ] ]
+							self needRebuild: false.
+							self buildWithSpec ] ] ]
 ]
 
 { #category : #utility }
