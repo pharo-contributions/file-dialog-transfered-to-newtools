@@ -185,7 +185,7 @@ FDFileDialogPresenter class >> defaultSpec [
 			withConstraints: [ :contraint | contraint height: self toolbarHeight ] yourself
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #example }
 FDFileDialogPresenter class >> examplePreviewer [
 	| presenter |
 	presenter := FDOpenFileDialog new.
