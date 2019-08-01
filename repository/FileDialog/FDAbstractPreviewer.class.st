@@ -1,11 +1,11 @@
 "
-i'm an abstract class to define a interface for a preview system 
+I'm an abstract class to define a interface for a preview system 
 
-my subclass have to define :
+my subclasses have to define :
 
-* canBeUseOn: aFileReference 
-	return a Boolean if it can be use on  'aFileReference'
-	
+* matchingMimeType: aZnMimeType
+	return a Boolean to indicate if element matches
+
 * previewOn: aFileReference 
 	return a Presenter (son of SpPresenter)  
 "
@@ -25,7 +25,17 @@ FDAbstractPreviewer class >> isAbstract [
 
 { #category : #testing }
 FDAbstractPreviewer >> canBeUsedOn: aFileReference [
-		^ self subclassResponsibility
+	aFileReference ifNil: [ ^ false ].
+	aFileReference mimeTypes
+		ifNil: [ ^ false ]
+		ifNotNil:
+			[ :items | ^ items anySatisfy: [ :aZnMimeType | self matchingMimeType: aZnMimeType ] ]
+]
+
+{ #category : #testing }
+FDAbstractPreviewer >> matchingMimeType: aZnMimeType [
+	"return a Boolean to indicate if element matches"
+	^ self subclassResponsibility 
 ]
 
 { #category : #'as yet unclassified' }

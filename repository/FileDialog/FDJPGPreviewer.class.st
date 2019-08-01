@@ -1,22 +1,19 @@
-"
-i'm creating 
-
-a SpImagePresenter of PNG file
-"
 Class {
-	#name : #FDPNGPreviewer,
+	#name : #FDJPGPreviewer,
 	#superclass : #FDAbstractPreviewer,
 	#category : #'FileDialog-previewerStrategie'
 }
 
 { #category : #testing }
-FDPNGPreviewer >> matchingMimeType: element [
-	^ element matches:  ZnMimeType imagePng
+FDJPGPreviewer >> matchingMimeType: aZnMimeType [
+	"return a Boolean to indicate if element matches"
+
+	^ aZnMimeType matches: ZnMimeType imageJpeg
 ]
 
 { #category : #'as yet unclassified' }
-FDPNGPreviewer >> previewOn: aFileReference [
-	^ SpImagePresenter new
+FDJPGPreviewer >> previewOn: aFileReference [
+SpImagePresenter new
 		image:
 			(aFileReference
 				binaryReadStreamDo: [ :stream | PNGReadWriter formFromStream: stream ]);
