@@ -1,5 +1,5 @@
 # File Dialog
-[![Build Status](https://travis-ci.org/peteruhnak/file-dialog.svg?branch=master)](https://travis-ci.org/peteruhnak/file-dialog) [![Coverage Status](https://coveralls.io/repos/github/peteruhnak/file-dialog/badge.svg)](https://coveralls.io/github/peteruhnak/file-dialog)
+[![Build Status](https://travis-ci.org/pharo-contributions/file-dialog.svg?branch=master)](https://travis-ci.org/pharo-contributions/file-dialog) [![Coverage Status](https://coveralls.io/repos/github/pharo-contributions/file-dialog/badge.svg)](https://coveralls.io/github/pharo-contributions/file-dialog)
 
 A simple replacement for Pharo's native file/folder selection dialog.
 
@@ -21,7 +21,7 @@ A simple replacement for Pharo's native file/folder selection dialog.
 ```st
 Metacello new
 	baseline: 'FileDialog';
-	repository: 'github://peteruhnak/file-dialog/repository';
+	repository: 'github://pharo-contributions/file-dialog/repository';
 	load.
 ```
 
