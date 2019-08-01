@@ -608,7 +608,7 @@ FDFileDialogPresenter >> initializeWidgets [
 	bookmarks := Bookmarks.
 	
 	bookmarksTreeTable := self newTreeTable.
-	filesList := self newList.
+	filesList := self instantiate: HRBFolderContentPresenter2.
 	currentPathTextInputPresenter := self newTextInput.
 	nameLabel := self newLabel.
 	nameText := self newTextInput.
