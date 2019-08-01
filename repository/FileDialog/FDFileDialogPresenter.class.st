@@ -88,10 +88,8 @@ Class {
 	],
 	#classVars : [
 		'Bookmarks',
-		'CustomBookmarks',
 		'Directory',
 		'FilterSet',
-		'FixedBookMark',
 		'OkActionBlock',
 		'Previewer'
 	],
@@ -113,6 +111,10 @@ FDFileDialogPresenter class >> buildCommandsGroupWith: presenter forRoot: rootCo
 			((CmCommandGroup named: 'interact with file') asSpecGroup
 				register: (FDCreatDirectoryCommand forSpec context: presenter);
 				register: (FDToggleHiddenFilesCommand forSpec context: presenter);
+				register: (FDAddBookmarkCommand  forSpec context: presenter )
+				yourself);
+			register: ((CmCommandGroup named: 'bookmarkCommand') asSpecGroup
+				register: (FDRemoveBookmarkCommand forSpec context: presenter);
 				yourself)
 ]
 
@@ -130,7 +132,7 @@ FDFileDialogPresenter class >> defaultBookmarks [
 	^ {(FDGroupBookMark
 		CreatWithname: 'fixed bookmarks'
 		WithContent: presets
-		withIconName: '')}
+		withIconName: '')} asOrderedCollection
 ]
 
 { #category : #defaultClassVariable }
@@ -302,16 +304,6 @@ FDFileDialogPresenter class >> textIcons [
 ]
 
 { #category : #utility }
-FDFileDialogPresenter >> ChangeDirectoryApplyToPresenter: aFolder [
-	self flag: 'I have to rename it but I have no idea'.
-	currentDirectory := aFolder canonicalize.
-	currentPathTextInputPresenter text: currentDirectory fullName.
-	filesList items: (self filterACollection: self currentFiles).
-	filesListContent := filesList items.
-	filesList unselectAll
-]
-
-{ #category : #utility }
 FDFileDialogPresenter >> bookmarks [
 	^ bookmarks
 ]
@@ -336,6 +328,16 @@ FDFileDialogPresenter >> bookmarksTreeTableAction [
 					selectedItem isComposite
 						ifFalse: [ self openFolder: selectedItem location ] ] ]
 
+]
+
+{ #category : #utility }
+FDFileDialogPresenter >> changeDirectoryApplyToPresenter: aFolder [
+	self flag: 'I have to rename it but I have no idea'.
+	currentDirectory := aFolder canonicalize.
+	currentPathTextInputPresenter text: currentDirectory fullName.
+	filesList items: (self filterACollection: self currentFiles).
+	filesListContent := filesList items.
+	filesList unselectAll
 ]
 
 { #category : #utility }
@@ -550,7 +552,9 @@ FDFileDialogPresenter >> initializeBookmarksTreeTable [
 		children: [ :child | 
 			child isComposite
 				ifTrue: [ child collection ]
-				ifFalse: [ {} ] ]
+				ifFalse: [ {} ] ];
+			contextMenu: [ (self rootCommandsGroup / 'bookmarkCommand') beRoot
+				asMenuPresenter ]
 ]
 
 { #category : #initialization }
@@ -601,7 +605,7 @@ FDFileDialogPresenter >> initializePresenter [
 { #category : #initialization }
 FDFileDialogPresenter >> initializeWidgets [
 	currentDirectory := Directory copy.
-	bookmarks := Bookmarks copy.
+	bookmarks := Bookmarks.
 	
 	bookmarksTreeTable := self newTreeTable.
 	filesList := self newList.
@@ -637,6 +641,12 @@ FDFileDialogPresenter >> isRootDirectory: aDirectory [
 	^ aDirectory isRoot or: [ OSPlatform current isWindows and: [ aDirectory parent isRoot ] ]
 ]
 
+{ #category : #initialization }
+FDFileDialogPresenter >> isolate [
+	bookmarks := bookmarks copy.
+	
+]
+
 { #category : #accessing }
 FDFileDialogPresenter >> lastDirectoryVisitAfterButton [
 	^ lastDirectoryVisitAfterButton
@@ -655,7 +665,7 @@ FDFileDialogPresenter >> lastDirectoryVisitiAfterButtonAction [
 						inform:
 							'this button is use to go after clicking on <- button to return on the last directory' ]
 				ifTrue: [ self
-						ChangeDirectoryApplyToPresenter: readPointerHistoryParcour nextLink value.
+						changeDirectoryApplyToPresenter: readPointerHistoryParcour nextLink value.
 					readPointerHistoryParcour := readPointerHistoryParcour nextLink ] ]
 ]
 
@@ -665,7 +675,7 @@ FDFileDialogPresenter >> lastDirectoryVisitiBeforeButtonAction [
 		action: [ readPointerHistoryParcour hasPredecessor
 				ifFalse: [ self inform: 'this button is used to go to the last directory ' ]
 				ifTrue: [ self
-						ChangeDirectoryApplyToPresenter: readPointerHistoryParcour previousLink value.
+						changeDirectoryApplyToPresenter: readPointerHistoryParcour previousLink value.
 					readPointerHistoryParcour := readPointerHistoryParcour
 						previousLink ] ]
 ]
@@ -687,7 +697,7 @@ FDFileDialogPresenter >> okActionBlock: aOneArgBlock [
 
 { #category : #utility }
 FDFileDialogPresenter >> openFolder: aFolder [
-	self ChangeDirectoryApplyToPresenter: aFolder.
+	self changeDirectoryApplyToPresenter: aFolder.
 	(readPointerHistoryParcour value children includes: currentDirectory)
 		ifTrue: [ readPointerHistoryParcour
 				nextLink:

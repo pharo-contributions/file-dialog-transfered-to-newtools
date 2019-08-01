@@ -33,3 +33,8 @@ FDGroupBookMark >> collection: anObject [
 FDGroupBookMark >> isComposite [
 	^ true
 ]
+
+{ #category : #accesing }
+FDGroupBookMark >> removeAt: anInteger [ 
+	self collection removeAt: anInteger.
+]

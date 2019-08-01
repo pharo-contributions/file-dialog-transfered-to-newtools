@@ -37,7 +37,9 @@ FDFileDialogTest >> setUp [
 { #category : #running }
 FDFileDialogTest >> tearDown [
 	super tearDown.
+	dialog class initialize.
 	window ifNotNil: #delete
+	
 ]
 
 { #category : #tests }
@@ -96,6 +98,43 @@ FDFileDialogTest >> testWhenAddACollectionOfBookmarkToCustomBookmarkShouldBeAdde
 		assertCollection: (dialog bookmarksTreeTable roots at: 1) collection
 		hasSameElements: aCollectionOfBookmark.
 	self assert: dialog bookmarksTreeTable roots size equals: 1
+]
+
+{ #category : #tests }
+FDFileDialogTest >> testWhenAddingBookmarkOnDefaultBookmarksShouldBeAddToAllInstance [
+	| anOtherInstance addCommand |
+	anOtherInstance := FDOpenDirectoryDialog new.
+	self
+		assertCollection: anOtherInstance bookmarks
+		hasSameElements: dialog bookmarks.
+	addCommand := FDAddBookmarkCommand new.
+	addCommand context: dialog.
+	dialog filesList
+		selectIndex: ((dialog filesList items collect: #basename) indexOf: 'dir'). 
+	addCommand execute.
+	self
+		assertCollection: dialog bookmarksTreeTable roots
+		hasSameElements: anOtherInstance bookmarks .
+	self
+		assertCollection: dialog bookmarksTreeTable roots
+		hasSameElements: anOtherInstance bookmarksTreeTable roots
+]
+
+{ #category : #tests }
+FDFileDialogTest >> testWhenAddingBookmarkOnIsolateBookmarksShouldBeAddToAllInstance [
+	| anOtherInstance addCommand beforeAdding |
+	dialog isolate.
+	addCommand := FDAddBookmarkCommand new.
+	addCommand context: dialog.
+	dialog filesList
+		selectIndex: ((dialog filesList items collect: #basename) indexOf: 'dir'). 
+	addCommand execute.
+	anOtherInstance := FDOpenDirectoryDialog new.
+	self flag: #issue4162.
+	self deny: anOtherInstance bookmarks equals: dialog bookmarks.
+	self
+		deny: dialog bookmarksTreeTable roots
+		equals: anOtherInstance bookmarksTreeTable roots
 ]
 
 { #category : #tests }
