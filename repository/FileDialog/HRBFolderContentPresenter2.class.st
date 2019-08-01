@@ -13,7 +13,7 @@ Class {
 	#category : #FileDialog
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #defaults }
 HRBFolderContentPresenter2 class >> defaultColumns [
 	^ {
 	FDIconFileReferenceTableColumn column width: 20.
@@ -86,7 +86,7 @@ HRBFolderContentPresenter2 >> initializePresenter [
 	table
 		whenActivatedDo: [ :selectedItem | 
 			selectedItem selectedItem isDirectory
-				ifTrue: [ 1halt.table items: selectedItem selectedItem children ] ]
+				ifTrue: [ table items: selectedItem selectedItem children ] ]
 ]
 
 { #category : #initialization }
