@@ -1,5 +1,8 @@
+"
+I'm using to navigate into file
+"
 Class {
-	#name : #HRBFolderContentPresenter2,
+	#name : #FDFileListPresenter,
 	#superclass : #SpPresenter,
 	#instVars : [
 		'table',
@@ -8,13 +11,14 @@ Class {
 		'columns'
 	],
 	#classVars : [
-		'Columns'
+		'Columns',
+		'Prevewer'
 	],
-	#category : #FileDialog
+	#category : #'FileDialog-UI'
 }
 
 { #category : #defaults }
-HRBFolderContentPresenter2 class >> defaultColumns [
+FDFileListPresenter class >> defaultColumns [
 	^ {
 	FDIconFileReferenceTableColumn column width: 20.
 	FDbasenameFileReferenceColumn column.
@@ -22,8 +26,13 @@ HRBFolderContentPresenter2 class >> defaultColumns [
 	FDAccessRightFileReferenceColumn column}
 ]
 
+{ #category : #'class initialization' }
+FDFileListPresenter class >> defaultPreviewer [
+	^ nil
+]
+
 { #category : #specs }
-HRBFolderContentPresenter2 class >> defaultSpec [
+FDFileListPresenter class >> defaultSpec [
 
 	^ SpPanedLayout newVertical
 		position: 30 percent;
@@ -33,18 +42,19 @@ HRBFolderContentPresenter2 class >> defaultSpec [
 ]
 
 { #category : #examples }
-HRBFolderContentPresenter2 class >> example [
+FDFileListPresenter class >> example [
 
 	^self openOn: FileSystem workingDirectory
 ]
 
 { #category : #'class initialization' }
-HRBFolderContentPresenter2 class >> initialize [
-	Columns := self defaultColumns
+FDFileListPresenter class >> initialize [
+	Columns := self defaultColumns.
+	Prevewer := self defaultPreviewer
 ]
 
 { #category : #'instance creation' }
-HRBFolderContentPresenter2 class >> on: aFileReference [
+FDFileListPresenter class >> on: aFileReference [
 
 	^(self new)
 		folder: aFileReference;
@@ -52,37 +62,37 @@ HRBFolderContentPresenter2 class >> on: aFileReference [
 ]
 
 { #category : #show }
-HRBFolderContentPresenter2 class >> openOn: aFileReference [
+FDFileListPresenter class >> openOn: aFileReference [
 
 	(self on: aFileReference) openWithSpec
 ]
 
 { #category : #'api-customization' }
-HRBFolderContentPresenter2 >> columns: aCollectionOfColumn [
+FDFileListPresenter >> columns: aCollectionOfColumn [
 	columns := aCollectionOfColumn.
 	folder roots: columns
 ]
 
 { #category : #accessing }
-HRBFolderContentPresenter2 >> detail [
+FDFileListPresenter >> detail [
 
-	^detail ifNil: [ detail := (self instantiate: HRBFileDetailPresenter) ]
+	^detail 
 ]
 
 { #category : #accessing }
-HRBFolderContentPresenter2 >> folder [
+FDFileListPresenter >> folder [
 	^ folder
 ]
 
 { #category : #accessing }
-HRBFolderContentPresenter2 >> folder: aFileReference [
+FDFileListPresenter >> folder: aFileReference [
 	detail showFile: nil.
    self table items: aFileReference children
 	
 ]
 
 { #category : #initialization }
-HRBFolderContentPresenter2 >> initializePresenter [
+FDFileListPresenter >> initializePresenter [
 	table
 		whenActivatedDo: [ :selectedItem | 
 			selectedItem selectedItem isDirectory
@@ -90,10 +100,12 @@ HRBFolderContentPresenter2 >> initializePresenter [
 ]
 
 { #category : #initialization }
-HRBFolderContentPresenter2 >> initializeWidgets [
+FDFileListPresenter >> initializeWidgets [
 	columns := Columns.
-	self detail.
-	self table
+	detail := self instantiate: HRBFileDetailPresenter.
+	table := self newTable.
+	
+	table
 		beMultipleSelection;
 		columns: columns;
 		sortingBlock: [ :a :b | 
@@ -104,19 +116,35 @@ HRBFolderContentPresenter2 >> initializeWidgets [
 						& (a basename asLowercase < b basename asLowercase) ] ]
 ]
 
-{ #category : #initialization }
-HRBFolderContentPresenter2 >> isolate [
+{ #category : #'api-customization' }
+FDFileListPresenter >> isolate [
 	columns := columns copy
 ]
 
-{ #category : #accessing }
-HRBFolderContentPresenter2 >> table [
+{ #category : #'as yet unclassified' }
+FDFileListPresenter >> listAction [
+	self flag: #warning.
+	"filesList
+		whenSelectionChangedDo: [ :selectedFileReference | 
+			previewer
+				ifNotNil: [ (previewer canBeUsedOn: selectedFileReference selectedItem)
+						ifTrue: [ previewContentPresenter := previewer
+								previewOn: selectedFileReference selectedItem.
+							self needRebuild: false.
+							self buildWithSpecLayout: self class layoutPreviewer ]
+						ifFalse: [ previewContentPresenter := nil.
+							self needRebuild: false.
+							self buildWithSpec ] ] ]"
+]
 
-	^table ifNil: [ table := self newTable ]
+{ #category : #accessing }
+FDFileListPresenter >> table [
+	
+	^table 
 ]
 
 { #category : #'api-events' }
-HRBFolderContentPresenter2 >> whenItemsChangedDo: aBlock [
+FDFileListPresenter >> whenItemsChangedDo: aBlock [
 	
 	table whenSelectionChangedDo: [:sel | 
 		|items|
