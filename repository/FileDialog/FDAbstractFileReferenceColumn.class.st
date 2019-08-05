@@ -19,9 +19,24 @@ Class {
 	#category : #'FileDialog-FileTreeStrategie'
 }
 
+{ #category : #accessing }
+FDAbstractFileReferenceColumn class >> column [
+	"I'm returning a SpTreeTableColumn"
+
+	^ self tableColumnClass
+		title: self columnTitle
+		evaluated: self columnEvaluated
+]
+
 { #category : #templateMethod }
 FDAbstractFileReferenceColumn class >> columnEvaluated [
 	^ [:selectedFileReference | self evaluateOn: selectedFileReference   ]
+]
+
+{ #category : #templateMethod }
+FDAbstractFileReferenceColumn class >> columnTitle [
+	"I'm returning a String"
+	^ self subclassResponsibility
 ]
 
 { #category : #templateMethod }
@@ -32,4 +47,10 @@ FDAbstractFileReferenceColumn class >> evaluateOn: aFileReference [
 { #category : #testing }
 FDAbstractFileReferenceColumn class >> isAbstract [ 
 	^ self = FDAbstractFileReferenceColumn
+]
+
+{ #category : #class }
+FDAbstractFileReferenceColumn class >> tableColumnClass [
+	"I'm returning a son of SpTreeTableColumn"
+	^ self subclassResponsibility 
 ]

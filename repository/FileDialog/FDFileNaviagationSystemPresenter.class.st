@@ -74,13 +74,13 @@ FDFileNaviagationSystemPresenter class >> defaultSpec [
 ]
 
 { #category : #examples }
-FDFileNaviagationSystemPresenter class >> example [ 	
+FDFileNaviagationSystemPresenter class >> example [
 	<example>
-		| presenter |
-		presenter := self new.
-		presenter defaultFolder: FileLocator documents.
-		 
-		^ presenter
+	| presenter |
+	presenter := self new.
+	presenter defaultFolder: FileLocator documents.
+	presenter openWithSpec.
+	^ presenter
 ]
 
 { #category : #'class initialization' }
