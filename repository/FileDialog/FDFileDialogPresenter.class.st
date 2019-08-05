@@ -444,7 +444,7 @@ FDFileDialogPresenter >> initializeWidgets [
 	bookmarks := Bookmarks.
 	
 	bookmarksTreeTable := self newTreeTable.
-	filesList := self instantiate: FDFileListPresenter.
+	filesList := self instantiate: FDFileNaviagationSystemPresenter.
 	nameText := self newTextInput.
 	nameText autoAccept: true.
 	
