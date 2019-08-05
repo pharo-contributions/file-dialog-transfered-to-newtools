@@ -6,9 +6,9 @@ Class {
 	#superclass : #SpPresenter,
 	#instVars : [
 		'table',
-		'folder',
 		'detail',
-		'columns'
+		'columns',
+		'currentDirectory'
 	],
 	#classVars : [
 		'Columns',
@@ -69,19 +69,23 @@ FDFileListPresenter class >> openOn: aFileReference [
 
 { #category : #'api-customization' }
 FDFileListPresenter >> columns: aCollectionOfColumn [
-	columns := aCollectionOfColumn.
-	folder roots: columns
+	columns := aCollectionOfColumn
+]
+
+{ #category : #accessing }
+FDFileListPresenter >> currentDirectory [ 
+	^ currentDirectory 
+]
+
+{ #category : #accessing }
+FDFileListPresenter >> currentDirectory: aFileReference [
+	currentDirectory := aFileReference 
 ]
 
 { #category : #accessing }
 FDFileListPresenter >> detail [
 
 	^detail 
-]
-
-{ #category : #accessing }
-FDFileListPresenter >> folder [
-	^ folder
 ]
 
 { #category : #accessing }
@@ -96,7 +100,8 @@ FDFileListPresenter >> initializePresenter [
 	table
 		whenActivatedDo: [ :selectedItem | 
 			selectedItem selectedItem isDirectory
-				ifTrue: [ table items: selectedItem selectedItem children ] ]
+				ifTrue: [ table items: selectedItem selectedItem children.
+					self currentDirectory: selectedItem selectedItem ] ]
 ]
 
 { #category : #initialization }
@@ -106,7 +111,6 @@ FDFileListPresenter >> initializeWidgets [
 	table := self newTable.
 	
 	table
-		beMultipleSelection;
 		columns: columns;
 		sortingBlock: [ :a :b | 
 			(a isDirectory & b isDirectory not

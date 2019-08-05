@@ -162,13 +162,8 @@ FDFileNaviagationSystemPresenter >> defaultFolder: aFileReference [
 { #category : #'initialize-actions' }
 FDFileNaviagationSystemPresenter >> filesListAction [
 	filesList table
-		whenModelChangedDo: [ :selectedFileReference | 
-			nameText
-				text:
-					(selectedFileReference selectedItem
-						ifNotNil: [ selectedFileReference selectedItem basename ]
-						ifNil: [ 'noFileSelected' ]) ].
-	
+		transmitTo: nameText
+		transform: [ :selectedItem | selectedItem basename ]
 ]
 
 { #category : #utility }
