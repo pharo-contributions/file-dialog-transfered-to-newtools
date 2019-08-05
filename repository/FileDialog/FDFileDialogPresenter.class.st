@@ -70,20 +70,8 @@ Class {
 	#instVars : [
 		'nameText',
 		'filesList',
-		'currentDirectory',
-		'nameLabel',
-		'showHiddenFiles',
-		'filtersDropList',
-		'filesListContent',
-		'hiddenFilter',
 		'okActionBlock',
 		'bookmarksTreeTable',
-		'previewContentPresenter',
-		'previewer',
-		'currentPathTextInputPresenter',
-		'lastDirectoryVisitBeforeButton',
-		'lastDirectoryVisitAfterButton',
-		'readPointerHistoryParcour',
 		'bookmarks'
 	],
 	#classVars : [
@@ -108,9 +96,7 @@ FDFileDialogPresenter class >> allIcons [
 FDFileDialogPresenter class >> buildCommandsGroupWith: presenter forRoot: rootCommandGroup [
 	rootCommandGroup
 		register:
-			((CmCommandGroup named: 'interact with file') asSpecGroup
-				register: (FDCreatDirectoryCommand forSpec context: presenter);
-				register: (FDToggleHiddenFilesCommand forSpec context: presenter);
+			((CmCommandGroup named: 'interact with bookmark') asSpecGroup
 				register: (FDAddBookmarkCommand  forSpec context: presenter )
 				yourself);
 			register: ((CmCommandGroup named: 'bookmarkCommand') asSpecGroup
@@ -136,23 +122,8 @@ FDFileDialogPresenter class >> defaultBookmarks [
 ]
 
 { #category : #defaultClassVariable }
-FDFileDialogPresenter class >> defaultDirectory [
-	^ FileLocator imageDirectory asFileReference
-]
-
-{ #category : #defaultClassVariable }
-FDFileDialogPresenter class >> defaultFilterSet [
-	^ FDAbstractPredicate actions
-]
-
-{ #category : #defaultClassVariable }
 FDFileDialogPresenter class >> defaultOkActionBlock [
 	^ [ :fileReference | self inform: 'you select the file' , fileReference basename ]
-]
-
-{ #category : #defaultClassVariable }
-FDFileDialogPresenter class >> defaultPreviewer [
-	^ nil
 ]
 
 { #category : #specs }
@@ -331,16 +302,6 @@ FDFileDialogPresenter >> bookmarksTreeTableAction [
 ]
 
 { #category : #utility }
-FDFileDialogPresenter >> changeDirectoryApplyToPresenter: aFolder [
-	self flag: 'I have to rename it but I have no idea'.
-	currentDirectory := aFolder canonicalize.
-	currentPathTextInputPresenter text: currentDirectory fullName.
-	filesList items: (self filterACollection: self currentFiles).
-	filesListContent := filesList items.
-	filesList unselectAll
-]
-
-{ #category : #utility }
 FDFileDialogPresenter >> confirm [
 	self flag: #changeIt.
 	"it's horrible when we select a the bad selection (we select e file instead a directory) it's close it"
@@ -366,60 +327,6 @@ FDFileDialogPresenter >> createDirectory [
 ]
 
 { #category : #utility }
-FDFileDialogPresenter >> createDirectory: initialName [
-	| name path |
-	name := (UIManager default
-		request: 'Folder name'
-		initialAnswer: initialName
-		title: 'Create New Folder') ifNil: [ ^ self ].
-	path := currentDirectory / name.
-	path exists
-		ifFalse: [ (currentDirectory / name) ensureCreateDirectory.
-			self openFolder: currentDirectory.
-			^ self ].
-	path isDirectory
-		ifTrue: [ UIManager default alert: 'A folder with that name already exists.' ].
-	path isFile
-		ifTrue: [ UIManager default alert: 'A file with that name already exists.' ].
-	self createDirectory: name
-]
-
-{ #category : #accessing }
-FDFileDialogPresenter >> currentDirectory [
-	^ currentDirectory ifNil: [ currentDirectory := self defaultFolder ]
-]
-
-{ #category : #utility }
-FDFileDialogPresenter >> currentFiles [
-	^ (((self isRootDirectory: currentDirectory)
-		ifTrue: [ {} ]
-		ifFalse: [ {(self currentDirectory / '..')} ])
-		, self currentDirectory children)
-		asOrderedCollection
-		sort: [ :a :b | 
-			(a isDirectory & b isDirectory not
-				or: [ a isDirectory & b isDirectory
-						& (a basename asLowercase < b basename asLowercase) ])
-				or: [ a isFile & b isFile
-						& (a basename asLowercase < b basename asLowercase) ] ]
-]
-
-{ #category : #'initialize-actions' }
-FDFileDialogPresenter >> currentPathTextInputAction [
-	currentPathTextInputPresenter
-		whenTextIsAcceptedDo: [ :text | 
-			text asFileReference exists
-				ifFalse: [ self
-						inform: 'you have to write an absolute path and an existing one' ]
-				ifTrue: [ self openFolder: text asFileReference ] ]
-]
-
-{ #category : #accessing }
-FDFileDialogPresenter >> currentPathTextInputPresenter [
-	^ currentPathTextInputPresenter
-]
-
-{ #category : #utility }
 FDFileDialogPresenter >> defaultFolder [
 	^ FileLocator imageDirectory asFileReference
 ]
@@ -438,18 +345,14 @@ FDFileDialogPresenter >> filesList [
 
 { #category : #'initialize-actions' }
 FDFileDialogPresenter >> filesListAction [
-	filesList
-		whenSelectionChangedDo: [ :selectedFileReference | 
+	"filesList table
+		whenModelChangedDo: [ :selectedFileReference | 1halt.
 			nameText
 				text:
 					(selectedFileReference selectedItem
 						ifNotNil: [ selectedFileReference selectedItem basename ]
-						ifNil: [ 'noFileSelected' ]) ].
-	filesList
-		whenActivatedDo: [ :selectedItem | 
-			selectedItem selectedItem isDirectory
-				ifTrue: [ self openFolder: selectedItem selectedItem ] ].
-	filesList
+						ifNil: [ 'noFileSelected' ]) ]."
+	"filesList
 		whenSelectionChangedDo: [ :selectedFileReference | 
 			previewer
 				ifNotNil: [ (previewer canBeUsedOn: selectedFileReference selectedItem)
@@ -459,49 +362,7 @@ FDFileDialogPresenter >> filesListAction [
 							self buildWithSpecLayout: self class layoutPreviewer ]
 						ifFalse: [ previewContentPresenter := nil.
 							self needRebuild: false.
-							self buildWithSpec ] ] ]
-]
-
-{ #category : #utility }
-FDFileDialogPresenter >> filterACollection: aCollectionOfFileReference [
-	| collection |
-	collection := aCollectionOfFileReference
-		select:
-			[ :fileReference | filtersDropList selectedItem predicate: fileReference ].
-	showHiddenFiles
-		ifFalse: [ collection
-				removeAll:
-					(collection
-						select: [ :aFileReference | hiddenFilter predicate: aFileReference ]) ].
-	^ collection
-]
-
-{ #category : #'api-customization' }
-FDFileDialogPresenter >> filtersCustomization: aCollectionOfFilter [
-	"i always add the filter 'no filter'"
-
-	filtersDropList
-		items:
-			(aCollectionOfFilter asOrderedCollection
-				add: FDDefaultPredicate new;
-				yourself) asSet asOrderedCollection.
-	filtersDropList
-		selectedIndex:
-			((filtersDropList listItems collect: #name)
-				indexOf: FDDefaultPredicate new name)
-]
-
-{ #category : #accessing }
-FDFileDialogPresenter >> filtersDropList [
-	^ filtersDropList
-]
-
-{ #category : #initialization }
-FDFileDialogPresenter >> filtersDropListAction [
-	filtersDropList
-		transmitTo: filesList
-		transform:
-			[ :filterBis | filesListContent select: [ :item | filterBis predicate: item ] ]
+							self buildWithSpec ] ] ]"
 ]
 
 { #category : #utility }
@@ -529,12 +390,7 @@ FDFileDialogPresenter >> initialTitle [
 { #category : #initialization }
 FDFileDialogPresenter >> initialize [
 	super initialize.
-	showHiddenFiles := false.
 	okActionBlock := OkActionBlock.
-	hiddenFilter := FDHidenFilePredicate new.
-	previewer := Previewer.
-	previewContentPresenter := nil
-	
 ]
 
 { #category : #'initialize-widgets' }
@@ -568,35 +424,16 @@ FDFileDialogPresenter >> initializeDialogWindow: aDialogWindowPresenter [
 
 { #category : #'initialize-widgets' }
 FDFileDialogPresenter >> initializeFilesList [
-	filesList
-		items: self currentFiles;
-		displayBlock: [ :entry | entry basename ];
-		icons: [ :entry | self iconFor: entry ].
-	filesListContent := filesList items.
-	filesList
+	filesList table
 		contextMenu: [ (self rootCommandsGroup / 'interact with file') beRoot
 				asMenuPresenter ]
-]
-
-{ #category : #'initialize-widgets' }
-FDFileDialogPresenter >> initializeFiltersDropList [
-	| filterItems |
-	filterItems := FilterSet copy.
-	filterItems asOrderedCollection  add: FDDefaultPredicate new.
-	filterItems := filterItems asSet.
-	filtersDropList
-		items:  filterItems asOrderedCollection ;
-		displayBlock: [ :item | item name ];
-		selectedIndex:
-			((filtersDropList listItems collect: #name)
-				indexOf: FDDefaultPredicate new name)
 ]
 
 { #category : #initialization }
 FDFileDialogPresenter >> initializePresenter [
 	self bookmarksTreeTableAction.
 	self filesListAction.
-	self filtersDropListAction.
+	"self filtersDropListAction".
 	self currentPathTextInputAction.
 	self lastDirectoryVisitiBeforeButtonAction.
 	self lastDirectoryVisitiAfterButtonAction
@@ -604,36 +441,19 @@ FDFileDialogPresenter >> initializePresenter [
 
 { #category : #initialization }
 FDFileDialogPresenter >> initializeWidgets [
-	currentDirectory := Directory copy.
 	bookmarks := Bookmarks.
 	
 	bookmarksTreeTable := self newTreeTable.
-	filesList := self newList.
-	currentPathTextInputPresenter := self newTextInput.
-	nameLabel := self newLabel.
+	filesList := self instantiate: FDFileListPresenter.
 	nameText := self newTextInput.
-	filtersDropList := self newDropList.
-	lastDirectoryVisitBeforeButton := self newButton.
-	lastDirectoryVisitAfterButton := self newButton.
-	
-	readPointerHistoryParcour := DoubleLink value: currentDirectory.
-	currentPathTextInputPresenter text: currentDirectory fullName.
-	lastDirectoryVisitAfterButton
-		icon: (self iconNamed: #glamorousDiveRight).
-	lastDirectoryVisitBeforeButton icon: (self iconNamed: #back).
-	nameLabel label: 'Name:'.
 	nameText autoAccept: true.
+	
 	self initializeBookmarksTreeTable.
 	self initializeFilesList.
-	self initializeFiltersDropList.
 	self focusOrder
 		add: bookmarksTreeTable;
-		add: lastDirectoryVisitBeforeButton;
-		add: lastDirectoryVisitAfterButton ;
-		add: currentPathTextInputPresenter;
 		add: filesList;
-		add: nameText;	
-		add: filtersDropList
+		add: nameText
 ]
 
 { #category : #accessing }
@@ -648,44 +468,6 @@ FDFileDialogPresenter >> isolate [
 ]
 
 { #category : #accessing }
-FDFileDialogPresenter >> lastDirectoryVisitAfterButton [
-	^ lastDirectoryVisitAfterButton
-]
-
-{ #category : #accessing }
-FDFileDialogPresenter >> lastDirectoryVisitBeforeButton [
-	^ lastDirectoryVisitBeforeButton
-]
-
-{ #category : #'initialize-actions' }
-FDFileDialogPresenter >> lastDirectoryVisitiAfterButtonAction [
-	lastDirectoryVisitAfterButton
-		action: [ readPointerHistoryParcour hasSuccessor
-				ifFalse: [ self
-						inform:
-							'this button is use to go after clicking on <- button to return on the last directory' ]
-				ifTrue: [ self
-						changeDirectoryApplyToPresenter: readPointerHistoryParcour nextLink value.
-					readPointerHistoryParcour := readPointerHistoryParcour nextLink ] ]
-]
-
-{ #category : #'initialize-actions' }
-FDFileDialogPresenter >> lastDirectoryVisitiBeforeButtonAction [
-	lastDirectoryVisitBeforeButton
-		action: [ readPointerHistoryParcour hasPredecessor
-				ifFalse: [ self inform: 'this button is used to go to the last directory ' ]
-				ifTrue: [ self
-						changeDirectoryApplyToPresenter: readPointerHistoryParcour previousLink value.
-					readPointerHistoryParcour := readPointerHistoryParcour
-						previousLink ] ]
-]
-
-{ #category : #accessing }
-FDFileDialogPresenter >> nameLabel [
-	^ nameLabel
-]
-
-{ #category : #accessing }
 FDFileDialogPresenter >> nameText [
 	^ nameText
 ]
@@ -693,47 +475,6 @@ FDFileDialogPresenter >> nameText [
 { #category : #'api-customization' }
 FDFileDialogPresenter >> okActionBlock: aOneArgBlock [
 	okActionBlock := aOneArgBlock
-]
-
-{ #category : #utility }
-FDFileDialogPresenter >> openFolder: aFolder [
-	self changeDirectoryApplyToPresenter: aFolder.
-	(readPointerHistoryParcour value children includes: currentDirectory)
-		ifTrue: [ readPointerHistoryParcour
-				nextLink:
-					((DoubleLink value: currentDirectory)
-						previousLink: readPointerHistoryParcour;
-						yourself).
-			readPointerHistoryParcour := readPointerHistoryParcour nextLink ]
-		ifFalse: [ readPointerHistoryParcour
-				value: currentDirectory;
-				nextLink: nil;
-				previousLink: nil ]
-]
-
-{ #category : #accessing }
-FDFileDialogPresenter >> previewContentPresenter [
-	^ previewContentPresenter
-]
-
-{ #category : #accessing }
-FDFileDialogPresenter >> previewContentPresenter: anObject [
-	previewContentPresenter := anObject
-]
-
-{ #category : #accessing }
-FDFileDialogPresenter >> previewer [
-	^ previewer
-]
-
-{ #category : #'api-customization' }
-FDFileDialogPresenter >> previewer: anObject [
-	previewer := anObject
-]
-
-{ #category : #accessing }
-FDFileDialogPresenter >> readPointerHistoryParcour [
-	^ readPointerHistoryParcour
 ]
 
 { #category : #utility }
@@ -751,15 +492,4 @@ FDFileDialogPresenter >> selectedBookMark [
 { #category : #accessing }
 FDFileDialogPresenter >> selectedEntry [
 	^ self subclassResponsibility
-]
-
-{ #category : #accessing }
-FDFileDialogPresenter >> showHiddenFiles [
-	^ showHiddenFiles
-]
-
-{ #category : #'initialize-actions' }
-FDFileDialogPresenter >> toggleHiddenFiles [
-	showHiddenFiles := showHiddenFiles not.
-	filesList items: (self filterACollection: self currentFiles) 
 ]
