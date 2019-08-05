@@ -1,3 +1,7 @@
+"
+I'm use to give you the basename of a fileReference
+	example : 'my/path/something.exe' asFileReference basename >> something.exe 
+"
 Class {
 	#name : #FDbasenameFileReferenceColumn,
 	#superclass : #FDAbstractStringTableColumn,

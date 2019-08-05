@@ -1,3 +1,6 @@
+"
+I'm use to creat SpImageTableColumn
+"
 Class {
 	#name : #FDImageTableColumn,
 	#superclass : #FDAbstractFileReferenceColumn,
@@ -9,7 +12,7 @@ FDImageTableColumn class >> isAbstract [
 	^ self = FDImageTableColumn
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #class }
 FDImageTableColumn class >> tableColumnClass [
 	"I'm returning a class son of SpTableColumn"
 	^ SpImageTableColumn 

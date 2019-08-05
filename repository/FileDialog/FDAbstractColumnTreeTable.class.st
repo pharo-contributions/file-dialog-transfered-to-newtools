@@ -1,3 +1,6 @@
+"
+I'm an abstract class use to define TreeTable
+"
 Class {
 	#name : #FDAbstractColumnTreeTable,
 	#superclass : #Object,

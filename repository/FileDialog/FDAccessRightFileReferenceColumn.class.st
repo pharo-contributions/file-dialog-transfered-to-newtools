@@ -1,3 +1,6 @@
+"
+I'm a column use to give you the access right of a FileReference
+"
 Class {
 	#name : #FDAccessRightFileReferenceColumn,
 	#superclass : #FDAbstractStringTableColumn,

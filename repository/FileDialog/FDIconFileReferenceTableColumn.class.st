@@ -1,3 +1,7 @@
+"
+I'm use to give you an Icon 
+	
+"
 Class {
 	#name : #FDIconFileReferenceTableColumn,
 	#superclass : #FDImageTableColumn,

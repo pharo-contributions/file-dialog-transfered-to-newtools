@@ -15,7 +15,7 @@ FDAbstractStringTableColumn class >> isAbstract [
 	^ self = FDAbstractStringTableColumn
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #class }
 FDAbstractStringTableColumn class >> tableColumnClass [
 	^ SpStringTableColumn
 ]
