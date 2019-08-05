@@ -4,6 +4,11 @@ Class {
 	#category : #'FileDialog-filterStrategie'
 }
 
+{ #category : #applying }
+FDDefaultPredicate >> applyOn: aCollectionOfFileReference [
+	^ aCollectionOfFileReference
+]
+
 { #category : #accessing }
 FDDefaultPredicate >> name [
 	^ 'no filter'

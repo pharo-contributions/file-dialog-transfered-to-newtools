@@ -39,6 +39,16 @@ FDAbstractPredicate class >> isAbstract [
 	^ self = FDAbstractPredicate
 ]
 
+{ #category : #applying }
+FDAbstractPredicate >> applyOn: aCollectionOfFileReference [
+	^ aCollectionOfFileReference select: [:eachFileReference | self predicate: eachFileReference   ]
+]
+
+{ #category : #comparing }
+FDAbstractPredicate >> equals: aPredicate [
+	^ self className = aPredicate className
+]
+
 { #category : #accessing }
 FDAbstractPredicate >> name [
 	^ self subclassResponsibility 

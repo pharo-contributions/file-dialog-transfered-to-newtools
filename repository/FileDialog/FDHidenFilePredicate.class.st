@@ -12,6 +12,6 @@ FDHidenFilePredicate >> name [
 { #category : #accessing }
 FDHidenFilePredicate >> predicate: aFileReference [
 	OSPlatform current isWindows
-		ifTrue: [ aFileReference isHiddenInWindows ].
-	^ aFileReference basename matchesRegex: '\.[^.].*'.
+		ifTrue: [ aFileReference isHiddenInWindows not ].
+	^ (aFileReference basename matchesRegex: '\.[^.].*') not.
 ]
