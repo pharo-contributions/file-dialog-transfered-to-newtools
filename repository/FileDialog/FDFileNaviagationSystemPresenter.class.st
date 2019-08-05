@@ -2,7 +2,6 @@ Class {
 	#name : #FDFileNaviagationSystemPresenter,
 	#superclass : #SpPresenter,
 	#instVars : [
-		'filesList',
 		'currentPathTextInputPresenter',
 		'nameLabel',
 		'nameText',
@@ -11,11 +10,14 @@ Class {
 		'lastDirectoryVisitAfterButton',
 		'readPointerHistoryParcour',
 		'currentDirectory',
-		'showHiddenFiles',
 		'filesListContent',
-		'hiddenFilter'
+		'hiddenFilter',
+		'table',
+		'columns',
+		'previewer'
 	],
 	#classVars : [
+		'Columns',
 		'Directory',
 		'FilterSet',
 		'Previewer'
@@ -33,7 +35,16 @@ FDFileNaviagationSystemPresenter class >> buildCommandsGroupWith: presenter forR
 				yourself)
 ]
 
-{ #category : #'class initialization' }
+{ #category : #defaults }
+FDFileNaviagationSystemPresenter class >> defaultColumns [
+	^ {
+	FDIconFileReferenceTableColumn column width: 20.
+	FDbasenameFileReferenceColumn column.
+	FDSizeFileReferenceColumn column.
+	FDAccessRightFileReferenceColumn column}
+]
+
+{ #category : #defaults }
 FDFileNaviagationSystemPresenter class >> defaultDirectory [
 	^ FileLocator imageDirectory asFileReference
 ]
@@ -43,7 +54,7 @@ FDFileNaviagationSystemPresenter class >> defaultFilterSet [
 	^ FDAbstractPredicate actions
 ]
 
-{ #category : #'class initialization' }
+{ #category : #defaults }
 FDFileNaviagationSystemPresenter class >> defaultPreviewer [
 	^ nil
 ]
@@ -60,7 +71,10 @@ FDFileNaviagationSystemPresenter class >> defaultSpec [
 				add: #currentPathTextInputPresenter;
 				yourself)
 			withConstraints: [ :contraint | contraint height: self toolbarHeight ];
-		add: #filesList;
+		add: (SpBoxLayout newVertical 
+				add: #table;
+				add: #previewer;
+				yourself);
 		add:
 			(SpBoxLayout newHorizontal
 				add: #nameLabel
@@ -85,9 +99,10 @@ FDFileNaviagationSystemPresenter class >> example [
 
 { #category : #'class initialization' }
 FDFileNaviagationSystemPresenter class >> initialize [
-	Directory := self defaultDirectory.
 	FilterSet := self defaultFilterSet.
 	Previewer := self defaultPreviewer.
+	Columns := self defaultColumns.
+	Directory := self defaultDirectory
 ]
 
 { #category : #utility }
@@ -95,7 +110,7 @@ FDFileNaviagationSystemPresenter >> changeDirectoryApplyToPresenter: aFolder [
 	self flag: 'I have to rename it but I have no idea'.
 	currentDirectory := aFolder canonicalize.
 	currentPathTextInputPresenter text: currentDirectory fullName.
-	filesList table items: (self filterACollection: self currentFiles).
+	table table items: (self filterACollection: self currentFiles).
 ]
 
 { #category : #utility }
@@ -105,9 +120,9 @@ FDFileNaviagationSystemPresenter >> createDirectory: initialName [
 		request: 'Folder name'
 		initialAnswer: initialName
 		title: 'Create New Folder') ifNil: [ ^ self ].
-	path := currentDirectory / name.
+	path := self currentDirectory / name.
 	path exists
-		ifFalse: [ (currentDirectory / name) ensureCreateDirectory.
+		ifFalse: [ (self currentDirectory / name) ensureCreateDirectory.
 			self openFolder: currentDirectory.
 			^ self ].
 	path isDirectory
@@ -117,9 +132,9 @@ FDFileNaviagationSystemPresenter >> createDirectory: initialName [
 	self createDirectory: name
 ]
 
-{ #category : #utility }
-FDFileNaviagationSystemPresenter >> currentDirectory [
-	^ currentDirectory ifNil: [ currentDirectory := self defaultFolder ]
+{ #category : #accessing }
+FDFileNaviagationSystemPresenter >> currentDirectory [ 
+	^ currentDirectory
 ]
 
 { #category : #utility }
@@ -154,30 +169,20 @@ FDFileNaviagationSystemPresenter >> currentPathTextInputPresenter [
 
 { #category : #utility }
 FDFileNaviagationSystemPresenter >> defaultFolder: aFileReference [
-	currentDirectory := aFileReference.
+	currentDirectory:= aFileReference.
 	currentPathTextInputPresenter text: aFileReference fullName.
-	filesList table items: aFileReference children
+	table items: aFileReference children
 ]
 
 { #category : #'initialize-actions' }
 FDFileNaviagationSystemPresenter >> filesListAction [
-	filesList table
+	table
 		transmitTo: nameText
-		transform: [ :selectedItem | selectedItem basename ]
-]
-
-{ #category : #utility }
-FDFileNaviagationSystemPresenter >> filterACollection: aCollectionOfFileReference [
-	| collection hiddenFilter |
-	collection := aCollectionOfFileReference
-		select:
-			[ :fileReference | filtersDropList selectedItem predicate: fileReference ].
-	showHiddenFiles
-		ifFalse: [ collection
-				removeAll:
-					(collection
-						select: [ :aFileReference | hiddenFilter predicate: aFileReference ]) ].
-	^ collection
+		transform: [ :selectedItem | selectedItem basename ].
+	table
+		whenActivatedDo: [ :selectedItem | 
+			selectedItem selectedItem isDirectory
+				ifTrue: [ self openFolder: selectedItem selectedItem ] ]
 ]
 
 { #category : #utility }
@@ -203,22 +208,19 @@ FDFileNaviagationSystemPresenter >> filtersDropList [
 { #category : #utility }
 FDFileNaviagationSystemPresenter >> filtersDropListAction [
 	filtersDropList
-		transmitTo: filesList
-		transform:
-			[ :filterBis | filesListContent select: [ :item | filterBis predicate: item ] ]
+		whenSelectionChangedDo: [ self openFolder: currentDirectory ]
 ]
 
-{ #category : #utility }
+{ #category : #initialization }
 FDFileNaviagationSystemPresenter >> initialize [
 	super initialize.
-	showHiddenFiles := false.
-	hiddenFilter := FDHidenFilePredicate new.
+	hiddenFilter := FDDefaultPredicate new.
 
 ]
 
 { #category : #'initialize-widgets' }
 FDFileNaviagationSystemPresenter >> initializeFilesList [
-	filesList table
+	table
 		contextMenu: [ (self rootCommandsGroup / 'interact with file') beRoot
 				asMenuPresenter ]
 ]
@@ -240,7 +242,7 @@ FDFileNaviagationSystemPresenter >> initializeFiltersDropList [
 { #category : #initialization }
 FDFileNaviagationSystemPresenter >> initializePresenter [
 	self filesListAction.
-	"self filtersDropListAction".
+	self filtersDropListAction.
 	self currentPathTextInputAction.
 	self lastDirectoryVisitiBeforeButtonAction.
 	self lastDirectoryVisitiAfterButtonAction
@@ -249,8 +251,10 @@ FDFileNaviagationSystemPresenter >> initializePresenter [
 { #category : #initialization }
 FDFileNaviagationSystemPresenter >> initializeWidgets [
 	currentDirectory := Directory copy.
+	columns := Columns.
 	
-	filesList := self instantiate: FDFileListPresenter.
+	previewer := self instantiate: FDNoteBookPreviewerPresenter.
+	table := self newTable.
 	currentPathTextInputPresenter := self newTextInput.
 	nameLabel := self newLabel.
 	nameText := self newTextInput.
@@ -265,13 +269,21 @@ FDFileNaviagationSystemPresenter >> initializeWidgets [
 	lastDirectoryVisitBeforeButton icon: (self iconNamed: #back).
 	nameLabel label: 'Name:'.
 	nameText autoAccept: true.
+	table
+		columns: columns;
+		sortingBlock: [ :a :b | 
+			(a isDirectory & b isDirectory not
+				or: [ a isDirectory & b isDirectory
+						& (a basename asLowercase < b basename asLowercase) ])
+				or: [ a isFile & b isFile
+						& (a basename asLowercase < b basename asLowercase) ] ].
 	self initializeFilesList.
 	self initializeFiltersDropList.
 	self focusOrder
 		add: lastDirectoryVisitBeforeButton;
 		add: lastDirectoryVisitAfterButton ;
 		add: currentPathTextInputPresenter;
-		add: filesList;
+		add: table;
 		add: nameText;	
 		add: filtersDropList
 ]
@@ -315,7 +327,14 @@ FDFileNaviagationSystemPresenter >> nameLabel [
 ]
 
 { #category : #utility }
-FDFileNaviagationSystemPresenter >> openFolder: aFolder [
+FDFileNaviagationSystemPresenter >> openFolder: aFileReference [
+	currentDirectory := aFileReference.
+	self updateTableContent.
+	currentPathTextInputPresenter text: currentDirectory fullName
+]
+
+{ #category : #utility }
+FDFileNaviagationSystemPresenter >> openFolderBis: aFolder [
 	self changeDirectoryApplyToPresenter: aFolder.
 	(readPointerHistoryParcour value children includes: currentDirectory)
 		ifTrue: [ readPointerHistoryParcour
@@ -336,12 +355,18 @@ FDFileNaviagationSystemPresenter >> readPointerHistoryParcour [
 ]
 
 { #category : #utility }
-FDFileNaviagationSystemPresenter >> showHiddenFiles [
-	^ showHiddenFiles
+FDFileNaviagationSystemPresenter >> toggleHiddenFiles [
+	1 halt.
+	(hiddenFilter equals: FDDefaultPredicate new)
+		ifTrue: [ hiddenFilter := FDHidenFilePredicate new ]
+		ifFalse: [ hiddenFilter := FDDefaultPredicate new ].
+	self updateTableContent
 ]
 
 { #category : #utility }
-FDFileNaviagationSystemPresenter >> toggleHiddenFiles [
-	showHiddenFiles := showHiddenFiles not.
-	filesList items: (self filterACollection: self currentFiles) 
+FDFileNaviagationSystemPresenter >> updateTableContent [
+	table
+		items:
+			(hiddenFilter
+				applyOn: (filtersDropList selectedItem applyOn: currentDirectory children))
 ]
