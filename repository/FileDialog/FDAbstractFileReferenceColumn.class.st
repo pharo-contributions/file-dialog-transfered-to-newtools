@@ -24,6 +24,11 @@ FDAbstractFileReferenceColumn class >> columnEvaluated [
 	^ [:selectedFileReference | self evaluateOn: selectedFileReference   ]
 ]
 
+{ #category : #templateMethod }
+FDAbstractFileReferenceColumn class >> evaluateOn: aFileReference [ 
+	^ self subclassResponsibility
+]
+
 { #category : #testing }
 FDAbstractFileReferenceColumn class >> isAbstract [ 
 	^ self = FDAbstractFileReferenceColumn
