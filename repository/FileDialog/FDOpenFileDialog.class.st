@@ -25,5 +25,5 @@ FDOpenFileDialog >> initializeWidgets [
 
 { #category : #accessing }
 FDOpenFileDialog >> selectedEntry [
-	^ filesList fileReferenceTable selectedItem
+	^ filesList fileReferenceTable selection selectedItem
 ]

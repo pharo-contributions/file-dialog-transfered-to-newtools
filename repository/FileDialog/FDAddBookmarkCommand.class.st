@@ -1,3 +1,6 @@
+"
+I'm a command use to add bookmark
+"
 Class {
 	#name : #FDAddBookmarkCommand,
 	#superclass : #CmCommand,
@@ -6,13 +9,15 @@ Class {
 
 { #category : #hooks }
 FDAddBookmarkCommand >> canBeRun [
-	^ self context filesList selection selectedItem isDirectory
+	^ self context filesList fileReferenceTable selection selectedItem
+		isDirectory
 ]
 
 { #category : #hooks }
 FDAddBookmarkCommand >> execute [
 	| fileReference |
-	fileReference := self context filesList selection selectedItem.
+	fileReference := self context filesList fileReferenceTable selection
+		selectedItem.
 	self context bookmarks
 		add:
 			(FDBookmark
@@ -20,4 +25,12 @@ FDAddBookmarkCommand >> execute [
 				location: fileReference
 				icon: nil).
 	self context bookmarksTreeTable roots: self context bookmarks
+]
+
+{ #category : #initialization }
+FDAddBookmarkCommand >> initialize [
+	super initialize.
+	self
+		basicName: 'add bookmark';
+		basicDescription: 'add the selected file to the bookmarks'
 ]

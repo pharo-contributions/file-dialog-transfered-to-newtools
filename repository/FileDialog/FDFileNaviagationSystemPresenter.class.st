@@ -1,3 +1,56 @@
+"
+I'm use by thez fileDialog
+
+my job is to navigate across file 
+
+I provide:
+* an history of visited folder
+* a textInput use to jump to the write path
+* a dropList use to filter the content of the fileReferenceTable
+* a TextPresenter to show the selectedFile 
+
+CUSTOMIZATION
+-------------
+
+look at the protocol 'api-customization'
+
+column: aCollectionOfColumn
+===========================
+
+	to use it you have to give a collection of son of FDAbstractFileReferenceColumn for more information on how to create see documentation of FDAbstractFileReferenceColumn
+
+defaultFoler: aFileReference
+============================
+
+	nothing to say 
+
+filtersCustomization: aCollectionOfFilter
+=========================================
+
+	more documentation see FDAbstractPredicate documentation
+
+previewer: aPreviewer
+=====================
+
+	more documentation see FDAbstractPreviewer documentation
+	
+IV
+--
+
+currentPathTextInputPresenter : <SpTextInputFieldPresenter> It's use to display the current path and there are same feature like in window 
+nameLabel : <SpLabelPresenter>
+nameText: <SpTextInputFieldPresenter> , use to show the name of the selected item of fileReferenceTable
+filtersDropList <SpDropList> , use to display all the filter
+readPointerHistoryParcour <DoubleLink> , use for the navigationSystem
+currentDirectory , <FileReference> into there is the currentDirectory 
+hiddenFilter <FDAbstractPredicate> there is a NullFilter or an hiddenFilter
+columns <FDAbstractFileReferenceColumn> it's a collection of Column use by FileReferenceTable
+previewer <FDAbstractPreviewer> 
+nextButton <SpButton> use for the navigationSystem 
+previousButton <SpButton> use for the navigationSystem
+notebookPreviewer <SpNoteBook> use by the preview system
+fileReferenceTable <SpTablePresenter> it's display children of the current directory
+"
 Class {
 	#name : #FDFileNaviagationSystemPresenter,
 	#superclass : #SpPresenter,
@@ -51,7 +104,7 @@ FDFileNaviagationSystemPresenter class >> defaultDirectory [
 
 { #category : #'class initialization' }
 FDFileNaviagationSystemPresenter class >> defaultFilterSet [
-	^ FDAbstractPredicate actions
+	^ FDAbstractSelect actions
 ]
 
 { #category : #defaults }
@@ -107,7 +160,7 @@ FDFileNaviagationSystemPresenter class >> initialize [
 ]
 
 { #category : #'api-customization' }
-FDFileNaviagationSystemPresenter >> Column: aCollectionOfColumns [
+FDFileNaviagationSystemPresenter >> column: aCollectionOfColumns [
 	fileReferenceTable column: aCollectionOfColumns
 	
 ]
@@ -153,9 +206,8 @@ FDFileNaviagationSystemPresenter >> currentPathTextInputPresenter [
 
 { #category : #'api-customization' }
 FDFileNaviagationSystemPresenter >> defaultFolder: aFileReference [
-	currentDirectory:= aFileReference.
-	currentPathTextInputPresenter text: aFileReference fullName.
-	fileReferenceTable items: aFileReference children
+	self updateWidgetWithFileReference: aFileReference.
+	readPointerHistoryParcour value: aFileReference
 ]
 
 { #category : #accessing }
@@ -184,12 +236,12 @@ FDFileNaviagationSystemPresenter >> filtersCustomization: aCollectionOfFilter [
 	filtersDropList
 		items:
 			(aCollectionOfFilter asOrderedCollection
-				add: FDDefaultPredicate new;
+				add: FDDefaultSelect new;
 				yourself) asSet asOrderedCollection.
 	filtersDropList
 		selectedIndex:
 			((filtersDropList listItems collect: #name)
-				indexOf: FDDefaultPredicate new name)
+				indexOf: FDDefaultSelect new name)
 ]
 
 { #category : #accessing }
@@ -203,13 +255,6 @@ FDFileNaviagationSystemPresenter >> filtersDropListAction [
 		whenSelectionChangedDo: [ self updateWidgetWithFileReference: currentDirectory ]
 ]
 
-{ #category : #initialization }
-FDFileNaviagationSystemPresenter >> initialize [
-	super initialize.
-	hiddenFilter := FDHidenFilePredicate new.
-
-]
-
 { #category : #'initialize-widgets' }
 FDFileNaviagationSystemPresenter >> initializeFilesList [
 	fileReferenceTable
@@ -221,14 +266,14 @@ FDFileNaviagationSystemPresenter >> initializeFilesList [
 FDFileNaviagationSystemPresenter >> initializeFiltersDropList [
 	| filterItems |
 	filterItems := FilterSet copy.
-	filterItems asOrderedCollection add: FDDefaultPredicate new.
+	filterItems asOrderedCollection add: FDDefaultSelect new.
 	filterItems := filterItems asSet.
 	filtersDropList
 		items: filterItems asOrderedCollection;
 		displayBlock: [ :item | item name ];
 		selectedIndex:
 			((filtersDropList listItems collect: #name)
-				indexOf: FDDefaultPredicate new name)
+				indexOf: FDDefaultSelect new name)
 ]
 
 { #category : #initialization }
@@ -244,6 +289,7 @@ FDFileNaviagationSystemPresenter >> initializePresenter [
 FDFileNaviagationSystemPresenter >> initializeWidgets [
 	currentDirectory := Directory copy.
 	columns := Columns.
+	hiddenFilter := FDHidenSelect new.
 	previewer := Previewer.
 	notebookPreviewer := self instantiate: FDNoteBookPreviewerPresenter.
 	fileReferenceTable := self newTable.
@@ -266,10 +312,10 @@ FDFileNaviagationSystemPresenter >> initializeWidgets [
 				or: [ a isDirectory & b isDirectory
 						& (a basename asLowercase < b basename asLowercase) ])
 				or: [ a isFile & b isFile
-						& (a basename asLowercase < b basename asLowercase) ] ];
-		items: currentDirectory children.
+						& (a basename asLowercase < b basename asLowercase) ] ].
 	self initializeFilesList.
 	self initializeFiltersDropList.
+	self updateWidgetWithFileReference: currentDirectory.
 	self focusOrder
 		add: previousButton;
 		add: nextButton;
@@ -312,6 +358,11 @@ FDFileNaviagationSystemPresenter >> openFolder: aFileReference [
 	readPointerHistoryParcour := readPointerHistoryParcour nextLink
 ]
 
+{ #category : #acccessing }
+FDFileNaviagationSystemPresenter >> previewer [
+	^ previewer
+]
+
 { #category : #'api-customization' }
 FDFileNaviagationSystemPresenter >> previewer: aPreviewer [ 
 	previewer := aPreviewer 
@@ -339,9 +390,9 @@ FDFileNaviagationSystemPresenter >> readPointerHistoryParcour [
 
 { #category : #utility }
 FDFileNaviagationSystemPresenter >> toggleHiddenFiles [
-	(hiddenFilter equals: FDDefaultPredicate new)
-		ifTrue: [ hiddenFilter := FDHidenFilePredicate new ]
-		ifFalse: [ hiddenFilter := FDDefaultPredicate new ].
+	(hiddenFilter equals: FDDefaultSelect new)
+		ifTrue: [ hiddenFilter := FDHidenSelect new ]
+		ifFalse: [ hiddenFilter := FDDefaultSelect new ].
 	self updateTableContent
 ]
 

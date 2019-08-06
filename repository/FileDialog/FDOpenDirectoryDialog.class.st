@@ -50,7 +50,7 @@ FDOpenDirectoryDialog >> nameChanged [
 
 { #category : #actions }
 FDOpenDirectoryDialog >> selectedEntry [
-	filesList fileReferenceTable selectedItem
+	filesList fileReferenceTable selection selectedItem
 		ifNotNil: [ :fileReference | 
 			fileReference isDirectory
 				ifTrue: [ ^ fileReference ] ].

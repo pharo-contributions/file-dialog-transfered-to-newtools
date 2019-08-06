@@ -168,7 +168,7 @@ FDFileDialogPresenter class >> fullExample [
 	self flag: 'its dont work i think it''s because adapter are not rebuild see issue https://github.com/pharo-spec/Spec/issues/635'.
 	"with this when you select a png file it will display it"
 	
-	presenter filtersCustomization: {FDJPGAndPNGPredicate new}.
+	presenter filtersCustomization: {FDJPGOrPNGSelect new}.
 	"with you add filter and there always the 'no filter'"
 	
 	presenter defaultFolder: FileLocator home asFileReference.
@@ -184,7 +184,7 @@ FDFileDialogPresenter class >> fullExample [
 				WithContent:
 					{FDBookmark image.
 					FDBookmark home}
-				withIconName: 'group')}.
+				withIconName: 'group')} asOrderedCollection.
 	"you define the bookmarks have to be instance of FDAbstractBookMark"
 	
 	presenter openDialogWithSpec.
@@ -267,17 +267,6 @@ FDFileDialogPresenter >> bookmarksTreeTable [
 	^ bookmarksTreeTable
 ]
 
-{ #category : #'initialize-actions' }
-FDFileDialogPresenter >> bookmarksTreeTableAction [
-	bookmarksTreeTable
-		whenSelectionChangedDo: [ :selection | 
-			selection selectedItem
-				ifNotNil: [ :selectedItem | 
-					selectedItem isComposite
-						ifFalse: [ filesList openFolder: selectedItem location ] ] ]
-
-]
-
 { #category : #utility }
 FDFileDialogPresenter >> confirm [
 	nameText text isNotEmpty
@@ -301,6 +290,11 @@ FDFileDialogPresenter >> createDirectory [
 	^ filesList createDirectory: 'new-folder'
 ]
 
+{ #category : #accesing }
+FDFileDialogPresenter >> currentDirectory [
+	^ filesList currentDirectory 
+]
+
 { #category : #utility }
 FDFileDialogPresenter >> defaultFolder [
 	^ FileLocator imageDirectory asFileReference
@@ -309,6 +303,11 @@ FDFileDialogPresenter >> defaultFolder [
 { #category : #'api-customization' }
 FDFileDialogPresenter >> defaultFolder: aPath [
 	filesList defaultFolder: aPath
+]
+
+{ #category : #accessing }
+FDFileDialogPresenter >> fileReferenceTable [
+	^ filesList fileReferenceTable
 ]
 
 { #category : #accessing }
@@ -377,7 +376,7 @@ FDFileDialogPresenter >> initializeDialogWindow: aDialogWindowPresenter [
 { #category : #'initialize-widgets' }
 FDFileDialogPresenter >> initializeFilesList [
 	filesList fileReferenceTable
-		contextMenu: [ (self rootCommandsGroup / 'interact with file') beRoot
+		contextMenu: [ (self rootCommandsGroup / 'interact with bookmark') beRoot
 				asMenuPresenter ]
 ]
 
@@ -436,8 +435,9 @@ FDFileDialogPresenter >> previewer: aPreviewer [
 
 { #category : #utility }
 FDFileDialogPresenter >> selectFile: aFile [
-	filesList selection selectedItem = aFile
-		ifFalse: [ filesList selectIndex: (filesList model items indexOf: aFile) ].
+	filesList fileReferenceTable selection selectedItem = aFile
+		ifFalse: [ filesList fileReferenceTable
+				selectIndex: (filesList fileReferenceTable items indexOf: aFile) ].
 	nameText text: aFile basename
 ]
 
