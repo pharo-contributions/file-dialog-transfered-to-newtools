@@ -1,23 +1,26 @@
+"
+I'm selecting only jpg file or PNG file
+"
 Class {
-	#name : #FDJPGAndPNGPredicate,
-	#superclass : #FDAbstractCompositePredicate,
+	#name : #FDJPGOrPNGSelect,
+	#superclass : #FDAbstractCompositeSelect,
 	#category : #'FileDialog-filterStrategie'
 }
 
 { #category : #initialization }
-FDJPGAndPNGPredicate >> initialize [
+FDJPGOrPNGSelect >> initialize [
 	collectionOfFDAbstractFilter := OrderedCollection new.
-	collectionOfFDAbstractFilter add: FDDotJPGPredicate new.
-	collectionOfFDAbstractFilter add: FDDotPNGPredicate new
+	collectionOfFDAbstractFilter add: FDDotJPGSelect new.
+	collectionOfFDAbstractFilter add: FDDotPNGSelect new
 ]
 
 { #category : #accessing }
-FDJPGAndPNGPredicate >> name [
+FDJPGOrPNGSelect >> name [
 	^ '.jpg and .png filter'
 ]
 
 { #category : #accessing }
-FDJPGAndPNGPredicate >> predicate: aFileReference [
+FDJPGOrPNGSelect >> predicate: aFileReference [
 	^ collectionOfFDAbstractFilter
 		anySatisfy: [ :aFileFilter | aFileFilter predicate: aFileReference  ]
 ]

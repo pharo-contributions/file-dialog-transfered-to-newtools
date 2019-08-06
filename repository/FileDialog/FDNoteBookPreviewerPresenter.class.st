@@ -1,9 +1,11 @@
+"
+I'm a notebook Presenter use by the previewer system 
+"
 Class {
 	#name : #FDNoteBookPreviewerPresenter,
 	#superclass : #ComposablePresenter,
 	#instVars : [
 		'notebook',
-		'selectedFile',
 		'page'
 	],
 	#classVars : [
@@ -128,16 +130,6 @@ FDNoteBookPreviewerPresenter >> page: aPresenter [
 	notebook removePageAt: 1.
 	notebook addPage: self initializePage;
 	selectedPageIndex: 1.
-]
-
-{ #category : #accessing }
-FDNoteBookPreviewerPresenter >> selectedFile [
-	^ selectedFile
-]
-
-{ #category : #accessing }
-FDNoteBookPreviewerPresenter >> selectedFile: anObject [
-	selectedFile := anObject
 ]
 
 { #category : #initialization }

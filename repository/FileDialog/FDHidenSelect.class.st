@@ -1,16 +1,19 @@
+"
+I'm selecting file not hiddenfile
+"
 Class {
-	#name : #FDHidenFilePredicate,
-	#superclass : #FDAbstractSimplePredicate,
+	#name : #FDHidenSelect,
+	#superclass : #FDAbstractSimpleSelect,
 	#category : #'FileDialog-filterStrategie'
 }
 
 { #category : #accessing }
-FDHidenFilePredicate >> name [
+FDHidenSelect >> name [
 	^ 'filter hidden file'
 ]
 
 { #category : #accessing }
-FDHidenFilePredicate >> predicate: aFileReference [
+FDHidenSelect >> predicate: aFileReference [
 	OSPlatform current isWindows
 		ifTrue: [ aFileReference isHiddenInWindows not ].
 	^ (aFileReference basename matchesRegex: '\.[^.].*') not.

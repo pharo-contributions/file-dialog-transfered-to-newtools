@@ -19,42 +19,5 @@ this architecture is composed of 2 class
 Class {
 	#name : #FDAbstractPredicate,
 	#superclass : #Object,
-	#classInstVars : [
-		'uniqueInstance'
-	],
 	#category : #'FileDialog-filterStrategie'
 }
-
-{ #category : #actions }
-FDAbstractPredicate class >> actions [
-	| filterCollection |
-	filterCollection := {}.
-	self allSubclasses
-		do: [ :class |filterCollection := filterCollection | class actions ].
-	^ filterCollection
-]
-
-{ #category : #testing }
-FDAbstractPredicate class >> isAbstract [
-	^ self = FDAbstractPredicate
-]
-
-{ #category : #applying }
-FDAbstractPredicate >> applyOn: aCollectionOfFileReference [
-	^ aCollectionOfFileReference select: [:eachFileReference | self predicate: eachFileReference   ]
-]
-
-{ #category : #comparing }
-FDAbstractPredicate >> equals: aPredicate [
-	^ self className = aPredicate className
-]
-
-{ #category : #accessing }
-FDAbstractPredicate >> name [
-	^ self subclassResponsibility 
-]
-
-{ #category : #accessing }
-FDAbstractPredicate >> predicate: aFileReference [
-	^ self subclassResponsibility 
-]

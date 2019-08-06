@@ -1,16 +1,19 @@
+"
+I'm selecting only jpg file
+"
 Class {
-	#name : #FDDotJPGPredicate,
-	#superclass : #FDAbstractCompositePredicate,
+	#name : #FDDotJPGSelect,
+	#superclass : #FDAbstractCompositeSelect,
 	#category : #'FileDialog-filterStrategie'
 }
 
 { #category : #accessing }
-FDDotJPGPredicate >> name [
+FDDotJPGSelect >> name [
 	^ 'end with jpg'
 ]
 
 { #category : #accessing }
-FDDotJPGPredicate >> predicate: aFileReference [
+FDDotJPGSelect >> predicate: aFileReference [
 	^ aFileReference isDirectory
 		or: [ aFileReference isFile
 				and: [ 

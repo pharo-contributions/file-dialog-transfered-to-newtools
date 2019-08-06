@@ -1,16 +1,19 @@
+"
+I'm selecting file finishing with .png
+"
 Class {
-	#name : #FDEndWithPNGPredicate,
-	#superclass : #FDAbstractSimplePredicate,
+	#name : #FDEndWithPNGSelect,
+	#superclass : #FDAbstractSimpleSelect,
 	#category : #'FileDialog-filterStrategie'
 }
 
 { #category : #accessing }
-FDEndWithPNGPredicate >> name [
+FDEndWithPNGSelect >> name [
 	^ 'end with png'
 ]
 
 { #category : #accessing }
-FDEndWithPNGPredicate >> predicate: aFileReference [
+FDEndWithPNGSelect >> predicate: aFileReference [
 	^ aFileReference basename
 		regex: '.*\.png'
 		matchesDo: [ :item | ^ true ]

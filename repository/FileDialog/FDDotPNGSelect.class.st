@@ -1,16 +1,19 @@
+"
+I'm selecting only PNG file
+"
 Class {
-	#name : #FDDotPNGPredicate,
-	#superclass : #FDAbstractCompositePredicate,
+	#name : #FDDotPNGSelect,
+	#superclass : #FDAbstractCompositeSelect,
 	#category : #'FileDialog-filterStrategie'
 }
 
 { #category : #accessing }
-FDDotPNGPredicate >> name [
+FDDotPNGSelect >> name [
 	^ 'png filter'
 ]
 
 { #category : #accessing }
-FDDotPNGPredicate >> predicate: aFileReference [
+FDDotPNGSelect >> predicate: aFileReference [
 	^ aFileReference isDirectory
 		or: [ aFileReference isFile
 				and: [ aFileReference basename
