@@ -38,7 +38,15 @@ FDAbstractPreviewer >> matchingMimeType: aZnMimeType [
 	^ self subclassResponsibility 
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #templateMethod }
+FDAbstractPreviewer >> previewActionOn: aFileReference [
+	^ self subclassResponsibility
+]
+
+{ #category : #utils }
 FDAbstractPreviewer >> previewOn: aFileReference [
-	^ self subclassResponsibility 
+	(self canBeUsedOn: aFileReference) 
+	ifTrue: [ ^ self previewActionOn: aFileReference  ].
+	^ SpNullPresenter new
+	 
 ]
