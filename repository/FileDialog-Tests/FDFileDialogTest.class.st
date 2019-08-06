@@ -157,11 +157,11 @@ FDFileDialogTest >> testWhenClickAnAfterHistoryButtonIfThereAreHistoryShouldCome
 	self
 		assertCollection: (dialog filesList items collect: #basename)
 		hasSameElements: {'klm.jpg' . 'klm.png' . '..'}.
-	dialog lastDirectoryVisitBeforeButton click.
+	dialog previousButton click.
 	self
 		assertCollection: dialog filesList items
 		hasSameElements: itemsBefore.
-	dialog lastDirectoryVisitAfterButton click.
+	dialog nextButton click.
 	self
 		assertCollection: (dialog filesList items collect: #basename)
 		hasSameElements: {'klm.jpg' . 'klm.png' . '..'}
@@ -178,7 +178,7 @@ FDFileDialogTest >> testWhenClickAnBeforeHistoryButtonIfThereAreHistoryShouldCom
 	self
 		assertCollection: (dialog filesList items collect: #basename)
 		hasSameElements: {'klm.jpg' . 'klm.png' . '..'}.
-	dialog lastDirectoryVisitBeforeButton click.
+	dialog previousButton click.
 	self
 		assertCollection: dialog filesList items
 		hasSameElements: itemsBefore

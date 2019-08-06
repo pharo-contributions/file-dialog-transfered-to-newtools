@@ -18,19 +18,6 @@ FDOpenDirectoryDialog class >> defaultSpec [
 			(SpBoxLayout newHorizontal
 				add: #bookmarksTreeTable
 					withConstraints: [ :contraint | contraint width: 200 ];
-				add:
-					(SpBoxLayout newVertical
-						add:
-							(SpBoxLayout newHorizontal
-								add: #lastDirectoryVisitBeforeButton
-									withConstraints: [ :contraint | contraint width: 30 ];
-								add: #lastDirectoryVisitAfterButton
-									withConstraints: [ :contraint | contraint width: 30 ];
-								add: #currentPathTextInputPresenter;
-								yourself)
-							withConstraints: [ :contraint | contraint height: self toolbarHeight ];
-						add: #filesList;
-						yourself);
 				yourself);
 		yourself
 ]
@@ -63,7 +50,7 @@ FDOpenDirectoryDialog >> nameChanged [
 
 { #category : #actions }
 FDOpenDirectoryDialog >> selectedEntry [
-	filesList selection selectedItem
+	filesList fileReferenceTable selectedItem
 		ifNotNil: [ :fileReference | 
 			fileReference isDirectory
 				ifTrue: [ ^ fileReference ] ].

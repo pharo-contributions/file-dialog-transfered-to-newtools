@@ -21,10 +21,9 @@ FDOpenFileDialog >> initialTitle [
 FDOpenFileDialog >> initializeWidgets [
 	super initializeWidgets.
 	nameText disable.
-	"confirmButton label: 'Open'"
 ]
 
 { #category : #accessing }
 FDOpenFileDialog >> selectedEntry [
-	^ filesList selection selectedItem
+	^ filesList fileReferenceTable selectedItem
 ]
