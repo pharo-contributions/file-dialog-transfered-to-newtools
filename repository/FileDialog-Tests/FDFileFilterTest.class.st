@@ -8,7 +8,7 @@ Class {
 FDFileFilterTest >> testDefaultFilterShouldReturnEveryTimeTrue [
 	| beforeFilter defaultFilter |
 	beforeFilter := root children.
-	defaultFilter := FDDefaultPredicate new.
+	defaultFilter := FDDefaultSelect new.
 	self
 		assert:
 			(root children
@@ -19,18 +19,20 @@ FDFileFilterTest >> testDefaultFilterShouldReturnEveryTimeTrue [
 { #category : #tests }
 FDFileFilterTest >> testHiddenFilter [
 	| hiddenFilter |
-	hiddenFilter := FDHidenFilePredicate new.
+	hiddenFilter := FDHidenSelect new.
 	self
 		assert:
 			((root children select: [ :item | hiddenFilter predicate: item ])
 				collect: #basename) asSet
-		equals: {'.hidden-dir' . '.hidden'} asSet
+		equals:
+			{'sth.ext' . 'banana.jpg' . 'sth.aaa' . 'patate.png' . 'dir.ext'.
+			'dir'} asSet
 ]
 
 { #category : #tests }
 FDFileFilterTest >> testJPGFilterShouldFilterOnlyJPGFile [
 	| filterBis |
-	filterBis := FDDotJPGPredicate new.
+	filterBis := FDDotJPGSelect new.
 	self
 		assert:
 			((root children
@@ -41,7 +43,7 @@ FDFileFilterTest >> testJPGFilterShouldFilterOnlyJPGFile [
 { #category : #tests }
 FDFileFilterTest >> testPNGFilterShouldFilterOnlyPNGFile [
 	| filterBis |
-	filterBis := FDDotPNGPredicate new.
+	filterBis := FDDotPNGSelect new.
 	self
 		assert:
 			((root children

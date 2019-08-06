@@ -14,12 +14,13 @@ FDOpenDirectoryDialogTest >> testSelectDirectory [
 	| selectedDirectory |
 	dialog okActionBlock: [ :dir | selectedDirectory := dir ].
 	window := dialog openDialogWithSpec.
-	self assert: dialog currentDirectory equals: root.
+	self assert: dialog filesList currentDirectory equals: root.
 	dialog selectFile: root / 'dir'.
 	self
 		assert: dialog selectedEntry
-		equals: root / dialog filesList selection selectedItem basename.
+		equals:
+			root
+				/ dialog filesList fileReferenceTable selection selectedItem basename.
 	window triggerOkAction.
 	self assert: selectedDirectory equals: root / 'dir'
-
 ]
