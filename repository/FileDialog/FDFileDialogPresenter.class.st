@@ -76,10 +76,7 @@ Class {
 	],
 	#classVars : [
 		'Bookmarks',
-		'Directory',
-		'FilterSet',
-		'OkActionBlock',
-		'Previewer'
+		'OkActionBlock'
 	],
 	#category : #'FileDialog-UI'
 }
@@ -135,36 +132,19 @@ FDFileDialogPresenter class >> defaultSpec [
 				add: #bookmarksTreeTable;
 				add:
 					(SpBoxLayout newVertical
-						add:
-							(SpBoxLayout newHorizontal
-								add: #lastDirectoryVisitBeforeButton
-									withConstraints: [ :contraint | contraint width: 30 ];
-								add: #lastDirectoryVisitAfterButton
-									withConstraints: [ :contraint | contraint width: 30 ];
-								add: #currentPathTextInputPresenter;
-								yourself)
-							withConstraints: [ :contraint | contraint height: self toolbarHeight ];
 						add: #filesList;
 						yourself);
 				yourself);
-		add:
-			(SpBoxLayout newHorizontal
-				add: #nameLabel
-					withConstraints: [ :contraint | contraint width: 50 ];
-				add: #nameText;
-				add: #filtersDropList
-					withConstraints: [ :contraint | contraint width: 200 ];
-				yourself)
-			withConstraints: [ :contraint | contraint height: self toolbarHeight ] yourself
+		yourself
 ]
 
 { #category : #example }
 FDFileDialogPresenter class >> examplePreviewer [
 	| presenter |
-	self flag: 'its dont work i think it''s because adapter are not rebuild see issue https://github.com/pharo-spec/Spec/issues/635'.
 	presenter := FDOpenFileDialog new.
 	presenter previewer: FDPNGPreviewer new.
-	presenter openDialogWithSpec
+	presenter openDialogWithSpec.
+	^ presenter
 ]
 
 { #category : #example }
@@ -224,9 +204,6 @@ FDFileDialogPresenter class >> imageIcons [
 { #category : #'class initialization' }
 FDFileDialogPresenter class >> initialize [
 	OkActionBlock := self defaultOkActionBlock.
-	Directory := self defaultDirectory.
-	FilterSet := self defaultFilterSet.
-	Previewer := self defaultPreviewer.
 	Bookmarks := self defaultBookmarks.
 ]
 
@@ -274,7 +251,7 @@ FDFileDialogPresenter class >> textIcons [
 	(#txt -> (self iconNamed: #smallLeftFlush))}
 ]
 
-{ #category : #utility }
+{ #category : #accessing }
 FDFileDialogPresenter >> bookmarks [
 	^ bookmarks
 ]
@@ -297,14 +274,12 @@ FDFileDialogPresenter >> bookmarksTreeTableAction [
 			selection selectedItem
 				ifNotNil: [ :selectedItem | 
 					selectedItem isComposite
-						ifFalse: [ self openFolder: selectedItem location ] ] ]
+						ifFalse: [ filesList openFolder: selectedItem location ] ] ]
 
 ]
 
 { #category : #utility }
 FDFileDialogPresenter >> confirm [
-	self flag: #changeIt.
-	"it's horrible when we select a the bad selection (we select e file instead a directory) it's close it"
 	nameText text isNotEmpty
 		ifFalse: [ ^ self inform: 'you have to select a file' ].
 	self selectedEntry
@@ -323,7 +298,7 @@ FDFileDialogPresenter >> creatAnFDBookMark: aDirectory [
 
 { #category : #utility }
 FDFileDialogPresenter >> createDirectory [
-	^ self createDirectory: 'new-folder'
+	^ filesList createDirectory: 'new-folder'
 ]
 
 { #category : #utility }
@@ -333,9 +308,7 @@ FDFileDialogPresenter >> defaultFolder [
 
 { #category : #'api-customization' }
 FDFileDialogPresenter >> defaultFolder: aPath [
-	(aPath isNotNil and: [ aPath asFileReference exists ])
-		ifTrue: [ self openFolder: aPath asFileReference ]
-		ifFalse: [ self openFolder: self defaultFolder ]
+	filesList defaultFolder: aPath
 ]
 
 { #category : #accessing }
@@ -343,26 +316,9 @@ FDFileDialogPresenter >> filesList [
 	^ filesList
 ]
 
-{ #category : #'initialize-actions' }
-FDFileDialogPresenter >> filesListAction [
-	"filesList table
-		whenModelChangedDo: [ :selectedFileReference | 1halt.
-			nameText
-				text:
-					(selectedFileReference selectedItem
-						ifNotNil: [ selectedFileReference selectedItem basename ]
-						ifNil: [ 'noFileSelected' ]) ]."
-	"filesList
-		whenSelectionChangedDo: [ :selectedFileReference | 
-			previewer
-				ifNotNil: [ (previewer canBeUsedOn: selectedFileReference selectedItem)
-						ifTrue: [ previewContentPresenter := previewer
-								previewOn: selectedFileReference selectedItem.
-							self needRebuild: false.
-							self buildWithSpecLayout: self class layoutPreviewer ]
-						ifFalse: [ previewContentPresenter := nil.
-							self needRebuild: false.
-							self buildWithSpec ] ] ]"
+{ #category : #'api-customization' }
+FDFileDialogPresenter >> filtersCustomization: aCollection [ 
+	filesList filtersCustomization: aCollection
 ]
 
 { #category : #utility }
@@ -375,11 +331,6 @@ FDFileDialogPresenter >> iconFor: anEntry [
 		at: ext
 		ifPresent: [ :icon | icon ]
 		ifAbsent: [ self iconNamed: #page ]
-]
-
-{ #category : #'initialize-value' }
-FDFileDialogPresenter >> initialExtent [
-	^ 700 @ 700
 ]
 
 { #category : #'initialize-value' }
@@ -416,27 +367,28 @@ FDFileDialogPresenter >> initializeBookmarksTreeTable [
 { #category : #initialization }
 FDFileDialogPresenter >> initializeDialogWindow: aDialogWindowPresenter [
 	super initializeDialogWindow: aDialogWindowPresenter.
-	aDialogWindowPresenter title: self initialTitle.
 	aDialogWindowPresenter
+		title: self initialTitle;
+		initialExtent: 900 @ 900;
 		okAction: [ self confirm ];
 		cancelAction: [ self delete ]
 ]
 
 { #category : #'initialize-widgets' }
 FDFileDialogPresenter >> initializeFilesList [
-	filesList table
+	filesList fileReferenceTable
 		contextMenu: [ (self rootCommandsGroup / 'interact with file') beRoot
 				asMenuPresenter ]
 ]
 
 { #category : #initialization }
 FDFileDialogPresenter >> initializePresenter [
-	self bookmarksTreeTableAction.
-	self filesListAction.
-	"self filtersDropListAction".
-	self currentPathTextInputAction.
-	self lastDirectoryVisitiBeforeButtonAction.
-	self lastDirectoryVisitiAfterButtonAction
+	bookmarksTreeTable
+		whenSelectionChangedDo: [ :selection | 
+			selection selectedItem
+				ifNotNil: [ :selectedItem | 
+					selectedItem isComposite
+						ifFalse: [ filesList openFolder: selectedItem location ] ] ]
 ]
 
 { #category : #initialization }
@@ -475,6 +427,11 @@ FDFileDialogPresenter >> nameText [
 { #category : #'api-customization' }
 FDFileDialogPresenter >> okActionBlock: aOneArgBlock [
 	okActionBlock := aOneArgBlock
+]
+
+{ #category : #'api-customization' }
+FDFileDialogPresenter >> previewer: aPreviewer [ 
+	filesList previewer: aPreviewer
 ]
 
 { #category : #utility }
