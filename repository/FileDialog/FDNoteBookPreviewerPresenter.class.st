@@ -113,7 +113,8 @@ FDNoteBookPreviewerPresenter >> initializePage [
 { #category : #initialization }
 FDNoteBookPreviewerPresenter >> initializeWidgets [
 	notebook := self newNotebook.
-	
+	page := self newText.
+	notebook addPage: self initializePage
 ]
 
 { #category : #accessing }
@@ -124,6 +125,9 @@ FDNoteBookPreviewerPresenter >> page [
 { #category : #adding }
 FDNoteBookPreviewerPresenter >> page: aPresenter [
 	page := aPresenter.
+	notebook removePageAt: 1.
+	notebook addPage: self initializePage;
+	selectedPageIndex: 1.
 ]
 
 { #category : #accessing }

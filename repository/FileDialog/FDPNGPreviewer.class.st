@@ -14,8 +14,8 @@ FDPNGPreviewer >> matchingMimeType: element [
 	^ element matches:  ZnMimeType imagePng
 ]
 
-{ #category : #'as yet unclassified' }
-FDPNGPreviewer >> previewOn: aFileReference [
+{ #category : #utils }
+FDPNGPreviewer >> previewActionOn: aFileReference [
 	^ SpImagePresenter new
 		image:
 			(aFileReference

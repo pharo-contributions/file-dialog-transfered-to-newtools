@@ -1,3 +1,7 @@
+"
+I'm a previewer for JPG , jpeg file 
+	I provide a SpImagePresenter to show the picture
+"
 Class {
 	#name : #FDJPGPreviewer,
 	#superclass : #FDAbstractPreviewer,
@@ -11,11 +15,11 @@ FDJPGPreviewer >> matchingMimeType: aZnMimeType [
 	^ aZnMimeType matches: ZnMimeType imageJpeg
 ]
 
-{ #category : #'as yet unclassified' }
-FDJPGPreviewer >> previewOn: aFileReference [
-SpImagePresenter new
+{ #category : #utils }
+FDJPGPreviewer >> previewActionOn: aFileReference [
+	^ SpImagePresenter new
 		image:
 			(aFileReference
-				binaryReadStreamDo: [ :stream | PNGReadWriter formFromStream: stream ]);
+				binaryReadStreamDo: [ :stream | JPEGReadWriter formFromStream: stream ]);
 		yourself
 ]
