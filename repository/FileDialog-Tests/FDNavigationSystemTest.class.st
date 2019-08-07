@@ -20,7 +20,7 @@ FDNavigationSystemTest >> fileListAllMustBeFilterByPNGFIlter [
 { #category : #running }
 FDNavigationSystemTest >> setUp [
 	super setUp.
-	dialog := FDFileNaviagationSystemPresenter new.
+	dialog := FDFileNavigationSystemPresenter new.
 	dialog defaultFolder: root
 ]
 
