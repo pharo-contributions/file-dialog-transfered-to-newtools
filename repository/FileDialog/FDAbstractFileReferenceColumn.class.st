@@ -19,13 +19,20 @@ Class {
 	#category : #'FileDialog-FileTreeStrategie'
 }
 
+{ #category : #adding }
+FDAbstractFileReferenceColumn class >> addContraintTo: aTableColumn [
+	self subclassResponsibility
+]
+
 { #category : #accessing }
 FDAbstractFileReferenceColumn class >> column [
 	"I'm returning a SpTreeTableColumn"
-
-	^ self tableColumnClass
+	|column|
+	column  := self tableColumnClass
 		title: self columnTitle
-		evaluated: self columnEvaluated
+		evaluated: self columnEvaluated.
+	self addContraintTo: column.
+	^ column
 ]
 
 { #category : #templateMethod }
@@ -47,6 +54,11 @@ FDAbstractFileReferenceColumn class >> evaluateOn: aFileReference [
 { #category : #testing }
 FDAbstractFileReferenceColumn class >> isAbstract [ 
 	^ self = FDAbstractFileReferenceColumn
+]
+
+{ #category : #sorting }
+FDAbstractFileReferenceColumn class >> sortValue [
+	^ self subclassResponsibility
 ]
 
 { #category : #class }

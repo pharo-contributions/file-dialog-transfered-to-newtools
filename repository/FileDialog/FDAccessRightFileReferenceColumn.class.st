@@ -7,6 +7,11 @@ Class {
 	#category : #'FileDialog-FileTreeStrategie'
 }
 
+{ #category : #adding }
+FDAccessRightFileReferenceColumn class >> addContraintTo: aTableColumn [
+	"do nothing"
+]
+
 { #category : #templateMethod }
 FDAccessRightFileReferenceColumn class >> columnTitle [
 	"I'm returning a String for the title"
@@ -19,4 +24,9 @@ FDAccessRightFileReferenceColumn class >> evaluateOn: aFileReference [
 	"I'm provide action for fileReference"
 
 	^ aFileReference permissions
+]
+
+{ #category : #sorting }
+FDAccessRightFileReferenceColumn class >> sortValue [
+	^ 50
 ]

@@ -8,6 +8,11 @@ Class {
 	#category : #'FileDialog-FileTreeStrategie'
 }
 
+{ #category : #adding }
+FDIconFileReferenceTableColumn class >> addContraintTo: aTableColumn [
+	aTableColumn width: 20
+]
+
 { #category : #templateMethod }
 FDIconFileReferenceTableColumn class >> columnTitle [
 	"I'm returning a String for the title"
@@ -21,4 +26,9 @@ FDIconFileReferenceTableColumn class >> evaluateOn: aFileReference [
 
 	^ aFileReference isDirectory ifTrue: [ self iconNamed: #configNew ]
 	ifFalse: [ self iconNamed: #page ]
+]
+
+{ #category : #sorting }
+FDIconFileReferenceTableColumn class >> sortValue [
+	^ 0
 ]
