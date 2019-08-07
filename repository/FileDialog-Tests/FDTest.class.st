@@ -5,18 +5,23 @@ Class {
 		'filter',
 		'root'
 	],
-	#category : 'FileDialog-Tests'
+	#category : #'FileDialog-Tests'
 }
 
 { #category : #'instance creation' }
 FDTest >> createRoot [
-	(root := (FileLocator imageDirectory / 'fd-test') asFileReference) ensureCreateDirectory.
+	(root := (FileLocator imageDirectory / 'fd-test') asFileReference)
+		ensureCreateDirectory.
 	(root / 'dir') ensureCreateDirectory.
+	(root / 'dir' / 'klm.png') ensureCreateFile.
+	(root / 'dir' / 'klm.jpg') ensureCreateFile.
 	(root / 'dir.ext') ensureCreateDirectory.
 	(root / '.hidden-dir') ensureCreateDirectory.
 	(root / '.hidden') ensureCreateFile.
 	(root / 'sth.ext') ensureCreateFile.
 	(root / 'sth.aaa') ensureCreateFile.
+	(root / 'banana.jpg') ensureCreateFile.
+	(root / 'patate.png') ensureCreateFile.
 	^ root
 ]
 
@@ -28,6 +33,5 @@ FDTest >> inspectRoot [
 
 { #category : #running }
 FDTest >> setUp [
-	filter := FDFileFilter new.
 	self createRoot
 ]

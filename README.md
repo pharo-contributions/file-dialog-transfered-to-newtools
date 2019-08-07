@@ -2,8 +2,12 @@
 [![Build Status](https://travis-ci.org/pharo-contributions/file-dialog.svg?branch=master)](https://travis-ci.org/pharo-contributions/file-dialog) [![Coverage Status](https://coveralls.io/repos/github/pharo-contributions/file-dialog/badge.svg)](https://coveralls.io/github/pharo-contributions/file-dialog)
 
 A simple replacement for Pharo's native file/folder selection dialog.
-
 ![](figures/file-dialog-3.png)
+
+
+
+
+
 
 ## Features
 
@@ -57,21 +61,14 @@ You can also use the classes directly — there are just minor differences in th
 
 ### API
 
-The user-facing API is in the `public` protocol of `FDFileDialog`
+The user-facing API is in the `api-customization` protocol of `FDFileDialogPresenter`
 
 * `defaultFolder: aPath` — where should the dialog open, the default is the imageDirectory
 * `defaultName: aString` — prefill the file name input
-* `extensionFilters: aCollection` — a collection of `label -> extensions` filters
-* `fileFilters: aCollection` — a collection of `label -> pattern` filters
-* `whenSelected: aBlock` — a one arg block executed when a file was selected
+* `filtersCustomization: aCollectionOfFDAbstractPredicate` — a collection of FDAbstractPredicate
+* `okActionBlock: aBlock` — a one arg block executed when a file was selected
+* `previewer: aPreviewer` _ a son of FDAbstractPreviewer that returning a Spec widget 
 * `openModal` — when you open the dialog as modal, you will get the selected value as a return instead of using the block
-
-`extensionFilters:` is just a convenience for `fileFilters:` automatically adding labels & stuff, so the following is equivalent
-
-```
-extensionFilters: { 'STON files' -> #(ston json) }
-fileFilters: { 'STON files (*.ston, *.json)' -> #('*.ston' '*.json') }
-```
 
 ## Custom Icons
 

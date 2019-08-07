@@ -3,8 +3,8 @@ My responsibility is to provide dialog for SAVING files.
 "
 Class {
 	#name : #FDSaveFileDialog,
-	#superclass : #FDFileDialog,
-	#category : 'FileDialog'
+	#superclass : #FDFileDialogPresenter,
+	#category : #'FileDialog-UI'
 }
 
 { #category : #api }
@@ -15,24 +15,27 @@ FDSaveFileDialog >> initialTitle [
 { #category : #initialization }
 FDSaveFileDialog >> initializePresenter [
 	| ec |
+	self flag: #StrangeItsDontWork.
 	super initializePresenter.
 	(ec := EntryCompletion new)
-		dataSourceBlock: [ :text | currentDirectory children collect: #basename ];
-		filterBlock: [ :opt :text | opt beginsWith: text ].
+		dataSourceBlock: [ :text | filesList currentDirectory children collect: #basename ];
+		filterBlock: [ :opt :text |opt beginsWith: text ].
 	nameText entryCompletion: ec
 ]
 
 { #category : #initialization }
 FDSaveFileDialog >> initializeWidgets [
 	super initializeWidgets.
-	confirmButton label: 'Save'
+	"confirmButton label: 'Save'"
 ]
 
 { #category : #accessing }
 FDSaveFileDialog >> selectedEntry [
 	| entry proceed |
-	entry := self currentDirectory / nameText text.
-	filtersDropList selectedItem value
+	self flag:#warning.
+	entry := filesList currentDirectory / nameText text.
+	1halt.
+	filesList filtersDropList selectedItem value
 		ifNotEmpty: [ :extensions | 
 			(nameText text includes: $.)
 				ifFalse: [ entry := entry

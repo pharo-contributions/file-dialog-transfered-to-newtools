@@ -1,49 +1,52 @@
 Class {
 	#name : #FDFileFilterTest,
 	#superclass : #FDTest,
-	#category : 'FileDialog-Tests'
+	#category : #'FileDialog-Tests'
 }
 
 { #category : #tests }
-FDFileFilterTest >> testFilterExtensions [
+FDFileFilterTest >> testDefaultFilterShouldReturnEveryTimeTrue [
+	| beforeFilter defaultFilter |
+	beforeFilter := root children.
+	defaultFilter := FDDefaultSelect new.
 	self
-		assert: ((filter files: root children withExtensions: #(aaa)) collect: #basename) asSet
-		equals:
-			(Set
-				with: 'dir'
-				with: 'dir.ext'
-				with: '.hidden-dir'
-				with: 'sth.aaa')
+		assert:
+			(root children
+				select: [ :fileReference | defaultFilter predicate: fileReference ])
+		equals: beforeFilter
 ]
 
 { #category : #tests }
-FDFileFilterTest >> testFilterMatching [
+FDFileFilterTest >> testHiddenFilter [
+	| hiddenFilter |
+	hiddenFilter := FDHidenSelect new.
 	self
-		assert: ((filter files: root children matching: #('*th.e*' '*dd*')) collect: #basename) asSet
+		assert:
+			((root children select: [ :item | hiddenFilter predicate: item ])
+				collect: #basename) asSet
 		equals:
-			(Set
-				with: 'dir'
-				with: 'dir.ext'
-				with: '.hidden-dir'
-				with: '.hidden'
-				with: 'sth.ext')
+			{'sth.ext' . 'banana.jpg' . 'sth.aaa' . 'patate.png' . 'dir.ext'.
+			'dir'} asSet
 ]
 
 { #category : #tests }
-FDFileFilterTest >> testFoldersOnly [
+FDFileFilterTest >> testJPGFilterShouldFilterOnlyJPGFile [
+	| filterBis |
+	filterBis := FDDotJPGSelect new.
 	self
-		assert: ((filter directoriesOnly: root children) collect: #basename) asSet
-		equals: (Set with: 'dir' with: 'dir.ext' with: '.hidden-dir')
+		assert:
+			((root children
+				select: [ :fileReference | filterBis predicate: fileReference ])
+				allSatisfy: [ :item | (item basename endsWith: '.jpg') or: [ item isDirectory ] ])
 ]
 
 { #category : #tests }
-FDFileFilterTest >> testHiddenFiles [
+FDFileFilterTest >> testPNGFilterShouldFilterOnlyPNGFile [
+	| filterBis |
+	filterBis := FDDotPNGSelect new.
 	self
-		assert: ((filter noHiddenFiles: root children) collect: #basename) asSet
-		equals:
-			(Set
-				with: 'dir'
-				with: 'dir.ext'
-				with: 'sth.ext'
-				with: 'sth.aaa')
+		assert:
+			((root children
+				select: [ :fileReference | filterBis predicate: fileReference ])
+				allSatisfy: [ :item | (item basename endsWith: '.png' )or:[ item isDirectory]  ])
 ]
