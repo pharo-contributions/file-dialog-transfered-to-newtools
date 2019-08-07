@@ -164,8 +164,7 @@ FDFileDialogPresenter class >> fullExample [
 	| presenter |
 	presenter := FDOpenFileDialog new.
 	
-	presenter previewer: FDPNGPreviewer new.	
-	self flag: 'its dont work i think it''s because adapter are not rebuild see issue https://github.com/pharo-spec/Spec/issues/635'.
+	presenter previewer: FDContentPreviewer new.	
 	"with this when you select a png file it will display it"
 	
 	presenter filtersCustomization: {FDJPGOrPNGSelect new}.
@@ -187,6 +186,8 @@ FDFileDialogPresenter class >> fullExample [
 				withIconName: 'group')} asOrderedCollection.
 	"you define the bookmarks have to be instance of FDAbstractBookMark"
 	
+	presenter columns:  { FDCreationDateReferenceColumn }. 
+	
 	presenter openDialogWithSpec.
 	presenter inspect.
 	^ presenter
@@ -205,36 +206,6 @@ FDFileDialogPresenter class >> imageIcons [
 FDFileDialogPresenter class >> initialize [
 	OkActionBlock := self defaultOkActionBlock.
 	Bookmarks := self defaultBookmarks.
-]
-
-{ #category : #specs }
-FDFileDialogPresenter class >> layoutPreviewer [
-	^ SpPanedLayout newHorizontal
-		add:
-			(SpBoxLayout newVertical
-				add:
-					(SpPanedLayout newHorizontal
-						position: 200;
-						add: #bookmarksTreeTable;
-						add:
-							(SpBoxLayout newVertical
-								add: #currentPathTextInputPresenter
-									withConstraints: [ :contraint | contraint height: self toolbarHeight ];
-								add: #filesList;
-								yourself);
-						yourself);
-				add:
-					(SpBoxLayout newHorizontal
-						add: #nameLabel
-							withConstraints: [ :contraint | contraint width: 50 ];
-						add: #nameText;
-						add: #filtersDropList
-							withConstraints: [ :contraint | contraint width: 200 ];
-						yourself)
-					withConstraints: [ :contraint | contraint height: self toolbarHeight ];
-				yourself);
-		add: #previewContentPresenter;
-		yourself
 ]
 
 { #category : #'instance creation' }
@@ -267,6 +238,11 @@ FDFileDialogPresenter >> bookmarksTreeTable [
 	^ bookmarksTreeTable
 ]
 
+{ #category : #'api-customization' }
+FDFileDialogPresenter >> columns: aCollectionOfColumns [
+	filesList columns: aCollectionOfColumns 
+]
+
 { #category : #utility }
 FDFileDialogPresenter >> confirm [
 	nameText text isNotEmpty
@@ -283,11 +259,6 @@ FDFileDialogPresenter >> creatAnFDBookMark: aDirectory [
 		name: aDirectory basename
 		location: aDirectory path
 		icon: nil
-]
-
-{ #category : #utility }
-FDFileDialogPresenter >> createDirectory [
-	^ filesList createDirectory: 'new-folder'
 ]
 
 { #category : #accesing }
@@ -376,7 +347,10 @@ FDFileDialogPresenter >> initializeDialogWindow: aDialogWindowPresenter [
 { #category : #'initialize-widgets' }
 FDFileDialogPresenter >> initializeFilesList [
 	filesList fileReferenceTable
-		contextMenu: [ (self rootCommandsGroup / 'interact with bookmark') beRoot
+		contextMenu: [ 
+			filesList rootCommandsGroup
+				register: (self rootCommandsGroup / 'interact with bookmark');
+			 	beRoot;
 				asMenuPresenter ]
 ]
 
@@ -395,7 +369,7 @@ FDFileDialogPresenter >> initializeWidgets [
 	bookmarks := Bookmarks.
 	
 	bookmarksTreeTable := self newTreeTable.
-	filesList := self instantiate: FDFileNaviagationSystemPresenter.
+	filesList := self instantiate: FDFileNavigationSystemPresenter.
 	nameText := self newTextInput.
 	nameText autoAccept: true.
 	

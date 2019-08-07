@@ -12,9 +12,6 @@ my subclasses have to define :
 Class {
 	#name : #FDAbstractPreviewer,
 	#superclass : #Object,
-	#instVars : [
-		'predicateFunction'
-	],
 	#category : #'FileDialog-previewerStrategie'
 }
 
