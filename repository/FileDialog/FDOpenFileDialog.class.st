@@ -20,10 +20,10 @@ FDOpenFileDialog >> initialTitle [
 { #category : #initialization }
 FDOpenFileDialog >> initializeWidgets [
 	super initializeWidgets.
-	nameText disable.
+	fileNavigationSystem nameText disable
 ]
 
 { #category : #accessing }
 FDOpenFileDialog >> selectedEntry [
-	^ filesList fileReferenceTable selection selectedItem
+	^ fileNavigationSystem fileReferenceTable selection selectedItem
 ]

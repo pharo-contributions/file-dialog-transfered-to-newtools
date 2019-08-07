@@ -148,6 +148,7 @@ FDFileNavigationSystemPresenter class >> example [
 	"presenter defaultFolder: FileLocator documents."
 	presenter previewer: FDPNGPreviewer new.
 	presenter openWithSpec.
+	presenter inspect.
 	^ presenter
 ]
 
@@ -157,6 +158,11 @@ FDFileNavigationSystemPresenter class >> initialize [
 	Previewer := self defaultPreviewer.
 	Columns := self defaultColumns.
 	Directory := self defaultDirectory
+]
+
+{ #category : #accessing }
+FDFileNavigationSystemPresenter >> columns [
+	^ columns
 ]
 
 { #category : #'api-customization' }
@@ -202,7 +208,7 @@ FDFileNavigationSystemPresenter >> currentDirectory [
 
 { #category : #'initialize-actions' }
 FDFileNavigationSystemPresenter >> currentPathTextInputAction [
-	currentPathTextInputPresenter
+	currentPathTextInputPresenter entityText 
 		whenTextIsAcceptedDo: [ :text | 
 			text asFileReference exists
 				ifFalse: [ self
@@ -236,8 +242,9 @@ FDFileNavigationSystemPresenter >> filesListAction [
 			selectedItem selectedItem isDirectory
 				ifTrue: [ self openFolder: selectedItem selectedItem ] ].
 	fileReferenceTable
-		whenSelectionChangedDo:
-			[ :aFileReference |notebookPreviewer page: (previewer previewOn: aFileReference selectedItem) ]
+		whenSelectionChangedDo: [ :aFileReference | 
+			notebookPreviewer
+				page: (previewer previewOn: aFileReference selectedItem) ]
 ]
 
 { #category : #'api-customization' }
@@ -266,11 +273,35 @@ FDFileNavigationSystemPresenter >> filtersDropListAction [
 		whenSelectionChangedDo: [ self updateWidgetWithFileReference: currentDirectory ]
 ]
 
+{ #category : #accessing }
+FDFileNavigationSystemPresenter >> hiddenFilter [
+	^ hiddenFilter
+]
+
 { #category : #'initialize-widgets' }
-FDFileNavigationSystemPresenter >> initializeFilesList [
+FDFileNavigationSystemPresenter >> initializeCurrentPathTextInput [
+	currentPathTextInputPresenter
+		placeholder: 'give/me/a/path';
+		"displaySymbol: #fullName;"
+		possibleEntities: currentDirectory children.
+	currentPathTextInputPresenter entityText
+		autoAccept: false;
+		text: currentDirectory fullName.
+]
+
+{ #category : #'initialize-widgets' }
+FDFileNavigationSystemPresenter >> initializeFilesTable [
 	fileReferenceTable
 		contextMenu: [ (self rootCommandsGroup / 'interact with file') beRoot
-				asMenuPresenter ]
+				asMenuPresenter ].
+	fileReferenceTable
+		columns: columns;
+		sortingBlock: [ :a :b | 
+			(a isDirectory & b isDirectory not
+				or: [ a isDirectory & b isDirectory
+						& (a basename asLowercase < b basename asLowercase) ])
+				or: [ a isFile & b isFile
+						& (a basename asLowercase < b basename asLowercase) ] ]
 ]
 
 { #category : #'initialize-widgets' }
@@ -304,27 +335,21 @@ FDFileNavigationSystemPresenter >> initializeWidgets [
 	previewer := Previewer.
 	notebookPreviewer := self instantiate: FDNoteBookPreviewerPresenter.
 	fileReferenceTable := self newTable.
-	currentPathTextInputPresenter := self newTextInput.
+	currentPathTextInputPresenter := self instantiate: SpSelectEntity.
 	nameLabel := self newLabel.
 	nameText := self newTextInput.
 	filtersDropList := self newDropList.
 	previousButton := self newButton.
 	nextButton := self newButton.
+	
 	readPointerHistoryParcour := DoubleLink value: currentDirectory.
-	currentPathTextInputPresenter text: currentDirectory fullName.
 	nextButton icon: (self iconNamed: #glamorousDiveRight).
 	previousButton icon: (self iconNamed: #back).
 	nameLabel label: 'Name:'.
 	nameText autoAccept: true.
-	fileReferenceTable
-		columns: columns;
-		sortingBlock: [ :a :b | 
-			(a isDirectory & b isDirectory not
-				or: [ a isDirectory & b isDirectory
-						& (a basename asLowercase < b basename asLowercase) ])
-				or: [ a isFile & b isFile
-						& (a basename asLowercase < b basename asLowercase) ] ].
-	self initializeFilesList.
+	
+	self initializeCurrentPathTextInput.
+	self initializeFilesTable.
 	self initializeFiltersDropList.
 	self updateWidgetWithFileReference: currentDirectory.
 	self focusOrder
@@ -342,6 +367,11 @@ FDFileNavigationSystemPresenter >> nameLabel [
 ]
 
 { #category : #accessing }
+FDFileNavigationSystemPresenter >> nameText [
+	^ nameText
+]
+
+{ #category : #accessing }
 FDFileNavigationSystemPresenter >> nextButton [
 	^ nextButton
 ]
@@ -356,6 +386,11 @@ FDFileNavigationSystemPresenter >> nextButtonAction [
 				ifTrue: [ readPointerHistoryParcour := readPointerHistoryParcour nextLink.
 					self
 						updateWidgetWithFileReference: readPointerHistoryParcour value ] ]
+]
+
+{ #category : #accessing }
+FDFileNavigationSystemPresenter >> notebookPreviewer [
+	^ notebookPreviewer
 ]
 
 { #category : #utility }
@@ -407,6 +442,14 @@ FDFileNavigationSystemPresenter >> toggleHiddenFiles [
 	self updateTableContent
 ]
 
+{ #category : #accessing }
+FDFileNavigationSystemPresenter >> updateSelectEntity [
+	currentPathTextInputPresenter
+		possibleEntities: (currentDirectory children collect: #fullName).
+	currentPathTextInputPresenter entityText
+		text: currentDirectory fullName
+]
+
 { #category : #utility }
 FDFileNavigationSystemPresenter >> updateTableContent [
 	fileReferenceTable
@@ -419,5 +462,5 @@ FDFileNavigationSystemPresenter >> updateTableContent [
 FDFileNavigationSystemPresenter >> updateWidgetWithFileReference: aFileReference [
 	currentDirectory := aFileReference.
 	self updateTableContent.
-	currentPathTextInputPresenter text: currentDirectory fullName
+	self updateSelectEntity
 ]
