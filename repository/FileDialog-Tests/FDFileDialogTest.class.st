@@ -70,9 +70,9 @@ FDFileDialogTest >> testWhenAddACollectionOfBookmarkToCustomBookmarkShouldBeAdde
 	dialog
 		bookmarks:
 			{(FDGroupBookMark
-				CreatWithname: 'aTestBookmark'
-				WithContent: aCollectionOfBookmark
-				withIconName: '')}.
+				name: 'aTestBookmark'
+				collection: aCollectionOfBookmark
+				iconName: '')}.
 	self
 		assertCollection: (dialog bookmarksTreeTable roots at: 1) collection
 		hasSameElements: aCollectionOfBookmark.

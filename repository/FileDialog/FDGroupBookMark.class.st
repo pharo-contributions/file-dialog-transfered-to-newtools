@@ -10,13 +10,18 @@ Class {
 	#category : #'FileDialog-bookMark'
 }
 
-{ #category : #'as yet unclassified' }
-FDGroupBookMark class >> CreatWithname: aName WithContent: aCollection withIconName: icon [
+{ #category : #'instance creation' }
+FDGroupBookMark class >> name: aName collection: aCollection iconName: icon [
 	^ self new
 		name: aName;
 		collection: aCollection;
 		iconNamed: icon;
 		yourself
+]
+
+{ #category : #accessing }
+FDGroupBookMark >> children [ 
+	^ collection
 ]
 
 { #category : #accessing }
@@ -34,7 +39,7 @@ FDGroupBookMark >> isComposite [
 	^ true
 ]
 
-{ #category : #accesing }
+{ #category : #accessing }
 FDGroupBookMark >> removeAt: anInteger [ 
 	self collection removeAt: anInteger.
 ]
