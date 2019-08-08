@@ -165,7 +165,7 @@ FDFileDialogPresenter class >> exampleBookmark [
 FDFileDialogPresenter class >> examplePreviewer [
 	| presenter |
 	presenter := FDOpenFileDialog new.
-	presenter previewer: FDInspectPreviewer new.
+	presenter previewer: FDNullPreviewer new.
 	presenter openDialogWithSpec.
 	^ presenter
 ]

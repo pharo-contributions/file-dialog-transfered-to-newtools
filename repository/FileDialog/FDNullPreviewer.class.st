@@ -9,7 +9,7 @@ Class {
 
 { #category : #testing }
 FDNullPreviewer >> canBeUsedOn: aFileReference [
-	^ true
+	^ aFileReference isFile
 ]
 
 { #category : #testing }
@@ -20,6 +20,9 @@ FDNullPreviewer >> matchingMimeType: aZnMimeType [
 
 { #category : #utils }
 FDNullPreviewer >> previewActionOn: aFileReference [
-	1halt.
-	^ SpTextPresenter new text: aFileReference contents
+	^ SpTextPresenter new
+		text:
+			(aFileReference
+				binaryReadStreamDo:
+					[ :stream | (ZnCharacterReadStream on: stream encoding: #null) next: 5000 ])
 ]
