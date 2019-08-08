@@ -3,6 +3,7 @@ Extension { #name : #SpSelectEntity }
 { #category : #'*FileDialog' }
 SpSelectEntity >> entitiesEntryCompletion [
 	self flag: #WARNING.
+	"it's ugly without this the chooseBlock"
 	^ EntryCompletion new
 				dataSourceBlock: [:currText | self possibleEntities collect: [:each | 
 		each perform: self displaySymbol ]];

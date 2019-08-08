@@ -85,6 +85,7 @@ FDFileNavigationSystemPresenter class >> buildCommandsGroupWith: presenter forRo
 			((CmCommandGroup named: 'interact with file') asSpecGroup
 				register: (FDCreatDirectoryCommand forSpec context: presenter);
 				register: (FDToggleHiddenFilesCommand forSpec context: presenter);
+				register: (FDInspectCommand forSpec context: presenter);
 				yourself)
 ]
 

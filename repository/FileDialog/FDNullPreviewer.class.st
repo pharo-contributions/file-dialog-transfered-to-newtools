@@ -20,5 +20,6 @@ FDNullPreviewer >> matchingMimeType: aZnMimeType [
 
 { #category : #utils }
 FDNullPreviewer >> previewActionOn: aFileReference [
-	^ SpTextPresenter new text: 'it''s a null previewer'
+	1halt.
+	^ SpTextPresenter new text: aFileReference contents
 ]

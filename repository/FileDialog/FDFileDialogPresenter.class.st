@@ -112,9 +112,9 @@ FDFileDialogPresenter class >> defaultBookmarks [
 	OSPlatform current isWindows
 		ifTrue: [ presets addAll: FDBookmark windowsDrives ].
 	^ {(FDGroupBookMark
-		CreatWithname: 'fixed bookmarks'
-		WithContent: presets
-		withIconName: '')} asOrderedCollection
+		name: 'fixed bookmarks'
+		collection: presets
+		iconName: '')} asOrderedCollection
 ]
 
 { #category : #defaultClassVariable }
@@ -137,11 +137,35 @@ FDFileDialogPresenter class >> defaultSpec [
 		yourself
 ]
 
+{ #category : #examples }
+FDFileDialogPresenter class >> exampleBookmark [
+	<example>
+	| presenter |
+	presenter := FDOpenFileDialog new.
+	"this is a flat example"
+	presenter
+		bookmarks:
+			{FDBookmark home.
+			FDBookmark root.
+			FDBookmark tmp.
+			(FDBookmark
+				name: 'Image location'
+				location: FileLocator imageDirectory
+				icon: nil)}
+			"this is tree example" 	
+			"{(FDGroupBookMark
+				CreatWithname: 'exampleGroup'
+				WithContent:
+					{FDBookmark image.
+					FDBookmark home}
+				withIconName: 'group')}"
+]
+
 { #category : #example }
 FDFileDialogPresenter class >> examplePreviewer [
 	| presenter |
 	presenter := FDOpenFileDialog new.
-	presenter previewer: FDPNGPreviewer new.
+	presenter previewer: FDInspectPreviewer new.
 	presenter openDialogWithSpec.
 	^ presenter
 ]
@@ -178,11 +202,11 @@ FDFileDialogPresenter class >> fullExample [
 	presenter
 		bookmarks:
 			{(FDGroupBookMark
-				CreatWithname: 'exampleGroup'
-				WithContent:
+				name: 'exampleGroup'
+				collection:
 					{FDBookmark image.
 					FDBookmark home}
-				withIconName: 'group')} asOrderedCollection.
+				iconName: 'group')} .
 	"you define the bookmarks have to be instance of FDAbstractBookMark"
 	
 	presenter columns:  { FDCreationDateReferenceColumn }. 
@@ -228,8 +252,8 @@ FDFileDialogPresenter >> bookmarks [
 
 { #category : #'api-customization' }
 FDFileDialogPresenter >> bookmarks: aCollectionOfFDGroupBookMark [
-	bookmarks := aCollectionOfFDGroupBookMark.
-	bookmarksTreeTable roots: aCollectionOfFDGroupBookMark
+	bookmarks := aCollectionOfFDGroupBookMark asOrderedCollection.
+	bookmarksTreeTable roots: bookmarks 
 ]
 
 { #category : #accessing }
@@ -323,12 +347,9 @@ FDFileDialogPresenter >> initializeBookmarksTreeTable [
 				evaluated: [ :fdGroupBookMark | fdGroupBookMark name ]).
 	bookmarksTreeTable
 		roots: bookmarks;
-		children: [ :child | 
-			child isComposite
-				ifTrue: [ child collection ]
-				ifFalse: [ {} ] ];
-			contextMenu: [ (self rootCommandsGroup / 'bookmarkCommand') beRoot
-				asMenuPresenter ]
+		children: #children;
+		contextMenu:
+				[ (self rootCommandsGroup / 'bookmarkCommand') beRoot asMenuPresenter ]
 ]
 
 { #category : #initialization }
@@ -358,7 +379,7 @@ FDFileDialogPresenter >> initializePresenter [
 			selection selectedItem
 				ifNotNil: [ :selectedItem | 
 					selectedItem isComposite
-						ifFalse: [ fileNavigationSystem openFolder: selectedItem location ] ] ]
+						ifFalse: [ fileNavigationSystem openFolder: selectedItem location ] ] ].
 ]
 
 { #category : #initialization }

@@ -69,6 +69,11 @@ FDBookmark >> = aBookmark [
 		& (self name = aBookmark name)
 ]
 
+{ #category : #accessing }
+FDBookmark >> children [ 
+	^ {  }
+]
+
 { #category : #comparing }
 FDBookmark >> hash [
 	^ (self icon hash bitXor: self location hash) bitXor: self name hash
