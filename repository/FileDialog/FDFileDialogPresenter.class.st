@@ -252,8 +252,8 @@ FDFileDialogPresenter >> bookmarks [
 
 { #category : #'api-customization' }
 FDFileDialogPresenter >> bookmarks: aCollectionOfFDGroupBookMark [
-	bookmarks := aCollectionOfFDGroupBookMark.
-	bookmarksTreeTable roots: aCollectionOfFDGroupBookMark
+	bookmarks := aCollectionOfFDGroupBookMark asOrderedCollection.
+	bookmarksTreeTable roots: bookmarks 
 ]
 
 { #category : #accessing }

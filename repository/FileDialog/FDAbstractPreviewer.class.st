@@ -42,8 +42,7 @@ FDAbstractPreviewer >> previewActionOn: aFileReference [
 
 { #category : #utils }
 FDAbstractPreviewer >> previewOn: aFileReference [
-	(self canBeUsedOn: aFileReference) 
-	ifTrue: [ ^ self previewActionOn: aFileReference  ].
+	(self canBeUsedOn: aFileReference)
+		ifTrue: [ ^ self previewActionOn: aFileReference ].
 	^ SpNullPresenter new
-	 
 ]
