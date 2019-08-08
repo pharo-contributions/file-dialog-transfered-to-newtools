@@ -72,7 +72,6 @@ FDSaveFileDialog >> initializePresenter [
 { #category : #accessing }
 FDSaveFileDialog >> selectedEntry [
 	| entry proceed |
-	self flag: #warning.
 	entry := fileNavigationSystem currentDirectory /fileNavigationSystem nameText text.
 	(fileNavigationSystem nameText text includes: extensionMather)
 		ifFalse: [ entry := entry

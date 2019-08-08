@@ -91,7 +91,7 @@ FDFileNavigationSystemPresenter class >> buildCommandsGroupWith: presenter forRo
 { #category : #defaults }
 FDFileNavigationSystemPresenter class >> defaultColumns [
 	^ {
-	FDIconFileReferenceTableColumn  width: 20.
+	FDIconFileReferenceTableColumn  .
 	FDbasenameFileReferenceColumn .
 	FDSizeFileReferenceColumn .
 	FDAccessRightFileReferenceColumn }
@@ -121,10 +121,11 @@ FDFileNavigationSystemPresenter class >> defaultSpec [
 					withConstraints: [ :contraint | contraint width: 30 ];
 				add: #nextButton
 					withConstraints: [ :contraint | contraint width: 30 ];
-				add: #currentPathTextInputPresenter;
+				add: #currentPathTextInputPresenter withConstraints: [ :contraint | contraint spec: #fDLayoutFileDialog ];
 				yourself)
 			withConstraints: [ :contraint | contraint height: self toolbarHeight ];
-		add: (SpPanedLayout newVertical 
+		add:
+			(SpPanedLayout newVertical
 				add: #fileReferenceTable;
 				add: #notebookPreviewer;
 				yourself);
@@ -156,7 +157,7 @@ FDFileNavigationSystemPresenter class >> example [
 FDFileNavigationSystemPresenter class >> initialize [
 	FilterSet := self defaultFilterSet.
 	Previewer := self defaultPreviewer.
-	Columns := self defaultColumns.
+	Columns := self defaultColumns collect: #column.
 	Directory := self defaultDirectory
 ]
 
