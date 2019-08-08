@@ -38,7 +38,7 @@ FDOpenDirectoryDialog >> initialTitle [
 { #category : #initialization }
 FDOpenDirectoryDialog >> initializeWidgets [
 	super initializeWidgets.
-	nameText disable.
+	fileNavigationSystem nameText disable
 ]
 
 { #category : #actions }
@@ -50,7 +50,7 @@ FDOpenDirectoryDialog >> nameChanged [
 
 { #category : #actions }
 FDOpenDirectoryDialog >> selectedEntry [
-	filesList fileReferenceTable selection selectedItem
+	fileNavigationSystem fileReferenceTable selection selectedItem
 		ifNotNil: [ :fileReference | 
 			fileReference isDirectory
 				ifTrue: [ ^ fileReference ] ].

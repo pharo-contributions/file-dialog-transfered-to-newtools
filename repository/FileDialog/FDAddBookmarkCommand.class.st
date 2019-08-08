@@ -9,14 +9,14 @@ Class {
 
 { #category : #hooks }
 FDAddBookmarkCommand >> canBeRun [
-	^ self context filesList fileReferenceTable selection selectedItem
+	^ self context fileNavigationSystem fileReferenceTable selection selectedItem
 		isDirectory
 ]
 
 { #category : #hooks }
 FDAddBookmarkCommand >> execute [
 	| fileReference |
-	fileReference := self context filesList fileReferenceTable selection
+	fileReference := self context fileNavigationSystem fileReferenceTable selection
 		selectedItem.
 	self context bookmarks
 		add:

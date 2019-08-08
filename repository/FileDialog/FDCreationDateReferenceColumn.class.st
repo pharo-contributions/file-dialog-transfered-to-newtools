@@ -1,3 +1,6 @@
+"
+I'm a column use to display the creation date of a file
+"
 Class {
 	#name : #FDCreationDateReferenceColumn,
 	#superclass : #FDAbstractStringTableColumn,

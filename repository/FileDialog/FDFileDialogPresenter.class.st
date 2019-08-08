@@ -68,11 +68,10 @@ Class {
 	#name : #FDFileDialogPresenter,
 	#superclass : #SpPresenter,
 	#instVars : [
-		'nameText',
-		'filesList',
 		'okActionBlock',
 		'bookmarksTreeTable',
-		'bookmarks'
+		'bookmarks',
+		'fileNavigationSystem'
 	],
 	#classVars : [
 		'Bookmarks',
@@ -132,7 +131,7 @@ FDFileDialogPresenter class >> defaultSpec [
 				add: #bookmarksTreeTable;
 				add:
 					(SpBoxLayout newVertical
-						add: #filesList;
+						add: #fileNavigationSystem;
 						yourself);
 				yourself);
 		yourself
@@ -240,13 +239,11 @@ FDFileDialogPresenter >> bookmarksTreeTable [
 
 { #category : #'api-customization' }
 FDFileDialogPresenter >> columns: aCollectionOfColumns [
-	filesList columns: aCollectionOfColumns 
+	fileNavigationSystem columns: aCollectionOfColumns 
 ]
 
 { #category : #utility }
 FDFileDialogPresenter >> confirm [
-	nameText text isNotEmpty
-		ifFalse: [ ^ self inform: 'you have to select a file' ].
 	self selectedEntry
 		ifNotNil: [ :entry | 
 			okActionBlock value: entry.
@@ -261,9 +258,9 @@ FDFileDialogPresenter >> creatAnFDBookMark: aDirectory [
 		icon: nil
 ]
 
-{ #category : #accesing }
+{ #category : #accessing }
 FDFileDialogPresenter >> currentDirectory [
-	^ filesList currentDirectory 
+	^ fileNavigationSystem currentDirectory 
 ]
 
 { #category : #utility }
@@ -273,22 +270,22 @@ FDFileDialogPresenter >> defaultFolder [
 
 { #category : #'api-customization' }
 FDFileDialogPresenter >> defaultFolder: aPath [
-	filesList defaultFolder: aPath
+	fileNavigationSystem defaultFolder: aPath
+]
+
+{ #category : #accessing }
+FDFileDialogPresenter >> fileNavigationSystem [
+	^ fileNavigationSystem
 ]
 
 { #category : #accessing }
 FDFileDialogPresenter >> fileReferenceTable [
-	^ filesList fileReferenceTable
-]
-
-{ #category : #accessing }
-FDFileDialogPresenter >> filesList [
-	^ filesList
+	^ fileNavigationSystem fileReferenceTable
 ]
 
 { #category : #'api-customization' }
 FDFileDialogPresenter >> filtersCustomization: aCollection [ 
-	filesList filtersCustomization: aCollection
+	fileNavigationSystem filtersCustomization: aCollection
 ]
 
 { #category : #utility }
@@ -346,9 +343,9 @@ FDFileDialogPresenter >> initializeDialogWindow: aDialogWindowPresenter [
 
 { #category : #'initialize-widgets' }
 FDFileDialogPresenter >> initializeFilesList [
-	filesList fileReferenceTable
+	fileNavigationSystem fileReferenceTable
 		contextMenu: [ 
-			filesList rootCommandsGroup
+			fileNavigationSystem rootCommandsGroup
 				register: (self rootCommandsGroup / 'interact with bookmark');
 			 	beRoot;
 				asMenuPresenter ]
@@ -361,7 +358,7 @@ FDFileDialogPresenter >> initializePresenter [
 			selection selectedItem
 				ifNotNil: [ :selectedItem | 
 					selectedItem isComposite
-						ifFalse: [ filesList openFolder: selectedItem location ] ] ]
+						ifFalse: [ fileNavigationSystem openFolder: selectedItem location ] ] ]
 ]
 
 { #category : #initialization }
@@ -369,16 +366,13 @@ FDFileDialogPresenter >> initializeWidgets [
 	bookmarks := Bookmarks.
 	
 	bookmarksTreeTable := self newTreeTable.
-	filesList := self instantiate: FDFileNavigationSystemPresenter.
-	nameText := self newTextInput.
-	nameText autoAccept: true.
-	
+	fileNavigationSystem := self instantiate: FDFileNavigationSystemPresenter.
+
 	self initializeBookmarksTreeTable.
 	self initializeFilesList.
 	self focusOrder
 		add: bookmarksTreeTable;
-		add: filesList;
-		add: nameText
+		add: fileNavigationSystem
 ]
 
 { #category : #accessing }
@@ -392,11 +386,6 @@ FDFileDialogPresenter >> isolate [
 	
 ]
 
-{ #category : #accessing }
-FDFileDialogPresenter >> nameText [
-	^ nameText
-]
-
 { #category : #'api-customization' }
 FDFileDialogPresenter >> okActionBlock: aOneArgBlock [
 	okActionBlock := aOneArgBlock
@@ -404,15 +393,15 @@ FDFileDialogPresenter >> okActionBlock: aOneArgBlock [
 
 { #category : #'api-customization' }
 FDFileDialogPresenter >> previewer: aPreviewer [ 
-	filesList previewer: aPreviewer
+	fileNavigationSystem previewer: aPreviewer
 ]
 
 { #category : #utility }
 FDFileDialogPresenter >> selectFile: aFile [
-	filesList fileReferenceTable selection selectedItem = aFile
-		ifFalse: [ filesList fileReferenceTable
-				selectIndex: (filesList fileReferenceTable items indexOf: aFile) ].
-	nameText text: aFile basename
+	fileNavigationSystem fileReferenceTable selection selectedItem = aFile
+		ifFalse: [ fileNavigationSystem fileReferenceTable
+				selectIndex: (fileNavigationSystem fileReferenceTable items indexOf: aFile) ].
+	fileNavigationSystem nameText text: aFile basename
 ]
 
 { #category : #accessing }

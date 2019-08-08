@@ -4,8 +4,49 @@ My responsibility is to provide dialog for SAVING files.
 Class {
 	#name : #FDSaveFileDialog,
 	#superclass : #FDFileDialogPresenter,
+	#instVars : [
+		'extensionMather'
+	],
+	#classVars : [
+		'Matcher'
+	],
 	#category : #'FileDialog-UI'
 }
+
+{ #category : #examples }
+FDSaveFileDialog class >> example [ 	
+	<example>
+		^ self new openDialogWithSpec
+]
+
+{ #category : #'as yet unclassified' }
+FDSaveFileDialog class >> exampleExtension [
+	<example>
+	^ self extension: '*.jpg'
+]
+
+{ #category : #accessing }
+FDSaveFileDialog class >> extension: aExtensionMatcher [
+	"example 
+		you want to save png File 
+			FDSaveFileDialog extension: '*.jpg'
+	"
+
+	^ self new
+		extension: aExtensionMatcher;
+		openDialogWithSpec;
+		yourself
+]
+
+{ #category : #'class initialization' }
+FDSaveFileDialog class >> initialize [ 
+	Matcher := '*'
+]
+
+{ #category : #'api-customization' }
+FDSaveFileDialog >> extension: anExtensionMatcher [
+	extensionMather := anExtensionMatcher
+]
 
 { #category : #api }
 FDSaveFileDialog >> initialTitle [
@@ -13,33 +54,28 @@ FDSaveFileDialog >> initialTitle [
 ]
 
 { #category : #initialization }
-FDSaveFileDialog >> initializePresenter [
-	| ec |
-	self flag: #StrangeItsDontWork.
-	super initializePresenter.
-	(ec := EntryCompletion new)
-		dataSourceBlock: [ :text | filesList currentDirectory children collect: #basename ];
-		filterBlock: [ :opt :text |opt beginsWith: text ].
-	nameText entryCompletion: ec
+FDSaveFileDialog >> initialize [
+	super initialize.
+	extensionMather := Matcher
 ]
 
 { #category : #initialization }
-FDSaveFileDialog >> initializeWidgets [
-	super initializeWidgets.
-	"confirmButton label: 'Save'"
+FDSaveFileDialog >> initializePresenter [
+	| ec |
+	super initializePresenter.
+	(ec := EntryCompletion new)
+		dataSourceBlock: [ :text | fileNavigationSystem currentDirectory children collect: #basename ];
+		filterBlock: [ :opt :text |opt beginsWith: text ].
+	fileNavigationSystem nameText entryCompletion: ec
 ]
 
 { #category : #accessing }
 FDSaveFileDialog >> selectedEntry [
 	| entry proceed |
-	self flag:#warning.
-	entry := filesList currentDirectory / nameText text.
-	1halt.
-	filesList filtersDropList selectedItem value
-		ifNotEmpty: [ :extensions | 
-			(nameText text includes: $.)
-				ifFalse: [ entry := entry
-						, ((extensions first copyReplaceAll: '*' with: '') withoutPrefix: '.') ] ].
+	entry := fileNavigationSystem currentDirectory /fileNavigationSystem nameText text.
+	(fileNavigationSystem nameText text includes: extensionMather)
+		ifFalse: [ entry := entry
+				, ((extensionMather copyReplaceAll: '*' with: '') ) ].
 	proceed := entry exists not.
 	entry exists
 		ifTrue: [ proceed := UIManager default

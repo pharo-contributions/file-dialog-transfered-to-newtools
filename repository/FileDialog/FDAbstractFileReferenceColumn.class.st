@@ -6,12 +6,16 @@ my subclasses have to define:
 * columnTitle 
 	returning a String 
 
-* evaluateOn:aFileReference r
+* evaluateOn:aFileReference 
 	return something in function of it's superClass 
 	example 
 		in FDBasenameFileReferenceColumn my subclass is FDAbstractStringTableColumn 
 			so it will creat a SpStringTablePresenter so i have to return a String 
 				here I'm asking to the fileReference is basename	
+				
+* addContraintTo: aTableColumn
+	with this method you can add option like with 
+		see SpTableColumn and subclass for more information
 "
 Class {
 	#name : #FDAbstractFileReferenceColumn,
@@ -21,6 +25,9 @@ Class {
 
 { #category : #adding }
 FDAbstractFileReferenceColumn class >> addContraintTo: aTableColumn [
+	"I'm use to add option to column like width ... 
+	look at class 
+		SpTableColumn"
 	self subclassResponsibility
 ]
 

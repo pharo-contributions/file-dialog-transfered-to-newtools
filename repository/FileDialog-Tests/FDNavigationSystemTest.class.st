@@ -33,6 +33,11 @@ FDNavigationSystemTest >> testCustomizationWhenChangeCollectionOfPreviewerShould
 ]
 
 { #category : #tests }
+FDNavigationSystemTest >> testInitializeCurrentPathTextInputShouldSet [
+	self assert: dialog currentDirectory fullName equals: dialog currentPathTextInputPresenter entityText text 
+]
+
+{ #category : #tests }
 FDNavigationSystemTest >> testInitializeFilterDropListSelectedItemShouldBeDefaultFilter [
 	self assert: dialog filtersDropList selectedItem name equals: FDDefaultSelect new name
 ]
@@ -149,12 +154,12 @@ FDNavigationSystemTest >> testWhenOpenADirectoryShouldDisplayHisChildrenFilterBy
 
 { #category : #tests }
 FDNavigationSystemTest >> testWhenPathTextInputPresenterAcceptShouldChangeFileListWithTheGoodContent [
-	dialog currentPathTextInputPresenter
-		text: dialog currentPathTextInputPresenter text , '/dir/'.
-	dialog currentPathTextInputPresenter accept.
+	dialog currentPathTextInputPresenter entityText
+		text: dialog currentPathTextInputPresenter entityText text , '/dir/'.
+	dialog currentPathTextInputPresenter entityText accept.
 	self
 		assertCollection: (dialog fileReferenceTable items collect: #basename)
-		hasSameElements: {'klm.png' . 'klm.jpg' }
+		hasSameElements: {'klm.png' . 'klm.jpg'}
 ]
 
 { #category : #tests }
