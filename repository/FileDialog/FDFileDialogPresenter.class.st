@@ -137,11 +137,35 @@ FDFileDialogPresenter class >> defaultSpec [
 		yourself
 ]
 
+{ #category : #examples }
+FDFileDialogPresenter class >> exampleBookmark [
+	<example>
+	| presenter |
+	presenter := FDOpenFileDialog new.
+	"this is a flat example"
+	presenter
+		bookmarks:
+			{FDBookmark home.
+			FDBookmark root.
+			FDBookmark tmp.
+			(FDBookmark
+				name: 'Image location'
+				location: FileLocator imageDirectory
+				icon: nil)}
+			"this is tree example" 	
+			"{(FDGroupBookMark
+				CreatWithname: 'exampleGroup'
+				WithContent:
+					{FDBookmark image.
+					FDBookmark home}
+				withIconName: 'group')}"
+]
+
 { #category : #example }
 FDFileDialogPresenter class >> examplePreviewer [
 	| presenter |
 	presenter := FDOpenFileDialog new.
-	presenter previewer: FDPNGPreviewer new.
+	presenter previewer: FDInspectPreviewer new.
 	presenter openDialogWithSpec.
 	^ presenter
 ]
@@ -182,7 +206,7 @@ FDFileDialogPresenter class >> fullExample [
 				WithContent:
 					{FDBookmark image.
 					FDBookmark home}
-				withIconName: 'group')} asOrderedCollection.
+				withIconName: 'group')} .
 	"you define the bookmarks have to be instance of FDAbstractBookMark"
 	
 	presenter columns:  { FDCreationDateReferenceColumn }. 
