@@ -11,12 +11,13 @@ A simple replacement for Pharo's native file/folder selection dialog.
 
 ## Features
 
-* list of most common places (home, root, image directory, temp)
-* custom bookmarks by dragging folders from file-pane to bookmark-pane
+* contextMenu to add/remove bookmark
 * toggle hidden files (right-click on file listing)
 * preset file name
-* filtering files by extensions or patterns and toggling between filters
-* synchronous and asynchronous mode
+* filtering files by subclass FDAbstractSelect
+* TextInputField like window path text input
+* preview system
+* you can change the column of the tablePresente
 
 ## Installation
 
@@ -64,11 +65,11 @@ You can also use the classes directly — there are just minor differences in th
 The user-facing API is in the `api-customization` protocol of `FDFileDialogPresenter`
 
 * `defaultFolder: aPath` — where should the dialog open, the default is the imageDirectory
-* `defaultName: aString` — prefill the file name input
 * `filtersCustomization: aCollectionOfFDAbstractPredicate` — a collection of FDAbstractPredicate
+* `bookmarks: aCollectionOfBookmark` _ see bookmark example class side of FileDialog
 * `okActionBlock: aBlock` — a one arg block executed when a file was selected
 * `previewer: aPreviewer` _ a son of FDAbstractPreviewer that returning a Spec widget 
-* `openModal` — when you open the dialog as modal, you will get the selected value as a return instead of using the block
+* `columns: aCollectionOfColumns` _ you have to give a collection of subclass of FDAbstractFileReferenceColumn
 
 ## Custom Icons
 
@@ -76,27 +77,5 @@ The user-facing API is in the `api-customization` protocol of `FDFileDialogPrese
 
 ## Example
 
-asynchronous — execute behavior on selection from a block
-
-```st
-FDOpenFileDialog new
-	whenSelected: [ :file | file inspect ];
-	extensionFilters: {
-		'All images' -> #(jpg png gif svg).
-		'All files' -> #()
-	};
-	defaultFolder: FileLocator imageDirectory asFileReference;
-	open
-```
-
-synchronous — return the selected file as a value
-
-```st
-file := FDOpenFileDialog new
-	openModal
-```
 
 
-
-![](figures/file-dialog-1.png)
-![](figures/file-dialog-2.png)
