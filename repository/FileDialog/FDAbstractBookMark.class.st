@@ -21,6 +21,11 @@ Class {
 }
 
 { #category : #accessing }
+FDAbstractBookMark >> children [ 
+	^ self subclassResponsibility
+]
+
+{ #category : #accessing }
 FDAbstractBookMark >> icon [
 	^ icon
 ]

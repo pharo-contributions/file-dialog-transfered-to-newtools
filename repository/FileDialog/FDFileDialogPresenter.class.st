@@ -88,6 +88,12 @@ FDFileDialogPresenter class >> allIcons [
 			[ :pragma | pragma methodClass instanceSide perform: pragma methodSelector ]
 ]
 
+{ #category : #accessing }
+FDFileDialogPresenter class >> bookmarks [
+	self flag:#removeIt.
+	^ Bookmarks
+]
+
 { #category : #commander2 }
 FDFileDialogPresenter class >> buildCommandsGroupWith: presenter forRoot: rootCommandGroup [
 	rootCommandGroup
@@ -323,12 +329,9 @@ FDFileDialogPresenter >> initializeBookmarksTreeTable [
 				evaluated: [ :fdGroupBookMark | fdGroupBookMark name ]).
 	bookmarksTreeTable
 		roots: bookmarks;
-		children: [ :child | 
-			child isComposite
-				ifTrue: [ child collection ]
-				ifFalse: [ {} ] ];
-			contextMenu: [ (self rootCommandsGroup / 'bookmarkCommand') beRoot
-				asMenuPresenter ]
+		children: #children;
+		contextMenu:
+				[ (self rootCommandsGroup / 'bookmarkCommand') beRoot asMenuPresenter ]
 ]
 
 { #category : #initialization }

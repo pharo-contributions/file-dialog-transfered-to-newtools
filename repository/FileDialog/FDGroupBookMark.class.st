@@ -20,6 +20,11 @@ FDGroupBookMark class >> CreatWithname: aName WithContent: aCollection withIconN
 ]
 
 { #category : #accessing }
+FDGroupBookMark >> children [ 
+	^ collection
+]
+
+{ #category : #accessing }
 FDGroupBookMark >> collection [
 	^ collection
 ]
