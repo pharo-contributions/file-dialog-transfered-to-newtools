@@ -1,3 +1,6 @@
+"
+I'm a previewer use to display the content of a file 
+"
 Class {
 	#name : #FDContentPreviewer,
 	#superclass : #FDAbstractPreviewer,
@@ -7,12 +10,10 @@ Class {
 { #category : #testing }
 FDContentPreviewer >> matchingMimeType: aZnMimeType [
 	"return a Boolean to indicate if element matches"
-	1halt.
-	 
+	^ true
 ]
 
 { #category : #templateMethod }
 FDContentPreviewer >> previewActionOn: aFileReference [
-	1halt.
-	^ SpTextPresenter new text: aFileReference 
+	^ SpTextPresenter new text: aFileReference contents 
 ]
