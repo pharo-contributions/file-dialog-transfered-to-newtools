@@ -88,12 +88,6 @@ FDFileDialogPresenter class >> allIcons [
 			[ :pragma | pragma methodClass instanceSide perform: pragma methodSelector ]
 ]
 
-{ #category : #accessing }
-FDFileDialogPresenter class >> bookmarks [
-	self flag:#removeIt.
-	^ Bookmarks
-]
-
 { #category : #commander2 }
 FDFileDialogPresenter class >> buildCommandsGroupWith: presenter forRoot: rootCommandGroup [
 	rootCommandGroup
