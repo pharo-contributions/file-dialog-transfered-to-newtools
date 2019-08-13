@@ -107,7 +107,7 @@ FCjDKXmnHQAAAABJRU5ErkJggg=='
 FDNoteBookPreviewerPresenter >> initializePage [
 	^ NotebookPage
 		title: 'Previewer '  
-		icon: HRBIconCache fileIcon
+		icon: (self iconNamed:#page )
 		provider: [ page ]
 		 
 ]
