@@ -20,9 +20,6 @@ FDNullPreviewer >> matchingMimeType: aZnMimeType [
 
 { #category : #utils }
 FDNullPreviewer >> previewActionOn: aFileReference [
-	^ SpTextPresenter new
-		text:
-			(aFileReference
-				binaryReadStreamDo:
-					[ :stream | (ZnCharacterReadStream on: stream encoding: #null) next: 5000 ])
+	^ SpTextPresenter new text: aFileReference contents
+
 ]

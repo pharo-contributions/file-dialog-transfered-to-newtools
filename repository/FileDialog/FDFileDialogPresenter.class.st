@@ -88,6 +88,12 @@ FDFileDialogPresenter class >> allIcons [
 			[ :pragma | pragma methodClass instanceSide perform: pragma methodSelector ]
 ]
 
+{ #category : #accessing }
+FDFileDialogPresenter class >> bookmarks [
+	self flag:#removeIt.
+	^ Bookmarks
+]
+
 { #category : #commander2 }
 FDFileDialogPresenter class >> buildCommandsGroupWith: presenter forRoot: rootCommandGroup [
 	rootCommandGroup
@@ -165,7 +171,7 @@ FDFileDialogPresenter class >> exampleBookmark [
 FDFileDialogPresenter class >> examplePreviewer [
 	| presenter |
 	presenter := FDOpenFileDialog new.
-	presenter previewer: FDNullPreviewer new.
+	presenter previewer: FDInspectPreviewer new.
 	presenter openDialogWithSpec.
 	^ presenter
 ]
