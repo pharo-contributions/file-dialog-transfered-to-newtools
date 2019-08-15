@@ -379,7 +379,7 @@ FDFileDialogPresenter >> initializePresenter [
 			selection selectedItem
 				ifNotNil: [ :selectedItem | 
 					selectedItem isComposite
-						ifFalse: [ fileNavigationSystem openFolder: selectedItem location ] ] ].
+						ifFalse: [ fileNavigationSystem openFolder: selectedItem location ] ] ]
 ]
 
 { #category : #initialization }

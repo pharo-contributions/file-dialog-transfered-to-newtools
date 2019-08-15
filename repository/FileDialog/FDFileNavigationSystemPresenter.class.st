@@ -122,7 +122,7 @@ FDFileNavigationSystemPresenter class >> defaultSpec [
 					withConstraints: [ :contraint | contraint width: 30 ];
 				add: #nextButton
 					withConstraints: [ :contraint | contraint width: 30 ];
-				add: #currentPathTextInputPresenter withConstraints: [ :contraint | contraint spec: #fDLayoutFileDialog ];
+				add: #currentPathTextInputPresenter ;
 				yourself)
 			withConstraints: [ :contraint | contraint height: self toolbarHeight ];
 		add:
@@ -282,13 +282,7 @@ FDFileNavigationSystemPresenter >> hiddenFilter [
 
 { #category : #'initialize-widgets' }
 FDFileNavigationSystemPresenter >> initializeCurrentPathTextInput [
-	currentPathTextInputPresenter
-		placeholder: 'give/me/a/path';
-		"displaySymbol: #fullName;"
-		possibleEntities: currentDirectory children.
-	currentPathTextInputPresenter entityText
-		autoAccept: false;
-		text: currentDirectory fullName.
+	currentPathTextInputPresenter currentDirectory: currentDirectory
 ]
 
 { #category : #'initialize-widgets' }
@@ -337,7 +331,7 @@ FDFileNavigationSystemPresenter >> initializeWidgets [
 	previewer := Previewer.
 	notebookPreviewer := self instantiate: FDNoteBookPreviewerPresenter.
 	fileReferenceTable := self newTable.
-	currentPathTextInputPresenter := self instantiate: SpSelectEntity.
+	currentPathTextInputPresenter := self instantiate: FDWindowPathUI.
 	nameLabel := self newLabel.
 	nameText := self newTextInput.
 	filtersDropList := self newDropList.
@@ -444,14 +438,6 @@ FDFileNavigationSystemPresenter >> toggleHiddenFiles [
 	self updateTableContent
 ]
 
-{ #category : #accessing }
-FDFileNavigationSystemPresenter >> updateSelectEntity [
-	currentPathTextInputPresenter
-		possibleEntities: (currentDirectory children collect: #fullName).
-	currentPathTextInputPresenter entityText
-		text: currentDirectory fullName
-]
-
 { #category : #utility }
 FDFileNavigationSystemPresenter >> updateTableContent [
 	fileReferenceTable
@@ -464,5 +450,5 @@ FDFileNavigationSystemPresenter >> updateTableContent [
 FDFileNavigationSystemPresenter >> updateWidgetWithFileReference: aFileReference [
 	currentDirectory := aFileReference.
 	self updateTableContent.
-	self updateSelectEntity
+	currentPathTextInputPresenter currentDirectory: currentDirectory
 ]
