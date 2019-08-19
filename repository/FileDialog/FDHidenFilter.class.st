@@ -2,18 +2,18 @@
 I'm selecting file not hiddenfile
 "
 Class {
-	#name : #FDHidenSelect,
-	#superclass : #FDAbstractSimpleSelect,
+	#name : #FDHidenFilter,
+	#superclass : #FDAbstractSimpleFilter,
 	#category : #'FileDialog-filterStrategie'
 }
 
 { #category : #accessing }
-FDHidenSelect >> name [
+FDHidenFilter >> name [
 	^ 'filter hidden file'
 ]
 
 { #category : #accessing }
-FDHidenSelect >> predicate: aFileReference [
+FDHidenFilter >> predicate: aFileReference [
 	OSPlatform current isWindows
 		ifTrue: [ aFileReference isHiddenInWindows not ].
 	^ (aFileReference basename matchesRegex: '\.[^.].*') not.

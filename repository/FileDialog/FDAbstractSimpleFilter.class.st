@@ -3,17 +3,17 @@ i define simple predicate
 	see my super class for more information
 "
 Class {
-	#name : #FDAbstractSimpleSelect,
-	#superclass : #FDAbstractSelect,
+	#name : #FDAbstractSimpleFilter,
+	#superclass : #FDAbstractFilter,
 	#category : #'FileDialog-filterStrategie'
 }
 
 { #category : #actions }
-FDAbstractSimpleSelect class >> actions [
+FDAbstractSimpleFilter class >> actions [
 	^self allSubclasses collect: [:item |item new ]
 ]
 
 { #category : #testing }
-FDAbstractSimpleSelect class >> isAbstract [ 
-	^self = FDAbstractSimpleSelect 
+FDAbstractSimpleFilter class >> isAbstract [ 
+	^self = FDAbstractSimpleFilter 
 ]
