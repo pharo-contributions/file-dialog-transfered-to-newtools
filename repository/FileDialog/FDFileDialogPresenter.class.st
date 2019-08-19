@@ -88,12 +88,6 @@ FDFileDialogPresenter class >> allIcons [
 			[ :pragma | pragma methodClass instanceSide perform: pragma methodSelector ]
 ]
 
-{ #category : #accessing }
-FDFileDialogPresenter class >> bookmarks [
-	self flag:#removeIt.
-	^ Bookmarks
-]
-
 { #category : #commander2 }
 FDFileDialogPresenter class >> buildCommandsGroupWith: presenter forRoot: rootCommandGroup [
 	rootCommandGroup
@@ -196,7 +190,7 @@ FDFileDialogPresenter class >> fullExample [
 	presenter previewer: FDContentPreviewer new.	
 	"with this when you select a png file it will display it"
 	
-	presenter filtersCustomization: {FDJPGOrPNGSelect new}.
+	presenter filtersCustomization: {FDJPGOrPNGFilter new}.
 	"with you add filter and there always the 'no filter'"
 	
 	presenter defaultFolder: FileLocator home asFileReference.
@@ -385,7 +379,7 @@ FDFileDialogPresenter >> initializePresenter [
 			selection selectedItem
 				ifNotNil: [ :selectedItem | 
 					selectedItem isComposite
-						ifFalse: [ fileNavigationSystem openFolder: selectedItem location ] ] ].
+						ifFalse: [ fileNavigationSystem openFolder: selectedItem location ] ] ]
 ]
 
 { #category : #initialization }
@@ -407,7 +401,7 @@ FDFileDialogPresenter >> isRootDirectory: aDirectory [
 	^ aDirectory isRoot or: [ OSPlatform current isWindows and: [ aDirectory parent isRoot ] ]
 ]
 
-{ #category : #initialization }
+{ #category : #'api-customization' }
 FDFileDialogPresenter >> isolate [
 	bookmarks := bookmarks copy.
 	

@@ -3,8 +3,8 @@ i define compose predicate
 	see my super class for more information
 "
 Class {
-	#name : #FDAbstractCompositeSelect,
-	#superclass : #FDAbstractSelect,
+	#name : #FDAbstractCompositeFilter,
+	#superclass : #FDAbstractFilter,
 	#instVars : [
 		'collectionOfFDAbstractFilter'
 	],
@@ -12,21 +12,21 @@ Class {
 }
 
 { #category : #actions }
-FDAbstractCompositeSelect class >> actions [
+FDAbstractCompositeFilter class >> actions [
 	^self allSubclasses collect: [:item |item new ]
 ]
 
 { #category : #testing }
-FDAbstractCompositeSelect class >> isAbstract [ 
-	^ self = FDAbstractCompositeSelect
+FDAbstractCompositeFilter class >> isAbstract [ 
+	^ self = FDAbstractCompositeFilter
 ]
 
 { #category : #accessing }
-FDAbstractCompositeSelect >> collectionOfFDAbstractFilter [
+FDAbstractCompositeFilter >> collectionOfFDAbstractFilter [
 	^ collectionOfFDAbstractFilter
 ]
 
 { #category : #accessing }
-FDAbstractCompositeSelect >> collectionOfFDAbstractFilter: anObject [
+FDAbstractCompositeFilter >> collectionOfFDAbstractFilter: anObject [
 	collectionOfFDAbstractFilter := anObject
 ]

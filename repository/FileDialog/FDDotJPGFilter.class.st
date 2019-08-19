@@ -2,18 +2,18 @@
 I'm selecting only jpg file
 "
 Class {
-	#name : #FDDotJPGSelect,
-	#superclass : #FDAbstractCompositeSelect,
+	#name : #FDDotJPGFilter,
+	#superclass : #FDAbstractCompositeFilter,
 	#category : #'FileDialog-filterStrategie'
 }
 
 { #category : #accessing }
-FDDotJPGSelect >> name [
+FDDotJPGFilter >> name [
 	^ 'end with jpg'
 ]
 
 { #category : #accessing }
-FDDotJPGSelect >> predicate: aFileReference [
+FDDotJPGFilter >> predicate: aFileReference [
 	^ aFileReference isDirectory
 		or: [ aFileReference isFile
 				and: [ 

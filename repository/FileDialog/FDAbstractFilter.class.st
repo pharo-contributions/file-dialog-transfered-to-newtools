@@ -17,7 +17,7 @@ this architecture is composed of 2 class
 		it's compose of predicate compose of FAbstractPredicate
 "
 Class {
-	#name : #FDAbstractSelect,
+	#name : #FDAbstractFilter,
 	#superclass : #Object,
 	#classInstVars : [
 		'uniqueInstance'
@@ -26,7 +26,7 @@ Class {
 }
 
 { #category : #actions }
-FDAbstractSelect class >> actions [
+FDAbstractFilter class >> actions [
 	| filterCollection |
 	filterCollection := {}.
 	self allSubclasses
@@ -35,26 +35,26 @@ FDAbstractSelect class >> actions [
 ]
 
 { #category : #testing }
-FDAbstractSelect class >> isAbstract [
-	^ self = FDAbstractSelect
+FDAbstractFilter class >> isAbstract [
+	^ self = FDAbstractFilter
 ]
 
 { #category : #applying }
-FDAbstractSelect >> applyOn: aCollectionOfFileReference [
+FDAbstractFilter >> applyOn: aCollectionOfFileReference [
 	^ aCollectionOfFileReference select: [:eachFileReference | self predicate: eachFileReference   ]
 ]
 
 { #category : #comparing }
-FDAbstractSelect >> equals: aPredicate [
+FDAbstractFilter >> equals: aPredicate [
 	^ self className = aPredicate className
 ]
 
 { #category : #accessing }
-FDAbstractSelect >> name [
+FDAbstractFilter >> name [
 	^ self subclassResponsibility 
 ]
 
 { #category : #accessing }
-FDAbstractSelect >> predicate: aFileReference [
+FDAbstractFilter >> predicate: aFileReference [
 	^ self subclassResponsibility 
 ]

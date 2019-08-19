@@ -2,17 +2,17 @@
 I'm selecting only directory
 "
 Class {
-	#name : #FDDirectorySelect,
-	#superclass : #FDAbstractSimpleSelect,
+	#name : #FDDirectoryFilter,
+	#superclass : #FDAbstractSimpleFilter,
 	#category : #'FileDialog-filterStrategie'
 }
 
 { #category : #accessing }
-FDDirectorySelect >> name [
+FDDirectoryFilter >> name [
 	^ 'directory filter'
 ]
 
 { #category : #accessing }
-FDDirectorySelect >> predicate: aFileReference [
+FDDirectoryFilter >> predicate: aFileReference [
 	^ aFileReference isDirectory
 ]

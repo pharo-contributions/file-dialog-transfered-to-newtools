@@ -2,18 +2,18 @@
 I'm selecting file finishing with .png
 "
 Class {
-	#name : #FDEndWithPNGSelect,
-	#superclass : #FDAbstractSimpleSelect,
+	#name : #FDEndWithPNGFilter,
+	#superclass : #FDAbstractSimpleFilter,
 	#category : #'FileDialog-filterStrategie'
 }
 
 { #category : #accessing }
-FDEndWithPNGSelect >> name [
+FDEndWithPNGFilter >> name [
 	^ 'end with png'
 ]
 
 { #category : #accessing }
-FDEndWithPNGSelect >> predicate: aFileReference [
+FDEndWithPNGFilter >> predicate: aFileReference [
 	^ aFileReference basename
 		regex: '.*\.png'
 		matchesDo: [ :item | ^ true ]

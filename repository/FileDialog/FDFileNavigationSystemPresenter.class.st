@@ -105,7 +105,7 @@ FDFileNavigationSystemPresenter class >> defaultDirectory [
 
 { #category : #'class initialization' }
 FDFileNavigationSystemPresenter class >> defaultFilterSet [
-	^ FDAbstractSelect actions
+	^ FDAbstractFilter actions
 ]
 
 { #category : #defaults }
@@ -122,7 +122,7 @@ FDFileNavigationSystemPresenter class >> defaultSpec [
 					withConstraints: [ :contraint | contraint width: 30 ];
 				add: #nextButton
 					withConstraints: [ :contraint | contraint width: 30 ];
-				add: #currentPathTextInputPresenter withConstraints: [ :contraint | contraint spec: #fDLayoutFileDialog ];
+				add: #currentPathTextInputPresenter ;
 				yourself)
 			withConstraints: [ :contraint | contraint height: self toolbarHeight ];
 		add:
@@ -179,12 +179,12 @@ FDFileNavigationSystemPresenter >> columns: aCollectionOfColumns [
 		columns: ((tmpColumn asOrderedCollection sort: #sortValue ascending) collect: #column)
 ]
 
-{ #category : #utility }
+{ #category : #utils }
 FDFileNavigationSystemPresenter >> createDirectory [
 	^ self createDirectory: 'new-folder'
 ]
 
-{ #category : #utility }
+{ #category : #utils }
 FDFileNavigationSystemPresenter >> createDirectory: initialName [
 	| name path |
 	name := (UIManager default
@@ -256,12 +256,12 @@ FDFileNavigationSystemPresenter >> filtersCustomization: aCollectionOfFilter [
 	filtersDropList
 		items:
 			(aCollectionOfFilter asOrderedCollection
-				add: FDDefaultSelect new;
+				add: FDDefaultFilter new;
 				yourself) asSet asOrderedCollection.
 	filtersDropList
 		selectedIndex:
 			((filtersDropList listItems collect: #name)
-				indexOf: FDDefaultSelect new name)
+				indexOf: FDDefaultFilter new name)
 ]
 
 { #category : #accessing }
@@ -282,13 +282,7 @@ FDFileNavigationSystemPresenter >> hiddenFilter [
 
 { #category : #'initialize-widgets' }
 FDFileNavigationSystemPresenter >> initializeCurrentPathTextInput [
-	currentPathTextInputPresenter
-		placeholder: 'give/me/a/path';
-		"displaySymbol: #fullName;"
-		possibleEntities: currentDirectory children.
-	currentPathTextInputPresenter entityText
-		autoAccept: false;
-		text: currentDirectory fullName.
+	currentPathTextInputPresenter currentDirectory: currentDirectory
 ]
 
 { #category : #'initialize-widgets' }
@@ -310,14 +304,14 @@ FDFileNavigationSystemPresenter >> initializeFilesTable [
 FDFileNavigationSystemPresenter >> initializeFiltersDropList [
 	| filterItems |
 	filterItems := FilterSet copy.
-	filterItems asOrderedCollection add: FDDefaultSelect new.
+	filterItems asOrderedCollection add: FDDefaultFilter new.
 	filterItems := filterItems asSet.
 	filtersDropList
 		items: filterItems asOrderedCollection;
-		displayBlock: [ :item | item name ];
+		display: [ :item | item name ];
 		selectedIndex:
 			((filtersDropList listItems collect: #name)
-				indexOf: FDDefaultSelect new name)
+				indexOf: FDDefaultFilter new name)
 ]
 
 { #category : #initialization }
@@ -333,23 +327,22 @@ FDFileNavigationSystemPresenter >> initializePresenter [
 FDFileNavigationSystemPresenter >> initializeWidgets [
 	currentDirectory := Directory copy.
 	columns := Columns.
-	hiddenFilter := FDHidenSelect new.
+	hiddenFilter := FDHidenFilter new.
 	previewer := Previewer.
 	notebookPreviewer := self instantiate: FDNoteBookPreviewerPresenter.
 	fileReferenceTable := self newTable.
-	currentPathTextInputPresenter := self instantiate: SpSelectEntity.
+	currentPathTextInputPresenter := self instantiate: FDWindowPathUI.
+	currentPathTextInputPresenter presenterUI: self.
 	nameLabel := self newLabel.
 	nameText := self newTextInput.
 	filtersDropList := self newDropList.
 	previousButton := self newButton.
 	nextButton := self newButton.
-	
 	readPointerHistoryParcour := DoubleLink value: currentDirectory.
 	nextButton icon: (self iconNamed: #glamorousDiveRight).
 	previousButton icon: (self iconNamed: #back).
 	nameLabel label: 'Name:'.
 	nameText autoAccept: true.
-	
 	self initializeCurrentPathTextInput.
 	self initializeFilesTable.
 	self initializeFiltersDropList.
@@ -395,15 +388,20 @@ FDFileNavigationSystemPresenter >> notebookPreviewer [
 	^ notebookPreviewer
 ]
 
-{ #category : #utility }
+{ #category : #utils }
 FDFileNavigationSystemPresenter >> openFolder: aFileReference [
 	self updateWidgetWithFileReference: aFileReference.
-	readPointerHistoryParcour
-		nextLink:
-			((DoubleLink value: currentDirectory)
-				previousLink: readPointerHistoryParcour;
-				yourself).
-	readPointerHistoryParcour := readPointerHistoryParcour nextLink
+	self updateHistoryList.
+	
+]
+
+{ #category : #utils }
+FDFileNavigationSystemPresenter >> openOn: anAbsolutePath [
+	currentDirectory := anAbsolutePath asFileReference.
+	self updateTableContent.
+	self currentPathTextInputPresenter
+		updatePathInputWith: currentDirectory.
+	self updateHistoryList
 ]
 
 { #category : #acccessing }
@@ -436,23 +434,25 @@ FDFileNavigationSystemPresenter >> readPointerHistoryParcour [
 	^ readPointerHistoryParcour
 ]
 
-{ #category : #utility }
+{ #category : #utils }
 FDFileNavigationSystemPresenter >> toggleHiddenFiles [
-	(hiddenFilter equals: FDDefaultSelect new)
-		ifTrue: [ hiddenFilter := FDHidenSelect new ]
-		ifFalse: [ hiddenFilter := FDDefaultSelect new ].
+	(hiddenFilter equals: FDDefaultFilter  new)
+		ifTrue: [ hiddenFilter := FDHidenFilter new ]
+		ifFalse: [ hiddenFilter := FDDefaultFilter new ].
 	self updateTableContent
 ]
 
-{ #category : #accessing }
-FDFileNavigationSystemPresenter >> updateSelectEntity [
-	currentPathTextInputPresenter
-		possibleEntities: (currentDirectory children collect: #fullName).
-	currentPathTextInputPresenter entityText
-		text: currentDirectory fullName
+{ #category : #utils }
+FDFileNavigationSystemPresenter >> updateHistoryList [
+	readPointerHistoryParcour
+		nextLink:
+			((DoubleLink value: currentDirectory)
+				previousLink: readPointerHistoryParcour;
+				yourself).
+	readPointerHistoryParcour := readPointerHistoryParcour nextLink
 ]
 
-{ #category : #utility }
+{ #category : #utils }
 FDFileNavigationSystemPresenter >> updateTableContent [
 	fileReferenceTable
 		items:
@@ -460,9 +460,9 @@ FDFileNavigationSystemPresenter >> updateTableContent [
 				applyOn: (filtersDropList selectedItem applyOn: currentDirectory children))
 ]
 
-{ #category : #utility }
+{ #category : #utils }
 FDFileNavigationSystemPresenter >> updateWidgetWithFileReference: aFileReference [
 	currentDirectory := aFileReference.
 	self updateTableContent.
-	self updateSelectEntity
+	currentPathTextInputPresenter currentDirectory: currentDirectory
 ]
