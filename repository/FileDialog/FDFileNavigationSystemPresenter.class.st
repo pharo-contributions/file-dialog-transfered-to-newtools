@@ -105,7 +105,7 @@ FDFileNavigationSystemPresenter class >> defaultDirectory [
 
 { #category : #'class initialization' }
 FDFileNavigationSystemPresenter class >> defaultFilterSet [
-	^ FDAbstractSelect actions
+	^ FDAbstractFilter actions
 ]
 
 { #category : #defaults }
@@ -256,12 +256,12 @@ FDFileNavigationSystemPresenter >> filtersCustomization: aCollectionOfFilter [
 	filtersDropList
 		items:
 			(aCollectionOfFilter asOrderedCollection
-				add: FDDefaultSelect new;
+				add: FDDefaultFilter new;
 				yourself) asSet asOrderedCollection.
 	filtersDropList
 		selectedIndex:
 			((filtersDropList listItems collect: #name)
-				indexOf: FDDefaultSelect new name)
+				indexOf: FDDefaultFilter new name)
 ]
 
 { #category : #accessing }
@@ -304,14 +304,14 @@ FDFileNavigationSystemPresenter >> initializeFilesTable [
 FDFileNavigationSystemPresenter >> initializeFiltersDropList [
 	| filterItems |
 	filterItems := FilterSet copy.
-	filterItems asOrderedCollection add: FDDefaultSelect new.
+	filterItems asOrderedCollection add: FDDefaultFilter new.
 	filterItems := filterItems asSet.
 	filtersDropList
 		items: filterItems asOrderedCollection;
 		display: [ :item | item name ];
 		selectedIndex:
 			((filtersDropList listItems collect: #name)
-				indexOf: FDDefaultSelect new name)
+				indexOf: FDDefaultFilter new name)
 ]
 
 { #category : #initialization }
@@ -327,7 +327,7 @@ FDFileNavigationSystemPresenter >> initializePresenter [
 FDFileNavigationSystemPresenter >> initializeWidgets [
 	currentDirectory := Directory copy.
 	columns := Columns.
-	hiddenFilter := FDHidenSelect new.
+	hiddenFilter := FDHidenFilter new.
 	previewer := Previewer.
 	notebookPreviewer := self instantiate: FDNoteBookPreviewerPresenter.
 	fileReferenceTable := self newTable.
@@ -436,9 +436,9 @@ FDFileNavigationSystemPresenter >> readPointerHistoryParcour [
 
 { #category : #utils }
 FDFileNavigationSystemPresenter >> toggleHiddenFiles [
-	(hiddenFilter equals: FDDefaultSelect new)
-		ifTrue: [ hiddenFilter := FDHidenSelect new ]
-		ifFalse: [ hiddenFilter := FDDefaultSelect new ].
+	(hiddenFilter equals: FDDefaultFilter  new)
+		ifTrue: [ hiddenFilter := FDHidenFilter new ]
+		ifFalse: [ hiddenFilter := FDDefaultFilter new ].
 	self updateTableContent
 ]
 

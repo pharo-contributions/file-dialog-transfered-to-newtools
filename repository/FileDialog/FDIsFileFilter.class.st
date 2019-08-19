@@ -2,18 +2,18 @@
 I'm selecting file
 "
 Class {
-	#name : #FDIsFileSelect,
-	#superclass : #FDAbstractSimpleSelect,
+	#name : #FDIsFileFilter,
+	#superclass : #FDAbstractSimpleFilter,
 	#category : #'FileDialog-filterStrategie'
 }
 
 { #category : #accessing }
-FDIsFileSelect >> name [
+FDIsFileFilter >> name [
 	^ 'file filter'
 ]
 
 { #category : #accessing }
-FDIsFileSelect >> predicate: aFileReference [
+FDIsFileFilter >> predicate: aFileReference [
 	^ aFileReference isFile
 	
 ]

@@ -2,22 +2,22 @@
 I'm selecting all
 "
 Class {
-	#name : #FDDefaultSelect,
-	#superclass : #FDAbstractSimpleSelect,
+	#name : #FDDefaultFilter,
+	#superclass : #FDAbstractSimpleFilter,
 	#category : #'FileDialog-filterStrategie'
 }
 
 { #category : #applying }
-FDDefaultSelect >> applyOn: aCollectionOfFileReference [
+FDDefaultFilter >> applyOn: aCollectionOfFileReference [
 	^ aCollectionOfFileReference
 ]
 
 { #category : #accessing }
-FDDefaultSelect >> name [
+FDDefaultFilter >> name [
 	^ 'no filter'
 ]
 
 { #category : #accessing }
-FDDefaultSelect >> predicate: aFileReference [
+FDDefaultFilter >> predicate: aFileReference [
 	^ true
 ]

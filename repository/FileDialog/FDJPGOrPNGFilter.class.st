@@ -2,25 +2,25 @@
 I'm selecting only jpg file or PNG file
 "
 Class {
-	#name : #FDJPGOrPNGSelect,
-	#superclass : #FDAbstractCompositeSelect,
+	#name : #FDJPGOrPNGFilter,
+	#superclass : #FDAbstractCompositeFilter,
 	#category : #'FileDialog-filterStrategie'
 }
 
 { #category : #initialization }
-FDJPGOrPNGSelect >> initialize [
+FDJPGOrPNGFilter >> initialize [
 	collectionOfFDAbstractFilter := OrderedCollection new.
 	collectionOfFDAbstractFilter add: FDDotJPGSelect new.
 	collectionOfFDAbstractFilter add: FDDotPNGSelect new
 ]
 
 { #category : #accessing }
-FDJPGOrPNGSelect >> name [
+FDJPGOrPNGFilter >> name [
 	^ '.jpg and .png filter'
 ]
 
 { #category : #accessing }
-FDJPGOrPNGSelect >> predicate: aFileReference [
+FDJPGOrPNGFilter >> predicate: aFileReference [
 	^ collectionOfFDAbstractFilter
 		anySatisfy: [ :aFileFilter | aFileFilter predicate: aFileReference  ]
 ]

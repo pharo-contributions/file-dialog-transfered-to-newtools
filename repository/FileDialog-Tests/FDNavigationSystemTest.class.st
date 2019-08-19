@@ -39,7 +39,7 @@ FDNavigationSystemTest >> testInitializeCurrentPathTextInputShouldSet [
 
 { #category : #tests }
 FDNavigationSystemTest >> testInitializeFilterDropListSelectedItemShouldBeDefaultFilter [
-	self assert: dialog filtersDropList selectedItem name equals: FDDefaultSelect new name
+	self assert: dialog filtersDropList selectedItem name equals: FDDefaultFilter new name
 ]
 
 { #category : #tests }
@@ -97,12 +97,12 @@ FDNavigationSystemTest >> testWhenClickAnBeforeHistoryButtonIfThereAreHistorySho
 { #category : #tests }
 FDNavigationSystemTest >> testWhenCustomizeFilterShouldFilterDropListPresenterIncludeIt [
 	| aCollectionOfFilter |
-	aCollectionOfFilter := {FDDefaultSelect new.
-	FDDotJPGSelect new}.
+	aCollectionOfFilter := {FDDefaultFilter new.
+	FDDotJPGFilter new}.
 	dialog filtersCustomization: aCollectionOfFilter.
 	self
 		assert: dialog filtersDropList selectedItem name
-		equals: FDDefaultSelect new name.
+		equals: FDDefaultFilter new name.
 	self
 		assert: (dialog filtersDropList listItems includesAll: aCollectionOfFilter)
 ]
@@ -110,11 +110,11 @@ FDNavigationSystemTest >> testWhenCustomizeFilterShouldFilterDropListPresenterIn
 { #category : #tests }
 FDNavigationSystemTest >> testWhenCustomizeFilterWithoutDefaultFilterShouldFilterDropListPresenterIncludeDefaultFilterAndSelectIt [
 	| aCollectionOfFilter |
-	aCollectionOfFilter := {FDDotJPGSelect new}.
+	aCollectionOfFilter := {FDDotJPGFilter new}.
 	dialog filtersCustomization: aCollectionOfFilter.
 	self
 		assert: dialog filtersDropList selectedItem name
-		equals: FDDefaultSelect new name.
+		equals: FDDefaultFilter new name.
 	self
 		assert: (dialog filtersDropList listItems includesAll: aCollectionOfFilter)
 ]
@@ -141,7 +141,7 @@ FDNavigationSystemTest >> testWhenOpenADirectoryShouldDisplayHisChildrenFilterBy
 	dialog filtersDropList
 		selectedIndex:
 			((dialog filtersDropList listItems collect: #name)
-				indexOf: FDDotPNGSelect new name).
+				indexOf: FDDotPNGFilter new name).
 	self fileListAllMustBeFilterByPNGFIlter.
 	dialog fileReferenceTable
 		selectIndex: ((dialog fileReferenceTable items collect: #basename) indexOf: 'dir').
