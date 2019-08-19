@@ -179,12 +179,12 @@ FDFileNavigationSystemPresenter >> columns: aCollectionOfColumns [
 		columns: ((tmpColumn asOrderedCollection sort: #sortValue ascending) collect: #column)
 ]
 
-{ #category : #utility }
+{ #category : #utils }
 FDFileNavigationSystemPresenter >> createDirectory [
 	^ self createDirectory: 'new-folder'
 ]
 
-{ #category : #utility }
+{ #category : #utils }
 FDFileNavigationSystemPresenter >> createDirectory: initialName [
 	| name path |
 	name := (UIManager default
@@ -308,7 +308,7 @@ FDFileNavigationSystemPresenter >> initializeFiltersDropList [
 	filterItems := filterItems asSet.
 	filtersDropList
 		items: filterItems asOrderedCollection;
-		displayBlock: [ :item | item name ];
+		display: [ :item | item name ];
 		selectedIndex:
 			((filtersDropList listItems collect: #name)
 				indexOf: FDDefaultSelect new name)
@@ -332,18 +332,17 @@ FDFileNavigationSystemPresenter >> initializeWidgets [
 	notebookPreviewer := self instantiate: FDNoteBookPreviewerPresenter.
 	fileReferenceTable := self newTable.
 	currentPathTextInputPresenter := self instantiate: FDWindowPathUI.
+	currentPathTextInputPresenter presenterUI: self.
 	nameLabel := self newLabel.
 	nameText := self newTextInput.
 	filtersDropList := self newDropList.
 	previousButton := self newButton.
 	nextButton := self newButton.
-	
 	readPointerHistoryParcour := DoubleLink value: currentDirectory.
 	nextButton icon: (self iconNamed: #glamorousDiveRight).
 	previousButton icon: (self iconNamed: #back).
 	nameLabel label: 'Name:'.
 	nameText autoAccept: true.
-	
 	self initializeCurrentPathTextInput.
 	self initializeFilesTable.
 	self initializeFiltersDropList.
@@ -389,15 +388,20 @@ FDFileNavigationSystemPresenter >> notebookPreviewer [
 	^ notebookPreviewer
 ]
 
-{ #category : #utility }
+{ #category : #utils }
 FDFileNavigationSystemPresenter >> openFolder: aFileReference [
 	self updateWidgetWithFileReference: aFileReference.
-	readPointerHistoryParcour
-		nextLink:
-			((DoubleLink value: currentDirectory)
-				previousLink: readPointerHistoryParcour;
-				yourself).
-	readPointerHistoryParcour := readPointerHistoryParcour nextLink
+	self updateHistoryList.
+	
+]
+
+{ #category : #utils }
+FDFileNavigationSystemPresenter >> openOn: anAbsolutePath [
+	currentDirectory := anAbsolutePath asFileReference.
+	self updateTableContent.
+	self currentPathTextInputPresenter
+		updatePathInputWith: currentDirectory.
+	self updateHistoryList
 ]
 
 { #category : #acccessing }
@@ -430,7 +434,7 @@ FDFileNavigationSystemPresenter >> readPointerHistoryParcour [
 	^ readPointerHistoryParcour
 ]
 
-{ #category : #utility }
+{ #category : #utils }
 FDFileNavigationSystemPresenter >> toggleHiddenFiles [
 	(hiddenFilter equals: FDDefaultSelect new)
 		ifTrue: [ hiddenFilter := FDHidenSelect new ]
@@ -438,7 +442,17 @@ FDFileNavigationSystemPresenter >> toggleHiddenFiles [
 	self updateTableContent
 ]
 
-{ #category : #utility }
+{ #category : #utils }
+FDFileNavigationSystemPresenter >> updateHistoryList [
+	readPointerHistoryParcour
+		nextLink:
+			((DoubleLink value: currentDirectory)
+				previousLink: readPointerHistoryParcour;
+				yourself).
+	readPointerHistoryParcour := readPointerHistoryParcour nextLink
+]
+
+{ #category : #utils }
 FDFileNavigationSystemPresenter >> updateTableContent [
 	fileReferenceTable
 		items:
@@ -446,7 +460,7 @@ FDFileNavigationSystemPresenter >> updateTableContent [
 				applyOn: (filtersDropList selectedItem applyOn: currentDirectory children))
 ]
 
-{ #category : #utility }
+{ #category : #utils }
 FDFileNavigationSystemPresenter >> updateWidgetWithFileReference: aFileReference [
 	currentDirectory := aFileReference.
 	self updateTableContent.

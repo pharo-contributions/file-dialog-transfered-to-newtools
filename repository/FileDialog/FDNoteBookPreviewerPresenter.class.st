@@ -3,7 +3,7 @@ I'm a notebook Presenter use by the previewer system
 "
 Class {
 	#name : #FDNoteBookPreviewerPresenter,
-	#superclass : #ComposablePresenter,
+	#superclass : #SpPresenter,
 	#instVars : [
 		'notebook',
 		'page'
@@ -17,7 +17,7 @@ Class {
 { #category : #specs }
 FDNoteBookPreviewerPresenter class >> defaultSpec [
 
-	^ SpecBoxLayout newHorizontal	 
+	^ SpBoxLayout newHorizontal	 
 		add: #notebook;
 		yourself
 ]
@@ -105,7 +105,7 @@ FCjDKXmnHQAAAABJRU5ErkJggg=='
 
 { #category : #initialization }
 FDNoteBookPreviewerPresenter >> initializePage [
-	^ NotebookPage
+	^ SpNotebookPage
 		title: 'Previewer '  
 		icon: (self iconNamed:#page )
 		provider: [ page ]

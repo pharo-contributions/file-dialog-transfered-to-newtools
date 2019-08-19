@@ -40,28 +40,26 @@ FDWindowPathUI class >> otherlayout [
 FDWindowPathUI >> creatButtonWith: aFileReference [
 	^ SpButtonPresenter new
 		label: aFileReference basename;
-		action: [ 
-			1halt.
-			currentDirectory :=  aFileReference .
+		action: [ currentDirectory := aFileReference.
 			textInput entityText text: currentDirectory fullName.
-			presenterUI openOn: currentDirectory
-			 ];
+			presenterUI openOn: currentDirectory ];
 		yourself
+]
+
+{ #category : #accessing }
+FDWindowPathUI >> currentDirectory [
+	^ currentDirectory
 ]
 
 { #category : #api }
 FDWindowPathUI >> currentDirectory: aFileReference [
 	currentDirectory := aFileReference.
-	textInput
-		placeholder: 'give/me/a/path';
-		possibleEntities: currentDirectory children.
-	textInput entityText text: currentDirectory fullName.
+	self updatePathInputWith: aFileReference.
 	pathButtons items: #() asOrderedCollection.
 	currentDirectory fullPath withParents
-		do:
-			[ :eachAbsolutePath | pathButtons add: (self creatButtonWith: eachAbsolutePath) ].
-		self needRebuild: false.
-		self buildWithSpec.
+		do: [ :eachAbsolutePath | pathButtons add: (self creatButtonWith: eachAbsolutePath) ].
+	self needRebuild: false.
+	self buildWithSpec
 ]
 
 { #category : #accessing }
@@ -76,10 +74,12 @@ FDWindowPathUI >> initializeWidgets [
 	pathButtons := self newButtonBar.
 	edditButton := self newButton.
 	textInput entityText autoAccept: false.
+	textInput placeholder: 'give/me/a/path'.
 	edditButton
 		icon: (self iconNamed: #edit);
-		action: [ self window
-				rebuildWithSpecLayout:
+		action: [ self needRebuild: false.
+			self
+				buildWithSpecLayout:
 					(isTextInput
 						ifTrue: [ self class defaultSpec ]
 						ifFalse: [ self class otherlayout ]).
@@ -87,6 +87,27 @@ FDWindowPathUI >> initializeWidgets [
 ]
 
 { #category : #accessing }
+FDWindowPathUI >> isTextInput [
+	^ isTextInput
+]
+
+{ #category : #accessing }
 FDWindowPathUI >> pathButtons [
 	^ pathButtons
+]
+
+{ #category : #accessing }
+FDWindowPathUI >> presenterUI [
+	^ presenterUI
+]
+
+{ #category : #accessing }
+FDWindowPathUI >> presenterUI: anObject [
+	presenterUI := anObject
+]
+
+{ #category : #api }
+FDWindowPathUI >> updatePathInputWith: aFileReference [
+	textInput possibleEntities: aFileReference children.
+	textInput entityText text: aFileReference fullName
 ]
