@@ -56,10 +56,12 @@ FDWindowPathUI >> currentDirectory: aFileReference [
 		placeholder: 'give/me/a/path';
 		possibleEntities: currentDirectory children.
 	textInput entityText text: currentDirectory fullName.
-	pathButtons initialize.
+	pathButtons items: #() asOrderedCollection.
 	currentDirectory fullPath withParents
 		do:
-			[ :eachAbsolutePath | pathButtons add: (self creatButtonWith: eachAbsolutePath) ]
+			[ :eachAbsolutePath | pathButtons add: (self creatButtonWith: eachAbsolutePath) ].
+		self needRebuild: false.
+		self buildWithSpec.
 ]
 
 { #category : #accessing }
@@ -71,7 +73,7 @@ FDWindowPathUI >> entityText [
 FDWindowPathUI >> initializeWidgets [
 	isTextInput := false.
 	textInput := self instantiate: SpSelectEntity.
-	pathButtons := self newActionBar.
+	pathButtons := self newButtonBar.
 	edditButton := self newButton.
 	textInput entityText autoAccept: false.
 	edditButton

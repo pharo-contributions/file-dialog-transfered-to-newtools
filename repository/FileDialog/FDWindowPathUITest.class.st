@@ -18,3 +18,13 @@ FDWindowPathUITest >> testRoot [
 	windowPathUI openWithSpec.
 	self assert: windowPathUI pathButtons items size equals: 1
 ]
+
+{ #category : #tests }
+FDWindowPathUITest >> testSimplePath [
+	| newFile |
+	[ newFile := (FileLocator root / 'directoryUseForTestMustBeRemove')
+		asFileReference ensureCreateDirectory.
+	windowPathUI currentDirectory: newFile.
+	self assert: windowPathUI pathButtons items size equals: 2 ]
+		ensure: [ newFile delete ]
+]

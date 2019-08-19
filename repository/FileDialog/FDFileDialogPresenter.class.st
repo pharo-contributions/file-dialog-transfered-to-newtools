@@ -401,7 +401,7 @@ FDFileDialogPresenter >> isRootDirectory: aDirectory [
 	^ aDirectory isRoot or: [ OSPlatform current isWindows and: [ aDirectory parent isRoot ] ]
 ]
 
-{ #category : #initialization }
+{ #category : #'api-customization' }
 FDFileDialogPresenter >> isolate [
 	bookmarks := bookmarks copy.
 	
