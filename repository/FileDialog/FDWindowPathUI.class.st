@@ -108,6 +108,6 @@ FDWindowPathUI >> presenterUI: anObject [
 
 { #category : #api }
 FDWindowPathUI >> updatePathInputWith: aFileReference [
-	textInput possibleEntities: aFileReference children.
+	textInput possibleEntities: (aFileReference children collect: #fullName).
 	textInput entityText text: aFileReference fullName
 ]
