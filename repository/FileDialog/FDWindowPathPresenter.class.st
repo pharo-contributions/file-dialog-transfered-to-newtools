@@ -1,5 +1,25 @@
+"
+I provide a windowPathEditor 
+
+API
+
+* currentDirectory:  aFileReference
+	see example class side 
+	
+* presenterUI: theUIUsingThisPresenter
+	you have to send this message see 
+	example (  )
+		 MyUi >> initializeWidget
+			...
+			maVar := self instantiate: FDWindowPathPresenter.
+			maVar presenterUI: self.
+			...
+			
+UI using this widget have to define openOn: aFileReference
+	
+"
 Class {
-	#name : #FDWindowPathUI,
+	#name : #FDWindowPathPresenter,
 	#superclass : #SpPresenter,
 	#instVars : [
 		'textInput',
@@ -13,7 +33,7 @@ Class {
 }
 
 { #category : #specs }
-FDWindowPathUI class >> defaultSpec [
+FDWindowPathPresenter class >> defaultSpec [
 	^ SpBoxLayout newHorizontal
 		add: #pathButtons;
 		add: #edditButton withConstraints: [:contraint |contraint width: 30];
@@ -21,7 +41,7 @@ FDWindowPathUI class >> defaultSpec [
 ]
 
 { #category : #examples }
-FDWindowPathUI class >> example [
+FDWindowPathPresenter class >> example [
 	<example>
 	^ self new
 		currentDirectory: FileLocator imageDirectory;
@@ -29,7 +49,7 @@ FDWindowPathUI class >> example [
 ]
 
 { #category : #specs }
-FDWindowPathUI class >> otherlayout [
+FDWindowPathPresenter class >> otherlayout [
 	^ SpBoxLayout newHorizontal
 		add: #textInput withConstraints: [:contraint | contraint spec: #fDLayoutFileDialog]; 
 		add: #edditButton withConstraints: [:contraint |contraint width: 30 ];
@@ -37,7 +57,7 @@ FDWindowPathUI class >> otherlayout [
 ]
 
 { #category : #factory }
-FDWindowPathUI >> creatButtonWith: aFileReference [
+FDWindowPathPresenter >> creatButtonWith: aFileReference [
 	^ SpButtonPresenter new
 		label: aFileReference basename;
 		action: [ currentDirectory := aFileReference.
@@ -47,12 +67,12 @@ FDWindowPathUI >> creatButtonWith: aFileReference [
 ]
 
 { #category : #accessing }
-FDWindowPathUI >> currentDirectory [
+FDWindowPathPresenter >> currentDirectory [
 	^ currentDirectory
 ]
 
 { #category : #api }
-FDWindowPathUI >> currentDirectory: aFileReference [
+FDWindowPathPresenter >> currentDirectory: aFileReference [
 	currentDirectory := aFileReference.
 	self updatePathInputWith: aFileReference.
 	pathButtons items: #() asOrderedCollection.
@@ -63,12 +83,12 @@ FDWindowPathUI >> currentDirectory: aFileReference [
 ]
 
 { #category : #accessing }
-FDWindowPathUI >> entityText [
+FDWindowPathPresenter >> entityText [
 	^ textInput entityText
 ]
 
 { #category : #initialization }
-FDWindowPathUI >> initializeWidgets [
+FDWindowPathPresenter >> initializeWidgets [
 	isTextInput := false.
 	textInput := self instantiate: SpSelectEntity.
 	pathButtons := self newButtonBar.
@@ -87,27 +107,27 @@ FDWindowPathUI >> initializeWidgets [
 ]
 
 { #category : #accessing }
-FDWindowPathUI >> isTextInput [
+FDWindowPathPresenter >> isTextInput [
 	^ isTextInput
 ]
 
 { #category : #accessing }
-FDWindowPathUI >> pathButtons [
+FDWindowPathPresenter >> pathButtons [
 	^ pathButtons
 ]
 
 { #category : #accessing }
-FDWindowPathUI >> presenterUI [
+FDWindowPathPresenter >> presenterUI [
 	^ presenterUI
 ]
 
 { #category : #accessing }
-FDWindowPathUI >> presenterUI: anObject [
+FDWindowPathPresenter >> presenterUI: anObject [
 	presenterUI := anObject
 ]
 
 { #category : #api }
-FDWindowPathUI >> updatePathInputWith: aFileReference [
+FDWindowPathPresenter >> updatePathInputWith: aFileReference [
 	textInput possibleEntities: (aFileReference children collect: #fullName).
 	textInput entityText text: aFileReference fullName
 ]

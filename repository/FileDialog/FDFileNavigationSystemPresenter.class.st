@@ -331,7 +331,7 @@ FDFileNavigationSystemPresenter >> initializeWidgets [
 	previewer := Previewer.
 	notebookPreviewer := self instantiate: FDNoteBookPreviewerPresenter.
 	fileReferenceTable := self newTable.
-	currentPathTextInputPresenter := self instantiate: FDWindowPathUI.
+	currentPathTextInputPresenter := self instantiate: FDWindowPathPresenter.
 	currentPathTextInputPresenter presenterUI: self.
 	nameLabel := self newLabel.
 	nameText := self newTextInput.
