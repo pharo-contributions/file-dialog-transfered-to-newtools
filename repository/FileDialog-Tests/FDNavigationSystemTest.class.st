@@ -95,6 +95,19 @@ FDNavigationSystemTest >> testWhenClickAnBeforeHistoryButtonIfThereAreHistorySho
 ]
 
 { #category : #tests }
+FDNavigationSystemTest >> testWhenCurrentDirectoryChangeshouldNewFileDialogOpenOnTheNewDirectory [
+	| dirIndex newFileDialog |
+	dirIndex := (dialog fileReferenceTable items collect: #basename)
+		indexOf: 'dir'.
+	dialog fileReferenceTable selectIndex: dirIndex.
+	dialog fileReferenceTable doubleClickAtIndex: dirIndex.
+	newFileDialog := FDFileNavigationSystemPresenter new.
+	self
+		assert: newFileDialog currentDirectory
+		equals: (root / 'dir') asFileReference
+]
+
+{ #category : #tests }
 FDNavigationSystemTest >> testWhenCustomizeFilterShouldFilterDropListPresenterIncludeIt [
 	| aCollectionOfFilter |
 	aCollectionOfFilter := {FDDefaultFilter new.
