@@ -1,5 +1,5 @@
 Class {
-	#name : #FDWindowPathUITest,
+	#name : #FDWindowPathPresenterTest,
 	#superclass : #TestCase,
 	#instVars : [
 		'windowPathUI'
@@ -8,12 +8,12 @@ Class {
 }
 
 { #category : #running }
-FDWindowPathUITest >> setUp [
-	windowPathUI := FDWindowPathUI new.
+FDWindowPathPresenterTest >> setUp [
+	windowPathUI := FDWindowPathPresenter new.
 ]
 
 { #category : #tests }
-FDWindowPathUITest >> testRoot [
+FDWindowPathPresenterTest >> testRoot [
 	windowPathUI currentDirectory: FileLocator root.
 	windowPathUI openWithSpec.
 	self assert: windowPathUI pathButtons items size equals: 1
