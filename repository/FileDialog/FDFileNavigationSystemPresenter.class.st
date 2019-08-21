@@ -73,6 +73,7 @@ Class {
 		'Columns',
 		'Directory',
 		'FilterSet',
+		'LastDirectoryVisit',
 		'Previewer'
 	],
 	#category : #'FileDialog-UI'
@@ -246,7 +247,8 @@ FDFileNavigationSystemPresenter >> filesListAction [
 	fileReferenceTable
 		whenSelectionChangedDo: [ :aFileReference | 
 			notebookPreviewer
-				page: (previewer previewOn: aFileReference selectedItem) ]
+				page: (previewer previewOn: aFileReference selectedItem) ].
+	fileReferenceTable whenModelChangedDo: [ LastDirectoryVisit := currentDirectory ]
 ]
 
 { #category : #'api-customization' }
@@ -329,6 +331,7 @@ FDFileNavigationSystemPresenter >> initializeWidgets [
 	columns := Columns.
 	hiddenFilter := FDHidenFilter new.
 	previewer := Previewer.
+	
 	notebookPreviewer := self instantiate: FDNoteBookPreviewerPresenter.
 	fileReferenceTable := self newTable.
 	currentPathTextInputPresenter := self instantiate: FDWindowPathPresenter.
@@ -346,7 +349,7 @@ FDFileNavigationSystemPresenter >> initializeWidgets [
 	self initializeCurrentPathTextInput.
 	self initializeFilesTable.
 	self initializeFiltersDropList.
-	self updateWidgetWithFileReference: currentDirectory.
+	self updateWidgetWithFileReference: LastDirectoryVisit.
 	self focusOrder
 		add: previousButton;
 		add: nextButton;
