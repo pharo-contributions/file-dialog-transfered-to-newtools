@@ -10,8 +10,8 @@ Class {
 { #category : #initialization }
 FDJPGOrPNGFilter >> initialize [
 	collectionOfFDAbstractFilter := OrderedCollection new.
-	collectionOfFDAbstractFilter add: FDDotJPGSelect new.
-	collectionOfFDAbstractFilter add: FDDotPNGSelect new
+	collectionOfFDAbstractFilter add: FDDotJPGFilter new.
+	collectionOfFDAbstractFilter add: FDDotPNGFilter new
 ]
 
 { #category : #accessing }
