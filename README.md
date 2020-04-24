@@ -1,5 +1,5 @@
 # File Dialog 
-Pay attention this project has been merged into the https://pharo-spec/newtools
+Pay attention this project has been merged into https://pharo-spec/newtools
 
 
 
