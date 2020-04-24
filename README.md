@@ -1,6 +1,8 @@
 # File Dialog 
 Pay attention this project has been merged into https://pharo-spec/newtools
-The original version from Peter Uhnak is now available under https://pharo-contributions/spec1-file-dialog
+The original version from Peter Uhnak is now available under https://github.com/ducasse/file-dialog
+
+We plan to have it here under spec1-file-dialog but no time.
 
 
 [![Build Status](https://travis-ci.org/pharo-contributions/file-dialog.svg?branch=master)](https://travis-ci.org/pharo-contributions/file-dialog) [![Coverage Status](https://coveralls.io/repos/github/pharo-contributions/file-dialog/badge.svg)](https://coveralls.io/github/pharo-contributions/file-dialog)
