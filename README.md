@@ -1,6 +1,6 @@
 # File Dialog 
-Pay attention this project has been merged into https://github.com/pharo-spec/NewTools
-The original version from Peter Uhnak is now available under https://github.com/ducasse/file-dialog
+- Pay attention this project has been merged into https://github.com/pharo-spec/NewTools
+- The original version from Peter Uhnak is now available under https://github.com/ducasse/file-dialog
 
 We plan to have it here under spec1-file-dialog but no time.
 
